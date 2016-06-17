@@ -1,0 +1,45 @@
+.DMD Dungeon Mania Dungeon Formatting
+
+timer for ranking
+
+Image Information -
+tilesheet.png     16x16 amount of 32x32 pixel tiles (no transparency)
+objectsheet.png   same as above^ but inclues transparencies
+background.png    1 background per map, no transparency
+
+1 Chunk = 16x16 Tiles
+
+------------------------
+Header
+
+byte 0-3 - ".DMD"
+byte 4 - Width in Chunks
+byte 5 - Height in Chunks
+byte 6&7 - {chunk, remainder tile} (x position)
+byte 8&9 - {chunk, remainder tile} (y position)
+
+------------------------
+layer 1- Tile layer
+
+<byte numOfTiles, byte tileID>
+
+------------------------
+layer 2 - Solid layer
+
+<byte numOfSolids, byte solidID>
+
+Solid Layer Types:
+0 - No Collision
+1 - Solid
+2 - Slow
+3 - Slippery
+
+------------------------
+layer 3 - Object layer
+
+<byte numOfObjects, byte objectID>
+
+------------------------
+layer 4 - Entity Layer
+
+<byte x chunk, byte remainder tile, byte y chunk, byte remaineer tile, byte entityID>
