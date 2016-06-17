@@ -18,7 +18,6 @@ class Bgm
 		void resumeMusic();
 		void stopMusic();
 
-	private:
 		Mix_Music* m_Music;
 };
 
@@ -33,7 +32,5 @@ class Sfx
 
 		void playSound();
 
-
-	private:
 		Mix_Chunk* m_Chunk;
 };

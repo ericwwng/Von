@@ -42,7 +42,7 @@ void Player::Render() const
 {
 	SDL_Point rotationPoint = { tex.getWidth() / 2, tex.getHeight() / 2 };
 	tex.Render(position.x, position.y, NULL, angle, &rotationPoint);
-	Rectf box = { position.x + 3, position.y + 3, 64, 64 };
+	Rectf box = { position.x + 20, position.y + 20, 32, 32 };
 	if (showCollisionBox) renderEmptyBox(box, color(0, 255, 0, 255));
 	weapon->Render();
 }
@@ -71,34 +71,35 @@ void Player::HandleEvents()
 //Collision for player to tile handling
 void Player::CheckCollisionTypes(Tile* tileTypes, int dimW)
 {
-	for(int i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 		for (int ii = 0; ii < 5; ii++)
-			if (Collision(collisionBox, tileTypes[(i + (int)floor(collisionBox.position.y / 32) - 2) * dimW + (ii + (int)floor(collisionBox.position.x / 32) - 2)].collisionBox))
-			{
-				switch (tileTypes[(i + (int)floor(collisionBox.position.y / 32) - 2) * dimW + (ii + (int)floor(collisionBox.position.x / 32) - 2)].id)
+			if((i + (int)floor(collisionBox.position.y / 16) - 2) * dimW + (ii + (int)floor(collisionBox.position.x / 16) - 2) > 0)
+				if (Collision(collisionBox, tileTypes[(i + (int)floor(collisionBox.position.y / 16) - 2) * dimW + (ii + (int)floor(collisionBox.position.x / 16) - 2)].collisionBox))
 				{
+					switch (tileTypes[(i + (int)floor(collisionBox.position.y / 16) - 2) * dimW + (ii + (int)floor(collisionBox.position.x / 16) - 2)].id)
+					{
 					case 1: //Solid
 						isCollided = true;
-					break;
+						break;
 
 					case 2: //Slow
 						playerSpeed = 2;
-					break;
+						break;
 
 					case 3: //Slippery
 						slipAmount = 5;
 						playerSpeed = 6;
-					break;
+						break;
 
 					case 4: //Solid
 						isCollided = true;
-					break;
+						break;
 
 					case 5: //Solid
 						isCollided = true;
-					break;
+						break;
+					}
 				}
-			}
 }
 
 void Player::Update(float deltaTime, Tile* tileTypes, int dimW, int dimH)
@@ -115,17 +116,17 @@ void Player::Update(float deltaTime, Tile* tileTypes, int dimW, int dimH)
 	//Update x values to allow wall sliding
 	isCollided = false;
 	position.x = position.x + velocity.x;
-	collisionBox = { position, tex.getWidth(), tex.getHeight() };
+	collisionBox = { Vector2f(position.x + 20, position.y + 20), 32, 32 };
 	CheckCollisionTypes(tileTypes, dimW);
-	if (isCollided || collisionBox.position.x < 0 || collisionBox.position.x + collisionBox.width > dimW * 32)
+	if (isCollided || collisionBox.position.x < 0 || collisionBox.position.x + collisionBox.width > dimW * 16)
 		position.x = position.x - velocity.x;
 
 	//Update y values to allow wall sliding
 	isCollided = false;
 	position.y = position.y + velocity.y;
-	collisionBox = { position, tex.getWidth(), tex.getHeight() };
+	collisionBox = { Vector2f(position.x + 20, position.y + 20), 32, 32 };
 	CheckCollisionTypes(tileTypes, dimW);
-	if (isCollided || collisionBox.position.y < 0 || collisionBox.position.y + collisionBox.height > dimH * 32)
+	if (isCollided || collisionBox.position.y < 0 || collisionBox.position.y + collisionBox.height > dimH * 16)
 		position.y = position.y - velocity.y;
 
 	collisionBox = { position, tex.getWidth(), tex.getHeight() };
@@ -135,8 +136,8 @@ void Player::Update(float deltaTime, Tile* tileTypes, int dimW, int dimH)
 	
 	if (Camera::getInstance().collisionBox.position.x < 0) Camera::getInstance().collisionBox.position.x = 0;
 	if (Camera::getInstance().collisionBox.position.y < 0) Camera::getInstance().collisionBox.position.y = 0;
-	if (Camera::getInstance().collisionBox.position.x + Camera::getInstance().collisionBox.width > dimW * 32) Camera::getInstance().collisionBox.position.x = dimW * 32 - (float)Camera::getInstance().collisionBox.width;
-	if (Camera::getInstance().collisionBox.position.y + Camera::getInstance().collisionBox.height > dimH * 32) Camera::getInstance().collisionBox.position.y = dimH * 32 - (float)Camera::getInstance().collisionBox.height;
+	if (Camera::getInstance().collisionBox.position.x + Camera::getInstance().collisionBox.width > dimW * 16) Camera::getInstance().collisionBox.position.x = dimW * 16 - Camera::getInstance().collisionBox.width;
+	if (Camera::getInstance().collisionBox.position.y + Camera::getInstance().collisionBox.height > dimH * 16) Camera::getInstance().collisionBox.position.y = dimH * 16 - Camera::getInstance().collisionBox.height;
   
 	weapon->Update(position, angle, deltaTime);
 	direction = Cursor::getInstance().getPosition() - Vector2f(position.x + collisionBox.width / 2, position.y + collisionBox.height / 2);

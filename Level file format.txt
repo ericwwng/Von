@@ -43,3 +43,9 @@ layer 3 - Object layer
 layer 4 - Entity Layer
 
 <byte x chunk, byte remainder tile, byte y chunk, byte remaineer tile, byte entityID>
+
+
+.OPO 
+
+File Format
+idk lol

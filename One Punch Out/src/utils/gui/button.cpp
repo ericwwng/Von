@@ -8,6 +8,7 @@ Button::Button(Vector2f pos, GLuint w, GLuint h, char* msg)
 
 	menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
 	menuClick.loadSoundFile("res/Music/sfx/menuhit.wav");
+	Mix_VolumeChunk(menuClick.m_Chunk, 80);
 
 	click = false;
 }

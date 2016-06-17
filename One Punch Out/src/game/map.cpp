@@ -38,8 +38,8 @@ Map::Map(std::string filename)
 		Camera::getInstance().setCoords(Vector2f(m_playerSpawnPosition.x - SCREEN_WIDTH / 2, m_playerSpawnPosition.y - SCREEN_HEIGHT / 2));
 		if (Camera::getInstance().collisionBox.position.x < 0) Camera::getInstance().collisionBox.position.x = 0;
 		if (Camera::getInstance().collisionBox.position.y < 0) Camera::getInstance().collisionBox.position.y = 0;
-		if (Camera::getInstance().collisionBox.position.x + Camera::getInstance().collisionBox.width > width * 32) Camera::getInstance().collisionBox.position.x = width * 32 - (float)Camera::getInstance().collisionBox.width;
-		if (Camera::getInstance().collisionBox.position.y + Camera::getInstance().collisionBox.height > height * 32) Camera::getInstance().collisionBox.position.y = height * 32 - (float)Camera::getInstance().collisionBox.height;
+		if (Camera::getInstance().collisionBox.position.x + Camera::getInstance().collisionBox.width > width * 16) Camera::getInstance().collisionBox.position.x = width * 16 - Camera::getInstance().collisionBox.width;
+		if (Camera::getInstance().collisionBox.position.y + Camera::getInstance().collisionBox.height > height * 16) Camera::getInstance().collisionBox.position.y = height * 16 - Camera::getInstance().collisionBox.height;
 
 		int tilecounter = 0;
 		Vector2f tilePosition;
