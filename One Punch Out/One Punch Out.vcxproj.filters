@@ -64,6 +64,9 @@
     <Filter Include="Header Files\sfx">
       <UniqueIdentifier>{845c6bdf-f6d5-4274-9eba-f11918d775af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\sfx">
+      <UniqueIdentifier>{bb442917-90bf-4f1c-98fc-54269e7e57d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -122,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="src\entity\projectiles\bullet.cpp">
       <Filter>Source Files\entity\projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sfx\music.cpp">
+      <Filter>Source Files\sfx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,7 +212,7 @@
     <ClInclude Include="include\entity\weapons\gun.h">
       <Filter>Header Files\entity\weapons</Filter>
     </ClInclude>
-    <ClInclude Include="music.h">
+    <ClInclude Include="include\sfx\music.h">
       <Filter>Header Files\sfx</Filter>
     </ClInclude>
   </ItemGroup>

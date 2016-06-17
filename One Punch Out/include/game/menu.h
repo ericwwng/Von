@@ -8,6 +8,8 @@
 
 #include "gfx/texture.h"
 
+#include "sfx/music.h"
+
 #include "utils/gui/button.h"
 
 class Menu : public GameState
@@ -21,8 +23,9 @@ class Menu : public GameState
 		void HandleEvents();
 
 	private:
-		bool test;
 		std::vector<Button*> m_buttons;
 
 		Texture m_background;
+
+		Bgm menuTheme;
 };

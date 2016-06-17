@@ -91,6 +91,7 @@
     <ClCompile Include="src\gfx\texutils.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\physics\physics.cpp" />
+    <ClCompile Include="src\sfx\music.cpp" />
     <ClCompile Include="src\utils\gui\button.cpp" />
     <ClCompile Include="src\utils\gui\selectionitem.cpp" />
     <ClCompile Include="src\utils\timer.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="include\gfx\texutils.h" />
     <ClInclude Include="include\physics\AABB.h" />
     <ClInclude Include="include\physics\physics.h" />
+    <ClInclude Include="include\sfx\music.h" />
     <ClInclude Include="include\utils\dirent.h" />
     <ClInclude Include="include\utils\general.h" />
     <ClInclude Include="include\utils\gui\button.h" />
@@ -123,7 +125,6 @@
     <ClInclude Include="include\utils\singleton.h" />
     <ClInclude Include="include\utils\timer.h" />
     <ClInclude Include="include\utils\vector2f.h" />
-    <ClInclude Include="music.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,8 @@
 
 #include "gfx/texture.h"
 
+#include "sfx/music.h"
+
 #include "entity/player.h"
 
 #include "utils/general.h"
@@ -35,6 +37,9 @@ class SelectionItem
 
 		bool hover;
 		bool click;
+
+		Sfx menuHover;
+		Sfx menuClick;
 };
 
 void AddSelectionItem(std::vector<SelectionItem*> &selectionItems, char* path, Vector2f pos, int w, int h);

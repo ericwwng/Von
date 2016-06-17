@@ -83,6 +83,7 @@ Application::~Application()
 	SDL_Quit();
     IMG_Quit();
 	TTF_Quit();
+	Mix_Quit();
 }
 
 void Application::run()
