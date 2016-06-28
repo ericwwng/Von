@@ -1,5 +1,9 @@
 Release/
 Debug/
+One Punch Out/Release/
+One Punch Out/Debug/
+One-Punch-Out/Release/
+One-Punch-Out/Debug/
 
 *.sdf
 *.opendb
