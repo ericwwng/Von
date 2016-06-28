@@ -5,11 +5,26 @@ src\entity\player.cpp(134): warning C4244: '=': conversion from 'int' to 'GLfloa
 src\entity\player.cpp(135): warning C4244: '=': conversion from 'int' to 'GLfloat', possible loss of data
 src\entity\player.cpp(139): warning C4244: '=': conversion from 'GLuint' to 'GLfloat', possible loss of data
 src\entity\player.cpp(140): warning C4244: '=': conversion from 'GLuint' to 'GLfloat', possible loss of data
+  application.cpp
+  editorstate.cpp
+  level.cpp
+  map.cpp
+src\game\map.cpp(45): warning C4244: '=': conversion from 'GLuint' to 'GLfloat', possible loss of data
+src\game\map.cpp(46): warning C4244: '=': conversion from 'GLuint' to 'GLfloat', possible loss of data
+src\game\map.cpp(70): warning C4018: '<': signed/unsigned mismatch
+src\game\map.cpp(71): warning C4018: '<': signed/unsigned mismatch
+src\game\map.cpp(103): warning C4018: '<': signed/unsigned mismatch
+src\game\map.cpp(104): warning C4018: '<': signed/unsigned mismatch
+  menu.cpp
+  selectionstate.cpp
+src\game\selectionstate.cpp(93): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+  main.cpp
+  button.cpp
   selectionitem.cpp
   Generating code
-  4 of 589 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
+  15 of 588 functions ( 2.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    27 functions had inline decision re-evaluated but remain unchanged
+    7 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 SDL2main.lib(SDL_windows_main.obj) : warning LNK4049: locally defined symbol ___iob_func imported
-  One Punch Out.vcxproj -> C:\Users\Eric\workspace\C Stuff\One Punch Out\Release\One Punch Out.exe
+  One Punch Out.vcxproj -> C:\Users\Nick\Documents\GitHub\One-Punch-Out\Release\One Punch Out.exe
