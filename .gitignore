@@ -1,0 +1,6 @@
+Release/
+Debug/
+
+*.sdf
+*.opendb
+*.db
