@@ -1,7 +1,8 @@
 #include "game/map.h"
 
-Map::Map(std::string filename)
+Map::Map(std::string filename) 
 {
+	m_filename = filename;
     std::ifstream file(filename, std::ifstream::binary);
 	if (file)
     {

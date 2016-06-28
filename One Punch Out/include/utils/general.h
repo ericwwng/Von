@@ -10,12 +10,12 @@
 
 #include "game/gamestate.h"
 
-#define SCREEN_WIDTH            1280
-#define SCREEN_HEIGHT           720
-#define SCREEN_FPS              60
-#define SCREEN_TICKS_PER_FRAME  1000 / SCREEN_FPS
+constexpr unsigned SCREEN_WIDTH =			1280;
+constexpr unsigned SCREEN_HEIGHT =			720;
+constexpr unsigned SCREEN_FPS =				60;
+constexpr unsigned SCREEN_TICKS_PER_FRAME =	1000 / SCREEN_FPS;
 
-#define PI 3.14159265
+constexpr double PI = 3.14159265;
 
 extern SDL_Window* gWindow;
 extern SDL_Event event;

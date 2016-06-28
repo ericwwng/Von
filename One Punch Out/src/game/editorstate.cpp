@@ -67,6 +67,10 @@ void EditorState::HandleEvents()
 			m_selectorText.loadFromText(m_selectorID.str().c_str(), color(255, 255, 255, 255));
 			printf("Current Tile Selected: %d \n", id);
 		}
+		if ((event.key.keysym.sym == SDLK_LCTRL || event.key.keysym.sym == SDLK_RCTRL) && event.key.keysym.sym == SDLK_s)
+		{
+			printf("Map Saved \n");
+		}
 	}
 
 	if (event.type == SDL_MOUSEBUTTONDOWN)

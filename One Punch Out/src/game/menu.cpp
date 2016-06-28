@@ -3,7 +3,8 @@
 Menu::Menu()
 {
 	m_background.loadFromFile("res/GUI/menu-background.png", 1280, 720);
-	menuTheme.loadMusicFile("res/Music/bgm/Ievan Polka.ogg");
+	menuTheme.loadMusicFile("res/Music/bgm/Firestorm.ogg");
+	Mix_VolumeMusic(80);
 	menuTheme.playMusic();
 
 	GLfloat offsetWidth = SCREEN_WIDTH * 0.75;

@@ -131,8 +131,8 @@ void Player::Update(float deltaTime, Tile* tileTypes, int dimW, int dimH)
 
 	collisionBox = { position, tex.getWidth(), tex.getHeight() };
 
-	Camera::getInstance().collisionBox.position.x = (int)position.x - SCREEN_WIDTH / 2;
-	Camera::getInstance().collisionBox.position.y = (int)position.y - SCREEN_HEIGHT / 2;
+	Camera::getInstance().collisionBox.position.x = position.x - SCREEN_WIDTH / 2;
+	Camera::getInstance().collisionBox.position.y = position.y - SCREEN_HEIGHT / 2;
 	
 	if (Camera::getInstance().collisionBox.position.x < 0) Camera::getInstance().collisionBox.position.x = 0;
 	if (Camera::getInstance().collisionBox.position.y < 0) Camera::getInstance().collisionBox.position.y = 0;

@@ -5,7 +5,7 @@ Gun::Gun()
 	angle = 0.f;
 	tex.loadFromFile("res/Weapon/gun.png");
 
-	bullet = new Bullet[2];
+	bullet = new Bullet[3];
 
 	rateOfFire.start();
 }
@@ -17,7 +17,7 @@ Gun::~Gun()
 
 void Gun::Action()
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 		if (!bullet[i].isActive() && rateOfFire.getTicks() >= 200)
 		{
 			bullet[i].Reload(position, weaponDirection, angle, 1000);
@@ -30,7 +30,7 @@ void Gun::Render() const
 {
 	SDL_Point rotationPoint = { 0, 0 };
 	tex.Render(position.x, position.y, NULL, angle, &rotationPoint);
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 		if (bullet[i].isActive())
 			bullet[i].Render();
 }
@@ -44,7 +44,7 @@ void Gun::Update(Vector2f& pos, float angle, float deltaTime)
 
 	collisionBox = { position, 32, 16 };
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		if (bullet[i].isActive())
 			bullet[i].Update(deltaTime);

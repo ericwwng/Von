@@ -97,6 +97,7 @@
     <ClCompile Include="src\utils\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\entity\boss.h" />
     <ClInclude Include="include\entity\enemy.h" />
     <ClInclude Include="include\entity\entity.h" />
     <ClInclude Include="include\entity\player.h" />

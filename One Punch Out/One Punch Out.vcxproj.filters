@@ -67,6 +67,12 @@
     <Filter Include="Source Files\sfx">
       <UniqueIdentifier>{bb442917-90bf-4f1c-98fc-54269e7e57d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\entity\bosses">
+      <UniqueIdentifier>{50ba2318-48d6-4369-a6d6-77622994e841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\entity\bosses">
+      <UniqueIdentifier>{5636e074-c21e-4d64-bb90-f21342290cfe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -214,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="include\sfx\music.h">
       <Filter>Header Files\sfx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity\boss.h">
+      <Filter>Header Files\entity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

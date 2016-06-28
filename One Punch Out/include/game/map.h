@@ -37,16 +37,20 @@ class Map
 		void Render();
         void renderSolidTiles();
 
+		std::string getFilename() { return m_filename; }
+
 		Tile* getSolids() { return m_solidTiles; }
 
-        int getDimW() const { return width; } 
-        int getDimH() const { return height; } 
+		GLuint getDimW() const { return width; }
+		GLuint getDimH() const { return height; }
 
 		Vector2f getPlayerSpawn() { return m_playerSpawnPosition; }
 		void setPlayerSpawn(Vector2f spawnPos) { m_playerSpawnPosition = spawnPos; }
 
 		void setSolid(GLuint tileIndex, Uint8 id) { m_solidTiles[tileIndex].id = id; }
     private:
+		std::string m_filename;
+
 		Tile* m_solidTiles;
 		std::vector<Enemy*> m_enemyEntities;
 
@@ -54,5 +58,5 @@ class Map
 
 		Texture m_background;
 
-        int width, height; //should be image res / 8
+        GLuint width, height; //should be image res / 8
 };

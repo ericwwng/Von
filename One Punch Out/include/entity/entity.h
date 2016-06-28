@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "utils/Vector2f.h"
 
 #include "physics/AABB.h"

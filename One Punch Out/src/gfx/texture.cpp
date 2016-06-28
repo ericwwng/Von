@@ -37,7 +37,7 @@ void Texture::loadFromFile(const char* path, GLuint w, GLuint h)
 		printf("creating texture %d, %d", w, h);
 		textureFormat = GL_RGBA;
 		pixels = new GLuint[w * h];
-		for (int i = 0; i < (w * h); i++)
+		for (GLuint i = 0; i < (w * h); i++)
 		{
 			GLubyte* colors = (GLubyte*)&pixels[i];
 			colors[0] = 0xFF; colors[1] = 0xFF; colors[2] = 0xFF; colors[3] = 0xFF;
