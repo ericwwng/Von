@@ -1,8 +1,0 @@
-﻿  menu.cpp
-  Generating code
-  2 of 589 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-SDL2main.lib(SDL_windows_main.obj) : warning LNK4049: locally defined symbol ___iob_func imported
-  One Punch Out.vcxproj -> C:\Users\Eric\workspace\C Stuff\One Punch Out\Release\One Punch Out.exe
