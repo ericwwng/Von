@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cmath>
 #include <string>
+#include <direct.h>
 
 #include "game/camera.h"
 
@@ -20,12 +21,12 @@ struct Tile
 {
 public:
 	Tile();
-	Tile(Vector2f pos, Uint8 tileType);
+	Tile(Vector2f pos, GLubyte tileType);
 
 	void Render();
 
 	AABB collisionBox;
-	Uint8 id; //on the tilesheet
+	GLubyte id; //on the tilesheet
 };
 
 class Map
@@ -37,12 +38,13 @@ class Map
 		void Render();
         void renderSolidTiles();
 
+		void saveMap();
 		std::string getFilename() { return m_filename; }
 
 		Tile* getSolids() { return m_solidTiles; }
 
-		GLuint getDimW() const { return width; }
-		GLuint getDimH() const { return height; }
+		GLubyte getDimW() const { return m_width; }
+		GLubyte getDimH() const { return m_height; }
 
 		Vector2f getPlayerSpawn() { return m_playerSpawnPosition; }
 		void setPlayerSpawn(Vector2f spawnPos) { m_playerSpawnPosition = spawnPos; }
@@ -56,7 +58,8 @@ class Map
 
 		Vector2f m_playerSpawnPosition;
 
+		GLubyte m_backgroundNumber;
 		Texture m_background;
 
-        GLuint width, height; //should be image res / 8
+        GLubyte m_width, m_height; //should be image res / 8
 };

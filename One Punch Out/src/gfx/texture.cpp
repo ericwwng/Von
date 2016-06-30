@@ -34,7 +34,7 @@ void Texture::loadFromFile(const char* path, GLuint w, GLuint h)
 	{
 		width = w;
 		height = h;
-		printf("creating texture %d, %d", w, h);
+		printf("Creating texture %d, %d \n", w, h);
 		textureFormat = GL_RGBA;
 		pixels = new GLuint[w * h];
 		for (GLuint i = 0; i < (w * h); i++)

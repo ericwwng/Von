@@ -6,7 +6,7 @@ Map::Map(std::string filename)
     std::ifstream file(filename, std::ifstream::binary);
 	if (file)
     {
-		long index = 8; //start at end of attributes
+		long index = 6; //start at end of attributes
 
         //Finding file length
         file.seekg(0, file.end);
@@ -15,59 +15,60 @@ Map::Map(std::string filename)
 
         std::cout << "Reading Map " << filename << std::endl;
         //File Attributes
-		unsigned char* data = new unsigned char[length];
+		GLubyte* data = new GLubyte[length];
 		file.read((char*)data, length);
 
 		std::string bgfilename = "res/Backgrounds/";
+		m_backgroundNumber = data[4];
 		bgfilename.append(1, data[4] + '0');
 		bgfilename.append(".png");
-		printf("Background: %s\n", bgfilename.c_str());
-		m_background.loadFromFile(bgfilename.c_str());
+		printf("Background number: %d  // Background: %s\n", m_backgroundNumber, bgfilename.c_str());
+		m_background.loadFromFile(bgfilename.c_str(), 1280, 1080);
 
-		width = SCREEN_WIDTH / 16;
-		height = SCREEN_HEIGHT / 16;
+		m_width = SCREEN_WIDTH / 16;
+		m_height = SCREEN_HEIGHT / 16;
 		//width = m_background.getWidth() / 16;
         //height = m_background.getHeight() / 16;
-        printf("Tile Width: %d\nTile Height: %d\n", width, height);
+        printf("Tile Width: %d\nTile Height: %d\n", m_width, m_height);
 
-		//m_playerSpawnPosition.x = (float)((data[5] * 16 * 16) + (data[6] * 16));
-		//m_playerSpawnPosition.y = (float)((data[7] * 16 * 16) + (data[8] * 16));
-		m_playerSpawnPosition.x = 0;
-		m_playerSpawnPosition.y = 0;
+		m_playerSpawnPosition.x = (float)(data[7] * 16);
+		m_playerSpawnPosition.y = (float)(data[8] * 16);
+
 		printf("Player Spawn(%d, %d)\n", (int)m_playerSpawnPosition.x, (int)m_playerSpawnPosition.y);
 
 		Camera::getInstance().setCoords(Vector2f(m_playerSpawnPosition.x - SCREEN_WIDTH / 2, m_playerSpawnPosition.y - SCREEN_HEIGHT / 2));
 		if (Camera::getInstance().collisionBox.position.x < 0) Camera::getInstance().collisionBox.position.x = 0;
 		if (Camera::getInstance().collisionBox.position.y < 0) Camera::getInstance().collisionBox.position.y = 0;
-		if (Camera::getInstance().collisionBox.position.x + Camera::getInstance().collisionBox.width > width * 16) Camera::getInstance().collisionBox.position.x = width * 16 - Camera::getInstance().collisionBox.width;
-		if (Camera::getInstance().collisionBox.position.y + Camera::getInstance().collisionBox.height > height * 16) Camera::getInstance().collisionBox.position.y = height * 16 - Camera::getInstance().collisionBox.height;
+		if (Camera::getInstance().collisionBox.position.x + Camera::getInstance().collisionBox.width > m_width * 16) Camera::getInstance().collisionBox.position.x = m_width * 16 - Camera::getInstance().collisionBox.width;
+		if (Camera::getInstance().collisionBox.position.y + Camera::getInstance().collisionBox.height > m_height * 16) Camera::getInstance().collisionBox.position.y = m_height * 16 - Camera::getInstance().collisionBox.height;
 
 		int tilecounter = 0;
 		Vector2f tilePosition;
-		Rectf Clip = {0.f, 0.f, 32.f, 32.f};
+		Rectf Clip = {0.f, 0.f, 16.f, 16.f};
 
 		tilePosition = { 0.f, 0.f };
 		tilecounter = 0;
         //Tile types
-		m_solidTiles = new Tile[width * height];
-		/*while (tilecounter < width * height) {
+		m_solidTiles = new Tile[m_width * m_height];
+		/*while (tilecounter < m_width * m_height) {
 			for (int i = 0; i < data[index] + 1; i++)
 			{
-				m_solidTiles[i] = Tile(tilePosition, data[index + 1]);
+				m_solidTiles[tilecounter] = Tile(tilePosition, data[index + 1]);
 				tilecounter++;
 				tilePosition.x = tilePosition.x + 16;
-				if (tilecounter % width == 0)
+				if (tilecounter % m_width == 0)
 				{
 					tilePosition.x = 0;
 					tilePosition.y = tilePosition.y + 16;
 				}
 			}
 			index += 2;
-		}*/
-		for (int i = 0; i < height; i++)
-			for (int ii = 0; ii < width; ii++)
-				m_solidTiles[i * width + ii] = Tile(Vector2f((GLfloat)ii * 16, (GLfloat)i * 16), 0);
-
+		}
+		*/
+		for (int i = 0; i < m_height; i++)
+			for (int ii = 0; ii < m_width; ii++)
+				m_solidTiles[i * m_width + ii] = Tile(Vector2f((GLfloat)ii * 16, (GLfloat)i * 16), 0);
+		
 		tilePosition = { 0, 0 };
 		tilecounter = 0;
 
@@ -97,12 +98,12 @@ void Map::Render()
 
 void Map::renderSolidTiles()
 {
-    for(int i = 0; i < height; i++)
-		for (int ii = 0; ii < width; ii++)
+    for(int i = 0; i < m_height; i++)
+		for (int ii = 0; ii < m_width; ii++)
 		{
 			//Rectf box = { ii * 16, i * 16, 16.f, 16.f};
 			//renderEmptyBox(box);
-			m_solidTiles[i * width + ii].Render();
+			m_solidTiles[i * m_width + ii].Render();
 		}
 }
 
@@ -122,12 +123,71 @@ void Map::renderSolidTiles()
 }
 */
 
+void writeInt(std::ofstream& p_fileStream, GLuint p_uint)
+{
+	p_fileStream << GLubyte((p_uint & 0xFF000000) >> 24);
+	p_fileStream << GLubyte((p_uint & 0xFF0000) >> 16);
+	p_fileStream << GLubyte((p_uint & 0xFF00) >> 8);
+	p_fileStream << GLubyte((p_uint & 0xFF));
+}
+void writeShort(std::ofstream& p_fileStream, GLushort p_ushort)
+{
+	p_fileStream << GLubyte((p_ushort & 0xFF00) >> 8);
+	p_fileStream << GLubyte((p_ushort & 0xFF));
+}
+void writeChar(std::ofstream& p_fileStream, GLubyte p_uchar)
+{
+	p_fileStream << p_uchar;
+}
+
+void Map::saveMap()
+{
+	std::cout << "Saving map " << m_filename << std::endl;
+
+	std::ofstream _file;
+
+	//_mkdir(std::string("Levels\\").c_str());
+	_file.open(m_filename, std::ios::binary);
+
+	_file << ".OPO";
+	writeChar(_file, m_backgroundNumber);
+	writeChar(_file, m_width);
+	writeChar(_file, m_height);
+
+	writeChar(_file, m_playerSpawnPosition.x / 16);
+	writeChar(_file, m_playerSpawnPosition.y / 16);
+
+	GLubyte _lastId = 0;
+	GLubyte _count = 0;
+	for (int i = 0; i < m_width * m_height; i++)
+	{
+		if (_lastId == m_solidTiles[i].id)
+			_count++;
+		else if (_count > 0)
+		{
+			writeChar(_file, _count);
+			writeChar(_file, _lastId);
+			_count = 0;
+		}
+	}
+	if (_count > 0)
+	{
+		writeChar(_file, _count);
+		writeChar(_file, _lastId);
+		_count = 0;
+	}
+
+	_file.close();
+
+	std::cout << "Map saved." << std::endl;
+}
+
 Tile::Tile() :
 id(0)
 {
 	collisionBox = { Vector2f(0, 0), 32, 32 };
 }
-Tile::Tile(Vector2f pos, Uint8 tileType) :
+Tile::Tile(Vector2f pos, GLubyte tileType) :
 id(tileType)
 {
 	collisionBox = { pos, 32, 32 };

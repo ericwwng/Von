@@ -3,7 +3,7 @@
 Menu::Menu()
 {
 	m_background.loadFromFile("res/GUI/menu-background.png", 1280, 720);
-	menuTheme.loadMusicFile("res/Music/bgm/Firestorm.ogg");
+	//menuTheme.loadMusicFile("res/Music/bgm/Firestorm.ogg");
 	Mix_VolumeMusic(80);
 	menuTheme.playMusic();
 

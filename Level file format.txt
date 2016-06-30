@@ -3,10 +3,11 @@ OPO Levels File Format
 Header
 --------------------
 <4 bytes>".OPO"
-byte 4 - Width in Chunks
-byte 5 - Height in Chunks
-byte 6&7 - {chunk, remainder tile} (x position) playerSpawnPosition.x
-byte 8&9 - {chunk, remainder tile} (y position) playerSpawnPosition.y
+byte 4 - Background Number
+byte 5 - Width in Chunks
+byte 6 - Height in Chunks
+byte 7 - playerSpawnPosition.x tile
+byte 8 - playerSpawnPosition.y tiles
 
 layer 1 - Solid layer
 --------------------------------
