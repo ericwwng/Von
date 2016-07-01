@@ -161,13 +161,19 @@ void Map::saveMap()
 	GLubyte _count = 0;
 	for (int i = 0; i < m_width * m_height; i++)
 	{
-		if (_lastId == m_solidTiles[i].id)
-			_count++;
-		else if (_count > 0)
+		if (_lastId == m_solidTiles[i].id && _count < 255)
 		{
-			writeChar(_file, _count);
-			writeChar(_file, _lastId);
-			_count = 0;
+			_count++;
+		}
+		else
+		{
+			_lastId = m_solidTiles[i].id;
+			if (_count > 0)
+			{
+				writeChar(_file, _count);
+				writeChar(_file, _lastId);
+				_count = 0;
+			}
 		}
 	}
 	if (_count > 0)
