@@ -39,6 +39,7 @@ class Map
         void renderSolidTiles();
 
 		void saveMap();
+		void loadMap(std::string p_filename);
 		std::string getFilename() { return m_filename; }
 
 		Tile* getSolids() { return m_solidTiles; }

@@ -2,6 +2,9 @@
 
 Map::Map(std::string filename) 
 {
+	loadMap(filename);
+
+	return;
 	m_filename = filename;
     std::ifstream file(filename, std::ifstream::binary);
 	if (file)
@@ -154,8 +157,8 @@ void Map::saveMap()
 	writeChar(_file, m_width);
 	writeChar(_file, m_height);
 
-	writeChar(_file, m_playerSpawnPosition.x / 16);
-	writeChar(_file, m_playerSpawnPosition.y / 16);
+	writeShort(_file, round(m_playerSpawnPosition.x));
+	writeShort(_file, round(m_playerSpawnPosition.y));
 
 	GLubyte _lastId = 0;
 	GLubyte _count = 0;
@@ -186,6 +189,80 @@ void Map::saveMap()
 	_file.close();
 
 	std::cout << "Map saved." << std::endl;
+}
+
+GLubyte readChar(char* p_file, long& p_index)
+{
+	p_index = p_index + 1;
+	return GLubyte(p_file[p_index - 1]);
+}
+
+GLushort readShort(char* p_file, long& p_index)
+{
+	GLushort _value;
+	_value = readChar(p_file, p_index) << 8;
+	_value += readChar(p_file, p_index);
+	return _value;
+}
+
+GLuint readInt(char* p_file, long& p_index)
+{
+	GLushort _value;
+	_value = readShort(p_file, p_index) << 16;
+	_value += readShort(p_file, p_index);
+	return _value;
+}
+
+void Map::loadMap(std::string p_filename)
+{
+	std::ifstream _file;
+	_file.open(p_filename.c_str(), std::ios::binary);
+
+	if(!_file.good())
+	{
+		std::cout << "Error finding file " << p_filename << "." << std::endl;
+		return;
+	}
+
+	_file.seekg(0, _file.end);
+	long _len = _file.tellg();
+	_file.seekg(0, _file.beg);
+
+	long _index = 0;
+	char* _data = new char[_len];
+	_file.read(_data, _len);
+
+	if(_data[0] != '.' || _data[1] != 'O' || _data[2] != 'P' || _data[3] != 'O')
+	{
+		std::cout << "First 4 characters are not .OPO, file not trusted." << std::endl;
+		return;
+	}
+	_index = 4;
+
+	m_backgroundNumber = readChar(_data, _index);
+	m_background.loadFromFile(std::string("res\\Backgrounds\\").append(1, m_backgroundNumber + '0').append(".png").c_str(), 1280, 1080);
+	printf("Background number: %d  // Background: %s\n", m_backgroundNumber, std::string("res\\Backgrounds\\").append(1, m_backgroundNumber + '0').append(".png"));
+
+	m_width = readChar(_data, _index);
+	m_height = readChar(_data, _index);
+	m_playerSpawnPosition = Vector2f(readShort(_data, _index), readShort(_data, _index));
+
+	int i = 0;
+	GLubyte _amt = 0;
+	GLubyte _id = 0;
+	while(i < m_width * m_height)
+	{
+		_amt = readShort(_data, _index);
+		_id = readShort(_data, _index);
+		for(int j = 0; j < _amt; j++)
+		{
+			m_solidTiles[i].id = _id;
+			i++;
+		}
+	}
+	
+	_file.close();
+	delete[] _data;
 }
 
 Tile::Tile() :
