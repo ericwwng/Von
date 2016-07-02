@@ -250,6 +250,8 @@ void Map::loadMap(std::string p_filename)
 	int i = 0;
 	GLubyte _amt = 0;
 	GLubyte _id = 0;
+	delete[] m_solidTiles;
+	m_solidTiles = new Tile[m_width * m_height];
 	while(i < m_width * m_height)
 	{
 		_amt = readShort(_data, _index);
