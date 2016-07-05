@@ -5,6 +5,7 @@ Map::Map(std::string filename)
 	loadMap(filename);
 
 	return;
+	/*
 	m_filename = filename;
     std::ifstream file(filename, std::ifstream::binary);
 	if (file)
@@ -53,7 +54,8 @@ Map::Map(std::string filename)
 		tilecounter = 0;
         //Tile types
 		m_solidTiles = new Tile[m_width * m_height];
-		/*while (tilecounter < m_width * m_height) {
+		/
+		while (tilecounter < m_width * m_height) {
 			for (int i = 0; i < data[index] + 1; i++)
 			{
 				m_solidTiles[tilecounter] = Tile(tilePosition, data[index + 1]);
@@ -67,7 +69,7 @@ Map::Map(std::string filename)
 			}
 			index += 2;
 		}
-		*/
+		/
 		for (int i = 0; i < m_height; i++)
 			for (int ii = 0; ii < m_width; ii++)
 				m_solidTiles[i * m_width + ii] = Tile(Vector2f((GLfloat)ii * 16, (GLfloat)i * 16), 0);
@@ -86,7 +88,7 @@ Map::Map(std::string filename)
 	}
 
 	//enemyEntities.push_back(e);
-	
+	*/
 }
 
 Map::~Map()
@@ -258,7 +260,7 @@ void Map::loadMap(std::string p_filename)
 		_id = readShort(_data, _index);
 		for(int j = 0; j < _amt; j++)
 		{
-			m_solidTiles[i].id = _id;
+			m_solidTiles[i] = Tile(Vector2f(i%16, floor(i/16)), _id);
 			i++;
 		}
 	}
