@@ -2,11 +2,13 @@
 
 Map::Map(std::string filename) 
 {
-	loadMap(filename);
-
-	return;
-	/*
 	m_filename = filename;
+
+	//Comment between this and next comment to load new map
+	loadMap(filename);
+	return;
+	//Comment between this and previous comment to load new map
+
     std::ifstream file(filename, std::ifstream::binary);
 	if (file)
     {
@@ -54,7 +56,7 @@ Map::Map(std::string filename)
 		tilecounter = 0;
         //Tile types
 		m_solidTiles = new Tile[m_width * m_height];
-		/
+		/*
 		while (tilecounter < m_width * m_height) {
 			for (int i = 0; i < data[index] + 1; i++)
 			{
@@ -69,7 +71,7 @@ Map::Map(std::string filename)
 			}
 			index += 2;
 		}
-		/
+		*/
 		for (int i = 0; i < m_height; i++)
 			for (int ii = 0; ii < m_width; ii++)
 				m_solidTiles[i * m_width + ii] = Tile(Vector2f((GLfloat)ii * 16, (GLfloat)i * 16), 0);
@@ -88,7 +90,6 @@ Map::Map(std::string filename)
 	}
 
 	//enemyEntities.push_back(e);
-	*/
 }
 
 Map::~Map()
@@ -149,10 +150,10 @@ void Map::saveMap()
 {
 	std::cout << "Saving map " << m_filename << std::endl;
 
-	std::ofstream _file;
+	_mkdir(std::string("Levels\\").c_str());
+	std::ofstream _file(m_filename, std::ios::binary);
 
-	//_mkdir(std::string("Levels\\").c_str());
-	_file.open(m_filename, std::ios::binary);
+	std::cout << (int)_file.good() << std::endl;
 
 	_file << ".OPO";
 	writeChar(_file, m_backgroundNumber);
@@ -166,20 +167,17 @@ void Map::saveMap()
 	GLubyte _count = 0;
 	for (int i = 0; i < m_width * m_height; i++)
 	{
-		if (_lastId == m_solidTiles[i].id && _count < 255)
+		if(_count >= 255 || (int)_lastId != (int)m_solidTiles[i].id)
 		{
-			_count++;
-		}
-		else
-		{
-			_lastId = m_solidTiles[i].id;
 			if (_count > 0)
 			{
 				writeChar(_file, _count);
 				writeChar(_file, _lastId);
 				_count = 0;
 			}
+			_lastId = m_solidTiles[i].id;
 		}
+		_count++;
 	}
 	if (_count > 0)
 	{
@@ -254,13 +252,13 @@ void Map::loadMap(std::string p_filename)
 	GLubyte _id = 0;
 	delete[] m_solidTiles;
 	m_solidTiles = new Tile[m_width * m_height];
-	while(i < m_width * m_height)
+	while(_index < _len)
 	{
-		_amt = readShort(_data, _index);
-		_id = readShort(_data, _index);
+		_amt = readChar(_data, _index);
+		_id = readChar(_data, _index);
 		for(int j = 0; j < _amt; j++)
 		{
-			m_solidTiles[i] = Tile(Vector2f(i%16, floor(i/16)), _id);
+			m_solidTiles[i] = Tile(Vector2f((i % m_width), floor((GLfloat)i / m_width)) * 16, _id);
 			i++;
 		}
 	}
