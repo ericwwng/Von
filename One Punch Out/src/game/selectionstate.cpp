@@ -90,8 +90,14 @@ void SelectionState::Update(float deltaTime)
 void SelectionState::HandleEvents()
 {
 	if (event.type == SDL_MOUSEWHEEL)
-		Camera::getInstance().addCoords(Vector2f(0, -event.wheel.y * 10));
+		Camera::getInstance().addCoords(Vector2f(0.f, -event.wheel.y * 10.f));
 
+	if (event.type == SDL_KEYDOWN)
+		if (event.key.keysym.sym == SDLK_ESCAPE)
+		{
+			changeFontSize(64);
+			gameState = new Menu();
+		}
 	for (unsigned int i = 0; i < selectionItems.size(); i++)
 		selectionItems[i]->HandleEvents();
 }

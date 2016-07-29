@@ -123,16 +123,11 @@ void Application::loop()
 	{
 		if (event.type == SDL_QUIT)
 			m_appState = appExiting;
-		else if (event.type == SDL_KEYDOWN)
-		{
-			if (event.key.keysym.sym == SDLK_ESCAPE)
-				m_appState = appExiting;
-		}
-		else if (event.type == SDL_KEYUP)
-		{
+		
+		if (event.type == SDL_KEYUP)
 			if (event.key.keysym.sym == SDLK_LSHIFT)
 				showCollisionBox = !showCollisionBox;
-		}
+
 		gameState->HandleEvents();
 	}
     //Update current game state

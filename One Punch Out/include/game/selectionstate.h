@@ -2,6 +2,7 @@
 
 #include <cstring>
 
+#include "game/menu.h"
 #include "game/gamestate.h"
 #include "game/editorstate.h"
 #include "game/level.h"

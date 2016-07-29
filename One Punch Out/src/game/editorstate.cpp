@@ -67,7 +67,27 @@ void EditorState::HandleEvents()
 			m_selectorText.loadFromText(m_selectorID.str().c_str(), color(255, 255, 255, 255));
 			printf("Current Tile Selected: %d \n", id);
 		}
-		//if ((event.key.keysym.sym == SDLK_LCTRL || event.key.keysym.sym == SDLK_RCTRL) && event.key.keysym.sym == SDLK_s)
+		if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_RIGHT ||
+			event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)
+		{
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+			switch (event.key.keysym.sym)
+			{
+				case SDLK_LEFT:
+					SDL_WarpMouseInWindow(gWindow, x - 16, y);
+				break;
+				case SDLK_RIGHT:
+					SDL_WarpMouseInWindow(gWindow, x + 16, y);
+				break;
+				case SDLK_UP:
+					SDL_WarpMouseInWindow(gWindow, x, y - 16);
+				break;
+				case SDLK_DOWN:
+					SDL_WarpMouseInWindow(gWindow, x, y + 16);
+				break;
+			}
+		}
 		if (event.key.keysym.sym == SDLK_s)
 			m_dungeon->saveMap();
 	}

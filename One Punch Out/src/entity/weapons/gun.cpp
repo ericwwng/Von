@@ -28,7 +28,7 @@ void Gun::Action()
 
 void Gun::Render() const
 {
-	SDL_Point rotationPoint = { 0, 0 };
+	Vector2f rotationPoint = { 0.f, 0.f };
 	tex.Render(position.x, position.y, NULL, angle, &rotationPoint);
 	for (int i = 0; i < 3; i++)
 		if (bullet[i].isActive())

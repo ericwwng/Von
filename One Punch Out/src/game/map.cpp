@@ -2,94 +2,13 @@
 
 Map::Map(std::string filename) 
 {
+	m_solidTiles = NULL;
 	m_filename = filename;
 
-	//Comment between this and next comment to load new map
 	loadMap(filename);
-	return;
-	//Comment between this and previous comment to load new map
-
-    std::ifstream file(filename, std::ifstream::binary);
-	if (file)
-    {
-		long index = 6; //start at end of attributes
-
-        //Finding file length
-        file.seekg(0, file.end);
-        int length = (int)file.tellg();
-        file.seekg(0, file.beg);
-
-        std::cout << "Reading Map " << filename << std::endl;
-        //File Attributes
-		GLubyte* data = new GLubyte[length];
-		file.read((char*)data, length);
-
-		std::string bgfilename = "res/Backgrounds/";
-		m_backgroundNumber = data[4];
-		bgfilename.append(1, data[4] + '0');
-		bgfilename.append(".png");
-		printf("Background number: %d  // Background: %s\n", m_backgroundNumber, bgfilename.c_str());
-		m_background.loadFromFile(bgfilename.c_str(), 1280, 1080);
-
-		m_width = SCREEN_WIDTH / 16;
-		m_height = SCREEN_HEIGHT / 16;
-		//width = m_background.getWidth() / 16;
-        //height = m_background.getHeight() / 16;
-        printf("Tile Width: %d\nTile Height: %d\n", m_width, m_height);
-
-		m_playerSpawnPosition.x = (float)(data[7] * 16);
-		m_playerSpawnPosition.y = (float)(data[8] * 16);
-
-		printf("Player Spawn(%d, %d)\n", (int)m_playerSpawnPosition.x, (int)m_playerSpawnPosition.y);
-
-		Camera::getInstance().setCoords(Vector2f(m_playerSpawnPosition.x - SCREEN_WIDTH / 2, m_playerSpawnPosition.y - SCREEN_HEIGHT / 2));
-		if (Camera::getInstance().collisionBox.position.x < 0) Camera::getInstance().collisionBox.position.x = 0;
-		if (Camera::getInstance().collisionBox.position.y < 0) Camera::getInstance().collisionBox.position.y = 0;
-		if (Camera::getInstance().collisionBox.position.x + Camera::getInstance().collisionBox.width > m_width * 16) Camera::getInstance().collisionBox.position.x = m_width * 16 - Camera::getInstance().collisionBox.width;
-		if (Camera::getInstance().collisionBox.position.y + Camera::getInstance().collisionBox.height > m_height * 16) Camera::getInstance().collisionBox.position.y = m_height * 16 - Camera::getInstance().collisionBox.height;
-
-		int tilecounter = 0;
-		Vector2f tilePosition;
-		Rectf Clip = {0.f, 0.f, 16.f, 16.f};
-
-		tilePosition = { 0.f, 0.f };
-		tilecounter = 0;
-        //Tile types
-		m_solidTiles = new Tile[m_width * m_height];
-		/*
-		while (tilecounter < m_width * m_height) {
-			for (int i = 0; i < data[index] + 1; i++)
-			{
-				m_solidTiles[tilecounter] = Tile(tilePosition, data[index + 1]);
-				tilecounter++;
-				tilePosition.x = tilePosition.x + 16;
-				if (tilecounter % m_width == 0)
-				{
-					tilePosition.x = 0;
-					tilePosition.y = tilePosition.y + 16;
-				}
-			}
-			index += 2;
-		}
-		*/
-		for (int i = 0; i < m_height; i++)
-			for (int ii = 0; ii < m_width; ii++)
-				m_solidTiles[i * m_width + ii] = Tile(Vector2f((GLfloat)ii * 16, (GLfloat)i * 16), 0);
-		
-		tilePosition = { 0, 0 };
-		tilecounter = 0;
-
-		printf("Successfully Read!\n");
-		file.close();
-		delete data;
-    }
-	else
-	{
-		std::cout << "Map " << filename << "not found" << std::endl;
-		file.close();
-	}
 
 	//enemyEntities.push_back(e);
+	
 }
 
 Map::~Map()
@@ -153,21 +72,19 @@ void Map::saveMap()
 	_mkdir(std::string("Levels\\").c_str());
 	std::ofstream _file(m_filename, std::ios::binary);
 
-	std::cout << (int)_file.good() << std::endl;
-
 	_file << ".OPO";
 	writeChar(_file, m_backgroundNumber);
 	writeChar(_file, m_width);
 	writeChar(_file, m_height);
 
-	writeShort(_file, round(m_playerSpawnPosition.x));
-	writeShort(_file, round(m_playerSpawnPosition.y));
+	writeShort(_file, (GLushort)m_playerSpawnPosition.x);
+	writeShort(_file, (GLushort)m_playerSpawnPosition.y);
 
 	GLubyte _lastId = 0;
 	GLubyte _count = 0;
 	for (int i = 0; i < m_width * m_height; i++)
 	{
-		if(_count >= 255 || (int)_lastId != (int)m_solidTiles[i].id)
+		if (_count >= 255 || (int)_lastId != (int)m_solidTiles[i].id)
 		{
 			if (_count > 0)
 			{
@@ -221,15 +138,16 @@ void Map::loadMap(std::string p_filename)
 	if(!_file.good())
 	{
 		std::cout << "Error finding file " << p_filename << "." << std::endl;
+		//Create an empty map?
 		return;
 	}
 
 	_file.seekg(0, _file.end);
-	long _len = _file.tellg();
+	std::streamoff _len = _file.tellg();
 	_file.seekg(0, _file.beg);
 
 	long _index = 0;
-	char* _data = new char[_len];
+	char* _data = new char[(GLuint)_len];
 	_file.read(_data, _len);
 
 	if(_data[0] != '.' || _data[1] != 'O' || _data[2] != 'P' || _data[3] != 'O')
@@ -241,27 +159,31 @@ void Map::loadMap(std::string p_filename)
 
 	m_backgroundNumber = readChar(_data, _index);
 	m_background.loadFromFile(std::string("res\\Backgrounds\\").append(1, m_backgroundNumber + '0').append(".png").c_str(), 1280, 1080);
-	printf("Background number: %d  // Background: %s\n", m_backgroundNumber, std::string("res\\Backgrounds\\").append(1, m_backgroundNumber + '0').append(".png"));
+	std::string backgroundFile = std::string("res\\Backgrounds\\").append(1, m_backgroundNumber + '0').append(".png");
+	printf("Background number: %d  // Background: %s\n", m_backgroundNumber, backgroundFile.c_str());
 
 	m_width = readChar(_data, _index);
 	m_height = readChar(_data, _index);
 	m_playerSpawnPosition = Vector2f(readShort(_data, _index), readShort(_data, _index));
+	printf("Map Width: %d\nMap Height: %d \nPlayer Spawn: (%f, %f)\n", m_width, m_height, m_playerSpawnPosition.x, m_playerSpawnPosition.y);
 
 	int i = 0;
 	GLubyte _amt = 0;
 	GLubyte _id = 0;
-	delete[] m_solidTiles;
+	if(m_solidTiles != NULL)
+		delete[] m_solidTiles;
 	m_solidTiles = new Tile[m_width * m_height];
-	while(_index < _len)
+	while (_index < _len)
 	{
 		_amt = readChar(_data, _index);
 		_id = readChar(_data, _index);
-		for(int j = 0; j < _amt; j++)
+		for (int j = 0; j < _amt; j++)
 		{
-			m_solidTiles[i] = Tile(Vector2f((i % m_width), floor((GLfloat)i / m_width)) * 16, _id);
+			m_solidTiles[i] = Tile(Vector2f((GLfloat)(i % m_width), floor((GLfloat)i / m_width)) * 16, _id);
 			i++;
 		}
 	}
+	printf("Map Loaded\n");
 	
 	_file.close();
 	delete[] _data;
@@ -290,7 +212,7 @@ void Tile::Render()
 			
 			break;
 			case 1: //Solid - GRAY
-				renderFillRect(box, color(200, 200, 200, 128));
+				renderFillRect(box, color(200, 200, 200, 255));
 			break;
 			case 2: //Slow - GREEN
 				renderFillRect(box, color(0, 255, 0, 128));

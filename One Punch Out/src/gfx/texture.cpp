@@ -182,7 +182,7 @@ void Texture::setAlpha(Uint8 a)
 	alpha = a;
 }
 
-void Texture::Render(GLfloat x, GLfloat y, Rectf* clip, float angle, SDL_Point* center) const
+void Texture::Render(GLfloat x, GLfloat y, Rectf* clip, float angle, Vector2f* center, SDL_Color color) const
 {
 	if (texture != 0)
 	{
@@ -203,15 +203,15 @@ void Texture::Render(GLfloat x, GLfloat y, Rectf* clip, float angle, SDL_Point* 
 		glPopMatrix();
 		glPushMatrix();
 
-		glColor3f(1.f, 1.f, 1.f);
+		glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
 
 		glTranslatef(x, y, 0.f);
 
 		if (center != NULL)
 		{
-			glTranslatef((GLfloat)center->x, (GLfloat)center->y, 0.f);
+			glTranslatef(center->x, center->y, 0.f);
 			glRotatef(angle, 0.f, 0.f, 1.f);
-			glTranslatef((GLfloat)-center->x, (GLfloat)-center->y, 0.f);
+			glTranslatef(-center->x, -center->y, 0.f);
 		}
 
 		VertexData2f vData[4]; //Vertex Data

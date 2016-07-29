@@ -1,5 +1,7 @@
 #pragma once
 
+#include "entity/boss.h"
+
 #include "utils/Vector2f.h"
 
 #include "physics/AABB.h"
@@ -7,16 +9,18 @@
 #include "gfx/texture.h"
 #include "gfx/spritesheet.h"
 
-class Boss
+class SwordBoss : public Boss
 {
 	public:
-		void Render() {};
-		void Update() {};
-		void HandleEvents() {};
+		SwordBoss();
+		~SwordBoss();
 
-		void phaseOne() {};
-		void phaseTwo() {};
-		void phaseThree() {};
+		void Render();
+		void Update();
+
+		void phaseOne();
+		void phaseTwo();
+		void phaseThree();
 
 		Vector2f& getPosition() { return m_position; }
 

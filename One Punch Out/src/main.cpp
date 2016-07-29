@@ -3,7 +3,7 @@
 SDL_Window* gWindow = NULL;
 TTF_Font* Font = NULL;
 SDL_Event event;
-bool showCollisionBox   = true;
+bool showCollisionBox = false;
 GameState* gameState = NULL;
 
 FILE _iob[] = { *stdin, *stdout, *stderr };

@@ -13,7 +13,7 @@ Bullet::~Bullet()
 
 void Bullet::Render() const
 {
-	SDL_Point rotationPoint = { tex.getWidth() / 2, tex.getHeight() / 2 };
+	Vector2f rotationPoint = { tex.getWidth() / 2.f, tex.getHeight() / 2.f };
 	tex.Render(position.x, position.y, NULL, angle, &rotationPoint);
 	Rectf box = { position.x, position.y, (GLfloat)tex.getWidth(), (GLfloat)tex.getHeight() };
 	if (showCollisionBox) renderEmptyBox(box, color(0, 255, 0, 255));

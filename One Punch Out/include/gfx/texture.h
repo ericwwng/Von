@@ -23,7 +23,7 @@ class Texture
 
         void setAlpha(Uint8 a);
 
-		void Render(GLfloat x, GLfloat y, Rectf* clip = NULL, float angle = 0.0, SDL_Point* center = NULL) const;
+		void Render(GLfloat x, GLfloat y, Rectf* clip = NULL, float angle = 0.0, Vector2f* center = NULL, SDL_Color color = color(255, 255, 255, 255)) const;
 
 		GLuint getTextureID() const;
 		GLuint getWidth() const;
