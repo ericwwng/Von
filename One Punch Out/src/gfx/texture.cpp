@@ -2,12 +2,12 @@
 
 Texture::Texture()
 {
-	texture = NULL;
-	width = 0;
-	height = 0;
+	m_texture = NULL;
+	m_width = 0;
+	m_height = 0;
 
-	VBOid = 0;
-	IBOid = 0;
+	m_VBOid = 0;
+	m_IBOid = 0;
 }
 
 Texture::~Texture()
@@ -16,48 +16,51 @@ Texture::~Texture()
 	freeVBO();
 }
 
-void Texture::loadFromFile(const char* path, GLuint w, GLuint h)
+void Texture::loadFromFile(
+	const char* path,
+	GLuint w, 
+	GLuint h)
 {
 	free();
 
-	SDL_Surface* surface = IMG_Load(path);
-	GLuint* pixels = NULL;
-	if (surface == NULL)
+	SDL_Surface* _surface = IMG_Load(path);
+	GLuint* _pixels = NULL;
+	if (_surface == NULL)
 		printf("Unable to load image %s!\n", path);
 
-	if (surface != NULL)
+	if (_surface)
 	{
-		width = surface->w;
-		height = surface->h;
+		m_width = _surface->w;
+		m_height = _surface->h;
 	}
 	else
 	{
-		width = w;
-		height = h;
+		m_width = w;
+		m_height = h;
 		printf("Creating texture %d, %d \n", w, h);
-		textureFormat = GL_RGBA;
-		pixels = new GLuint[w * h];
+		m_textureFormat = GL_RGBA;
+		_pixels = new GLuint[w * h];
 		for (GLuint i = 0; i < (w * h); i++)
 		{
-			GLubyte* colors = (GLubyte*)&pixels[i];
-			colors[0] = 0xFF; colors[1] = 0xFF; colors[2] = 0xFF; colors[3] = 0xFF;
+			GLubyte* _colors = (GLubyte*)&_pixels[i];
+			_colors[0] = 0xFF; _colors[1] = 0xFF; _colors[2] = 0xFF; _colors[3] = 0xFF;
 		}
 	}
 
-	if (surface != NULL)
+	if (_surface != NULL)
 	{
-		if (surface->format->BytesPerPixel == 4)
-			textureFormat = GL_RGBA;
-		else if (surface->format->BytesPerPixel == 3)
-			textureFormat = GL_RGB;
+		if (_surface->format->BytesPerPixel == 4)
+			m_textureFormat = GL_RGBA;
+		else if (_surface->format->BytesPerPixel == 3)
+			m_textureFormat = GL_RGB;
 	}
 
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	if (surface != NULL)
-		glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+	glGenTextures(1, &m_texture);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	if (_surface != NULL)
+		glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _surface->pixels);
 	else
-		glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, textureFormat, GL_UNSIGNED_BYTE, pixels);
+		glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _pixels);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -69,7 +72,7 @@ void Texture::loadFromFile(const char* path, GLuint w, GLuint h)
 		printf("Error loading texture! %s\n", gluErrorString(glGetError()));
 
 	///Initialize VBO
-	if (texture != 0 && VBOid == 0)
+	if (m_texture != 0 && m_VBOid == 0)
 	{
 		//Vertex data
 		VertexData2f vData[4]; //To be set later in the render function
@@ -82,41 +85,43 @@ void Texture::loadFromFile(const char* path, GLuint w, GLuint h)
 		iData[3] = 3;
 
 		//VBO
-		glGenBuffers(1, &VBOid);
-		glBindBuffer(GL_ARRAY_BUFFER, VBOid);
+		glGenBuffers(1, &m_VBOid);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBOid);
 		glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VertexData2f), vData, GL_DYNAMIC_DRAW);
 
 		//IBO
-		glGenBuffers(1, &IBOid);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBOid);
+		glGenBuffers(1, &m_IBOid);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBOid);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), iData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
 	}
 
-	SDL_FreeSurface(surface);
+	SDL_FreeSurface(_surface);
 }
 
-void Texture::loadFromText(const char* text, SDL_Color color)
+void Texture::loadFromText(
+	const char* text,
+	SDL_Color color)
 {
 	free();
 
-	SDL_Surface* surface = TTF_RenderText_Blended(Font, text, color);
-	if (surface == NULL)
+	SDL_Surface* _surface = TTF_RenderText_Blended(g_font, text, color);
+	if (_surface == NULL)
 		printf("Unable to load image %s!\n", text);
 
-	width = surface->w;
-	height = surface->h;
+	m_width = _surface->w;
+	m_height = _surface->h;
 
-	if (surface->format->BytesPerPixel == 4)
-		textureFormat = GL_RGBA;
-	else if (surface->format->BytesPerPixel == 3)
-		textureFormat = GL_RGB;
+	if (_surface->format->BytesPerPixel == 4)
+		m_textureFormat = GL_RGBA;
+	else if (_surface->format->BytesPerPixel == 3)
+		m_textureFormat = GL_RGB;
 
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+	glGenTextures(1, &m_texture);
+	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _surface->pixels);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -128,7 +133,7 @@ void Texture::loadFromText(const char* text, SDL_Color color)
 		printf("Error loading texture! %s\n", gluErrorString(glGetError()));
 
 	///Initialize VBO
-	if (texture != 0 && VBOid == 0)
+	if (m_texture != 0 && m_VBOid == 0)
 	{
 		//Vertex data
 		VertexData2f vData[4]; //To be set later in the render function
@@ -141,60 +146,67 @@ void Texture::loadFromText(const char* text, SDL_Color color)
 		iData[3] = 3;
 
 		//VBO
-		glGenBuffers(1, &VBOid);
-		glBindBuffer(GL_ARRAY_BUFFER, VBOid);
+		glGenBuffers(1, &m_VBOid);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBOid);
 		glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(VertexData2f), vData, GL_DYNAMIC_DRAW);
 
 		//IBO
-		glGenBuffers(1, &IBOid);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBOid);
+		glGenBuffers(1, &m_IBOid);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBOid);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), iData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
 	}
 
-	SDL_FreeSurface(surface);
+	SDL_FreeSurface(_surface);
 }
 
 void Texture::free()
 {
-	if (texture != 0)
+	if (m_texture != 0)
 	{
-		glDeleteTextures(1, &texture);
-		texture = 0;
+		glDeleteTextures(1, &m_texture);
+		m_texture = 0;
 	}
-	width = 0;
-	height = 0;
+	m_width = 0;
+	m_height = 0;
 }
 
 void Texture::freeVBO()
 {
-	if(VBOid != 0)
+	if(m_VBOid != 0)
 	{
-		glDeleteBuffers(1, &VBOid);
-		glDeleteBuffers(1, &IBOid);
+		glDeleteBuffers(1, &m_VBOid);
+		glDeleteBuffers(1, &m_IBOid);
 	}
 }
 
-void Texture::setAlpha(Uint8 a)
+void Texture::setAlpha(
+	Uint8 a)
 {
-	alpha = a;
+	m_alpha = a;
 }
 
-void Texture::Render(GLfloat x, GLfloat y, Rectf* clip, float angle, Vector2f* center, SDL_Color color) const
+void Texture::render(
+	GLfloat x, 
+	GLfloat y, 
+	Rectf* clip, 
+	float angle, 
+	Vector2f* center, 
+	SDL_Color color) const
 {
-	if (texture != 0)
+	if (m_texture != 0)
 	{
 		Rectf texCoords = { 0.f, 1.f, 0.f, 1.f }; //Top Bottom Left Right
 
-		GLfloat quadWidth = (GLfloat)width;
-		GLfloat quadHeight = (GLfloat)height;
+		GLfloat quadWidth = (GLfloat)m_width;
+		GLfloat quadHeight = (GLfloat)m_height;
 
 		if (clip != NULL)
 		{
 			//Convert to texture coordinates
-			texCoords = { clip->y / height, (clip->y + clip->h) / height, clip->x / width, (clip->x + clip->w) / width };
+			texCoords = { clip->y / m_height, (clip->y + clip->h) / m_height, clip->x / m_width, (clip->x + clip->w) / m_width };
 
 			quadWidth = clip->w;
 			quadHeight = clip->h;
@@ -226,11 +238,11 @@ void Texture::Render(GLfloat x, GLfloat y, Rectf* clip, float angle, Vector2f* c
 		vData[2].position.x = quadWidth;	vData[2].position.y = quadHeight;
 		vData[3].position.x = 0.f;			vData[3].position.y = quadHeight;
 	
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, m_texture);
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, VBOid);
+			glBindBuffer(GL_ARRAY_BUFFER, m_VBOid);
 
 			//Update vertex buffer data
 			glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(VertexData2f), vData);
@@ -239,7 +251,7 @@ void Texture::Render(GLfloat x, GLfloat y, Rectf* clip, float angle, Vector2f* c
 			glVertexPointer(2, GL_FLOAT, sizeof(VertexData2f), (GLvoid*)offsetof(VertexData2f, position));
 
 			//Draw quad using vertex data and index data
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBOid);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBOid);
 			glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, NULL);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -250,15 +262,15 @@ void Texture::Render(GLfloat x, GLfloat y, Rectf* clip, float angle, Vector2f* c
 
 GLuint Texture::getTextureID() const
 {
-	return texture;
+	return m_texture;
 }
 
 GLuint Texture::getWidth() const
 {
-	return width;
+	return m_width;
 }
 
 GLuint Texture::getHeight() const
 {
-	return height;
+	return m_height;
 }

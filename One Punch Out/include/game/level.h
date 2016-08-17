@@ -2,6 +2,7 @@
 
 #include "game/gamestate.h"
 #include "game/map.h"
+#include "game/menu.h"
 #include "game/camera.h"
 
 #include "entity/player.h"
@@ -9,14 +10,16 @@
 class Level : public GameState
 {
     public:
-		Level(std::string filename);
+		Level(
+			std::string filename,
+			std::string worldName);
         ~Level();
 
-        void Render() const;
-        void Update(float deltaTime);
-        void HandleEvents();
+        void render() const;
+        void update(
+			float deltaTime);
+        void handleEvents();
 
     private:
 		Map* m_dungeon;
-		Player* m_player;
 };

@@ -13,8 +13,9 @@ class Enemy : public Entity
 		Enemy() {};
 		~Enemy() {};
 
-		virtual void Render() {}
-		virtual void Update(float deltaTime) {}
+		virtual void render() {}
+		virtual void update(
+			float deltaTime) {}
     protected:
-		Timer animationTimer;
+		Timer m_animationTimer;
 };

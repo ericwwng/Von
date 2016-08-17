@@ -1,24 +1,28 @@
 #include "utils/gui/selectionitem.h"
 
-SelectionItem::SelectionItem(std::string path, Vector2f pos, GLuint w, GLuint h)
+SelectionItem::SelectionItem(
+	std::string path,
+	Vector2f pos, 
+	GLuint w,
+	GLuint h)
 {
-	worldName = path;
+	m_worldName = path;
 	if (path == "0.opo")
 	{
-		messageTex.loadFromText("Boss 1", color(0, 0, 0, 255));
+		m_messageTex.loadFromText("Boss 1", color(0, 0, 0, 255));
 	}
 	else
-		messageTex.loadFromText(path.c_str(), color(0, 0, 0, 255));
+		m_messageTex.loadFromText(path.c_str(), color(0, 0, 0, 255));
 	
 	
-	buttonTex.loadFromFile("res/GUI/button.png");
-	collisionBox = { Vector2f(pos.x, pos.y), w, h };
+	m_buttonTex.loadFromFile("res/GUI/button.png");
+	m_collisionBox = { Vector2f(pos.x, pos.y), w, h };
 
-	menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
-	menuClick.loadSoundFile("res/Music/sfx/menuhit.wav");
-	Mix_VolumeChunk(menuClick.m_Chunk, 80);
+	m_menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
+	m_menuClick.loadSoundFile("res/Music/sfx/menuhit.wav");
+	Mix_VolumeChunk(m_menuClick.m_Chunk, 80);
 
-	click = false;
+	m_click = false;
 }
 
 SelectionItem::~SelectionItem()
@@ -26,74 +30,74 @@ SelectionItem::~SelectionItem()
 
 }
 
-void SelectionItem::Render() const
+void SelectionItem::render() const
 {
 	glPopMatrix();
-		glTranslatef(collisionBox.position.x, collisionBox.position.y, 0.f);
-		glScalef((GLfloat)collisionBox.width / (GLfloat)buttonTex.getWidth(), (GLfloat)collisionBox.height / (GLfloat)buttonTex.getHeight(), 1.f);
-		glTranslatef(-collisionBox.position.x, -collisionBox.position.y, 0.f);
+		glTranslatef(m_collisionBox.position.x, m_collisionBox.position.y, 0.f);
+		glScalef((GLfloat)m_collisionBox.width / (GLfloat)m_buttonTex.getWidth(), (GLfloat)m_collisionBox.height / (GLfloat)m_buttonTex.getHeight(), 1.f);
+		glTranslatef(-m_collisionBox.position.x, -m_collisionBox.position.y, 0.f);
 	glPushMatrix();
-	buttonTex.Render(collisionBox.position.x, collisionBox.position.y);
+	m_buttonTex.render(m_collisionBox.position.x, m_collisionBox.position.y);
 	glPopMatrix();
-		glTranslatef(collisionBox.position.x, collisionBox.position.y, 0.f);
-		glScalef((GLfloat)buttonTex.getWidth() / (GLfloat)collisionBox.width, (GLfloat)buttonTex.getHeight() / (GLfloat)collisionBox.height, 1.f);
-		glTranslatef(-collisionBox.position.x, -collisionBox.position.y, 0.f);
+		glTranslatef(m_collisionBox.position.x, m_collisionBox.position.y, 0.f);
+		glScalef((GLfloat)m_buttonTex.getWidth() / (GLfloat)m_collisionBox.width, (GLfloat)m_buttonTex.getHeight() / (GLfloat)m_collisionBox.height, 1.f);
+		glTranslatef(-m_collisionBox.position.x, -m_collisionBox.position.y, 0.f);
 	glPushMatrix();
 
 	glPopMatrix();
-		glTranslatef(collisionBox.position.x + (collisionBox.width / 6), collisionBox.position.y + (collisionBox.height / 6), 0.f);
-		glScalef((GLfloat)collisionBox.width / (GLfloat)messageTex.getWidth() / 1.5f, (GLfloat)collisionBox.height / (GLfloat)messageTex.getHeight() / 1.5f, 1.f);
-		glTranslatef(-collisionBox.position.x - (collisionBox.width / 6), -collisionBox.position.y - (collisionBox.height / 6), 0.f);
+		glTranslatef(m_collisionBox.position.x + (m_collisionBox.width / 6), m_collisionBox.position.y + (m_collisionBox.height / 6), 0.f);
+		glScalef((GLfloat)m_collisionBox.width / (GLfloat)m_messageTex.getWidth() / 1.5f, (GLfloat)m_collisionBox.height / (GLfloat)m_messageTex.getHeight() / 1.5f, 1.f);
+		glTranslatef(-m_collisionBox.position.x - (m_collisionBox.width / 6), -m_collisionBox.position.y - (m_collisionBox.height / 6), 0.f);
 	glPushMatrix();
-	messageTex.Render(collisionBox.position.x + (collisionBox.width / 6), collisionBox.position.y + (collisionBox.height / 6));
+	m_messageTex.render(m_collisionBox.position.x + (m_collisionBox.width / 6), m_collisionBox.position.y + (m_collisionBox.height / 6));
 	glPopMatrix();
-		glTranslatef(collisionBox.position.x + (collisionBox.width / 6), collisionBox.position.y + (collisionBox.height / 6), 0.f);
-		glScalef((GLfloat)messageTex.getWidth() / (GLfloat)collisionBox.width * 1.5f, (GLfloat)messageTex.getHeight() / (GLfloat)collisionBox.height * 1.5f, 1.f);
-		glTranslatef(-collisionBox.position.x - (collisionBox.width / 6), -collisionBox.position.y - (collisionBox.height / 6), 0.f);
+		glTranslatef(m_collisionBox.position.x + (m_collisionBox.width / 6), m_collisionBox.position.y + (m_collisionBox.height / 6), 0.f);
+		glScalef((GLfloat)m_messageTex.getWidth() / (GLfloat)m_collisionBox.width * 1.5f, (GLfloat)m_messageTex.getHeight() / (GLfloat)m_collisionBox.height * 1.5f, 1.f);
+		glTranslatef(-m_collisionBox.position.x - (m_collisionBox.width / 6), -m_collisionBox.position.y - (m_collisionBox.height / 6), 0.f);
 	glPushMatrix();
 
-	if (hover)
+	if (m_hover)
 	{
 		glColor4f(1.f, 1.f, 1.f, 0.5f);
-		glTranslatef(collisionBox.position.x, collisionBox.position.y, 0.f);
+		glTranslatef(m_collisionBox.position.x, m_collisionBox.position.y, 0.f);
 		glBegin(GL_QUADS);
 			glVertex2f(0.f, 0.f);
-			glVertex2f((GLfloat)collisionBox.width, 0.f);
-			glVertex2f((GLfloat)collisionBox.width, (GLfloat)collisionBox.height);
-			glVertex2f(0.f, (GLfloat)collisionBox.height);
+			glVertex2f((GLfloat)m_collisionBox.width, 0.f);
+			glVertex2f((GLfloat)m_collisionBox.width, (GLfloat)m_collisionBox.height);
+			glVertex2f(0.f, (GLfloat)m_collisionBox.height);
 		glEnd();
-		glTranslatef(-collisionBox.position.x, -collisionBox.position.y, 0.f);
+		glTranslatef(-m_collisionBox.position.x, -m_collisionBox.position.y, 0.f);
 	}
 }
 
-void SelectionItem::HandleEvents()
+void SelectionItem::handleEvents()
 {
-	static bool up;
+	static bool _up;
 
-	if (Collision(Cursor::getInstance().getCollisionBox(), collisionBox))
+	if (Collision(Cursor::getInstance().getCollisionBox(), m_collisionBox))
 	{
-		hover = true;
-		if (event.type == SDL_MOUSEMOTION)
-			menuHover.playSound();
+		m_hover = true;
+		if (g_event.type == SDL_MOUSEMOTION)
+			m_menuHover.playSound();
 
-		if (event.type == SDL_MOUSEBUTTONUP)
+		if (g_event.type == SDL_MOUSEBUTTONUP)
 		{
-			up = true;
-			click = false;
+			_up = true;
+			m_click = false;
 		}
-		if (event.type == SDL_MOUSEBUTTONDOWN)
+		if (g_event.type == SDL_MOUSEBUTTONDOWN)
 		{
-			if (up)
+			if (_up)
 			{
-				click = true;
-				hover = false;
-				up = false;
-				menuClick.playSound();
+				m_click = true;
+				m_hover = false;
+				_up = false;
+				m_menuClick.playSound();
 			}
 		}
 	}
 	else
-		hover = false;
+		m_hover = false;
 }
 
 void SelectionItem::updatePosition()
@@ -101,8 +105,13 @@ void SelectionItem::updatePosition()
 
 }
 
-void AddSelectionItem(std::vector<SelectionItem*> &selectionItems, char* path, Vector2f pos, int w, int h)
+void addSelectionItem(
+	std::vector<SelectionItem*> &selectionItems,
+	char* path,
+	Vector2f pos,
+	int w, 
+	int h)
 {
-	SelectionItem* selectionItem = new SelectionItem(path, pos, w, h);
-	selectionItems.push_back(selectionItem);
+	SelectionItem* _selectionItem = new SelectionItem(path, pos, w, h);
+	selectionItems.push_back(_selectionItem);
 }

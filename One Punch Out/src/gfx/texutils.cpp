@@ -1,12 +1,18 @@
 #include "gfx/texutils.h"
 
-SDL_Color color(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+SDL_Color color(
+	Uint8 r, 
+	Uint8 g, 
+	Uint8 b, 
+	Uint8 a)
 {
-	SDL_Color c = { r, g, b, a };
-	return c;
+	SDL_Color _c = { r, g, b, a };
+	return _c;
 }
 
-void renderEmptyBox(Rectf box, SDL_Color color)
+void renderEmptyBox(
+	Rectf box, 
+	SDL_Color color)
 {
 	glPopMatrix();
 	glPushMatrix();
@@ -27,7 +33,9 @@ void renderEmptyBox(Rectf box, SDL_Color color)
 	glEnd();
 }
 
-void renderFillRect(Rectf box, SDL_Color color)
+void renderFillRect(
+	Rectf box, 
+	SDL_Color color)
 {
 	glPopMatrix();
 	glPushMatrix();
@@ -44,7 +52,8 @@ void renderFillRect(Rectf box, SDL_Color color)
 	glEnd();
 }
 
-void changeFontSize(int ptsize)
+void changeFontSize(
+	int ptsize)
 {
-	Font = TTF_OpenFont("res/arial.ttf", ptsize);
+	g_font = TTF_OpenFont("res/arial.ttf", ptsize);
 }

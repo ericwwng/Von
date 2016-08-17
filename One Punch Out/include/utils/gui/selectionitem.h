@@ -15,31 +15,40 @@ class SelectionItem
 {
 	public:
 		SelectionItem() {};
-		SelectionItem(std::string path, Vector2f pos, GLuint w, GLuint h);
+		SelectionItem(
+			std::string path, 
+			Vector2f pos, 
+			GLuint w, 
+			GLuint h);
 		~SelectionItem();
 
-		void Render() const;
-		void HandleEvents();
+		void render() const;
+		void handleEvents();
 
-		bool getClicked() { return click; }
+		bool getClicked() { return m_click; }
 		
 		void updatePosition();
-		std::string getWorldName() { return worldName; }
+		std::string getWorldName() { return m_worldName; }
 
-		AABB getCollisionBox() { return collisionBox; }
+		AABB getCollisionBox() { return m_collisionBox; }
 	private:
-		AABB collisionBox;
+		AABB m_collisionBox;
 
-		Texture buttonTex;
-		Texture messageTex;
+		Texture m_buttonTex;
+		Texture m_messageTex;
 
-		std::string worldName;
+		std::string m_worldName;
 
-		bool hover;
-		bool click;
+		bool m_hover;
+		bool m_click;
 
-		Sfx menuHover;
-		Sfx menuClick;
+		Sfx m_menuHover;
+		Sfx m_menuClick;
 };
 
-void AddSelectionItem(std::vector<SelectionItem*> &selectionItems, char* path, Vector2f pos, int w, int h);
+void addSelectionItem(
+	std::vector<SelectionItem*> &selectionItems, 
+	char* path, 
+	Vector2f pos, 
+	int w,
+	int h);

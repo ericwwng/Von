@@ -14,7 +14,7 @@ class Timer
 		unsigned int getTicks() const;
 
     private:
-		unsigned int startTicks;
+		unsigned int m_startTicks;
 
-		bool started;
+		bool m_started;
 };

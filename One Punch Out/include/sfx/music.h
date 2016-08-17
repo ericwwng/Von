@@ -7,10 +7,12 @@ class Bgm
 {
 	public:
 		Bgm();
-		Bgm(const char* filename);
+		Bgm(
+			const char* filename);
 		~Bgm();
 
-		void loadMusicFile(const char* filename);
+		void loadMusicFile(
+			const char* filename);
 		
 		void playMusic();
 		void repeatMusic();
@@ -25,10 +27,12 @@ class Sfx
 {
 	public:
 		Sfx();
-		Sfx(const char* filename);
+		Sfx(
+			const char* filename);
 		~Sfx();
 
-		void loadSoundFile(const char* filename);
+		void loadSoundFile(
+			const char* filename);
 
 		void playSound();
 

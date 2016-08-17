@@ -12,16 +12,21 @@ class SpriteSheet : public Texture
 		void free();
 		void freeSheet();
 
-		int addClipSprite(Rectf& newClip); //returns index
-		Rectf getClip(int index);
+		int addClipSprite(
+			Rectf& newClip); //returns index
+		Rectf getClip(
+			int index);
 
 		void generateDataBuffer();
 
-		void RenderSprite(GLfloat x, GLfloat y, int index);
+		void renderSprite(
+			GLfloat x, 
+			GLfloat y,
+			int index);
 	private:
-		std::vector<Rectf> Clips;
+		std::vector<Rectf> m_Clips;
 
-		GLuint vertexDataBuffer;
-		GLuint* indexBuffers;
+		GLuint m_vertexDataBuffer;
+		GLuint* m_indexBuffers;
 
 };

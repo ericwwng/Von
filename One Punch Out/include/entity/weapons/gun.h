@@ -9,10 +9,13 @@ class Gun : public Weapon
         Gun();
         ~Gun();
 
-        void Action();
+        void action();
 
-        void Render() const;
-        void Update(Vector2f& pos, float angle, float deltaTime);
+        void render() const;
+        void update(
+			Vector2f& pos,
+			float angle,
+			float deltaTime);
     private:
-        Projectile* bullet;
+        Projectile* m_bullets;
 };

@@ -1,9 +1,11 @@
 #include "game/level.h"
 
-Level::Level(std::string filename)
+Level::Level(
+	std::string filename,
+	std::string worldName)
 {
-	m_dungeon = new Map(filename);
-	m_player = new Player(m_dungeon->getPlayerSpawn());
+	m_dungeon = new Map(filename, worldName);
+	Player::getInstance().setSpawnPosition(m_dungeon->getPlayerSpawn());
 }
 
 Level::~Level()
@@ -11,23 +13,32 @@ Level::~Level()
 	delete m_dungeon;
 }
 
-void Level::Render() const
+void Level::render() const
 {
-	Camera::getInstance().Update();
-	m_dungeon->Render();
-	m_player->Render();
+	Camera::getInstance().update();
+	m_dungeon->render();
+	Player::getInstance().render();
 	m_dungeon->renderSolidTiles();
-	m_player->RenderUI();
-    Cursor::getInstance().Render();
+	Player::getInstance().renderUI();
+    Cursor::getInstance().render();
 }
 
-void Level::Update(float deltaTime)
+void Level::update(
+	float deltaTime)
 {
-	m_player->Update(deltaTime, m_dungeon->getSolids(), m_dungeon->getDimW(), m_dungeon->getDimH());
-    Cursor::getInstance().Update(deltaTime);
+	Player::getInstance().update(deltaTime, m_dungeon->getSolids(), m_dungeon->getDimW(), m_dungeon->getDimH());
+    Cursor::getInstance().update(deltaTime);
 }
 
-void Level::HandleEvents()
+void Level::handleEvents()
 {
-	m_player->HandleEvents();
+	if (g_event.type == SDL_KEYDOWN)
+		if (g_event.key.keysym.sym == SDLK_ESCAPE)
+		{
+			changeFontSize(64);
+			delete g_gameState;
+			g_gameState = new Menu();
+		}
+
+	Player::getInstance().handleEvents();
 }

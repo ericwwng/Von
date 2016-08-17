@@ -5,7 +5,8 @@ Bgm::Bgm()
 	m_Music = NULL;
 }
 
-Bgm::Bgm(const char* filename)
+Bgm::Bgm(
+	const char* filename)
 {
 	m_Music = Mix_LoadMUS(filename);
 	if (m_Music == NULL)
@@ -18,7 +19,8 @@ Bgm::~Bgm()
 	m_Music = NULL;
 }
 
-void Bgm::loadMusicFile(const char* filename)
+void Bgm::loadMusicFile(
+	const char* filename)
 {
 	Mix_FreeMusic(m_Music);
 	m_Music = Mix_LoadMUS(filename);
@@ -62,7 +64,8 @@ Sfx::Sfx()
 	m_Chunk = NULL;
 }
 
-Sfx::Sfx(const char* filename)
+Sfx::Sfx(
+	const char* filename)
 {
 	m_Chunk = Mix_LoadWAV(filename);
 	if (m_Chunk == NULL)
@@ -75,7 +78,8 @@ Sfx::~Sfx()
 	m_Chunk = NULL;
 }
 
-void Sfx::loadSoundFile(const char* filename)
+void Sfx::loadSoundFile(
+	const char* filename)
 {
 	Mix_FreeChunk(m_Chunk);
 	m_Chunk = Mix_LoadWAV(filename);

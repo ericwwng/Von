@@ -46,7 +46,7 @@ inline bool Collision(AABB& a, AABB& b)
 
 inline bool Collision(CircleBB& a, CircleBB& b)
 {
-	return(DistanceSquared(a.position, b.position) <
+	return(distanceSquared(a.position, b.position) <
 		(a.radius + b.radius) * (a.radius + b.radius));
 }
 
@@ -69,5 +69,5 @@ inline bool Collision(CircleBB& a, AABB& b)
 	else
 		cY = a.position.y;
 
-	return (DistanceSquared(a.position, Vector2f(cX, cY)) < a.radius * a.radius);
+	return (distanceSquared(a.position, Vector2f(cX, cY)) < a.radius * a.radius);
 }

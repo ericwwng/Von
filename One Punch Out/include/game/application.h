@@ -40,5 +40,5 @@ class Application : public Singleton<Application>
 
         Texture m_fpsTex;
         std::stringstream m_fpsTime;
-        int countedFrames;
+        int m_countedFrames;
 };

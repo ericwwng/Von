@@ -10,6 +10,7 @@
 #include "game/camera.h"
 
 #include "entity/enemy.h"
+#include "entity/bosses/swordboss.h"
 
 #include "gfx/spritesheet.h"
 #include "gfx/texutils.h"
@@ -21,25 +22,29 @@ struct Tile
 {
 public:
 	Tile();
-	Tile(Vector2f pos, GLubyte tileType);
+	Tile(
+		Vector2f pos,
+		GLubyte tileType);
 
-	void Render();
+	void render();
 
-	AABB collisionBox;
-	GLubyte id; //on the tilesheet
+	AABB m_collisionBox;
+	GLubyte m_id; //on the tilesheet
 };
 
 class Map
 {
     public:
-		Map(std::string filename);
+		Map(std::string filename,
+			std::string worldName);
         ~Map();
 
-		void Render();
+		void render();
         void renderSolidTiles();
 
 		void saveMap();
-		void loadMap(std::string p_filename);
+		void loadMap(
+			std::string p_filename);
 		std::string getFilename() { return m_filename; }
 
 		Tile* getSolids() { return m_solidTiles; }
@@ -48,11 +53,15 @@ class Map
 		GLubyte getDimH() const { return m_height; }
 
 		Vector2f getPlayerSpawn() { return m_playerSpawnPosition; }
-		void setPlayerSpawn(Vector2f spawnPos) { m_playerSpawnPosition = spawnPos; }
+		void setPlayerSpawn(
+			Vector2f spawnPos) { m_playerSpawnPosition = spawnPos; }
 
-		void setSolid(GLuint tileIndex, Uint8 id) { m_solidTiles[tileIndex].id = id; }
+		void setSolid(
+			GLuint tileIndex
+			, Uint8 id) { m_solidTiles[tileIndex].m_id = id; }
     private:
 		std::string m_filename;
+		std::string m_worldName;
 
 		Tile* m_solidTiles;
 		std::vector<Enemy*> m_enemyEntities;
@@ -63,4 +72,6 @@ class Map
 		Texture m_background;
 
         GLubyte m_width, m_height; //should be image res / 8
+
+		SwordBoss* m_boss;
 };

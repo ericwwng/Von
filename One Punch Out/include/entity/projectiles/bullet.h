@@ -8,6 +8,7 @@ class Bullet : public Projectile
         Bullet();
         ~Bullet();
 
-		void Update(float deltaTime);
-		void Render() const;
+		void update(
+			float deltaTime);
+		void render() const;
 };

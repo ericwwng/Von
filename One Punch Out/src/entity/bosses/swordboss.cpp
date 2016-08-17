@@ -2,8 +2,9 @@
 
 SwordBoss::SwordBoss()
 {
-	m_tex.loadFromFile("res/Enemy/Boss/Youmu/YoumuImage.png", 300, 342);
+	m_texture.loadFromFile("res/Enemy/Boss/Youmu/YoumuImage.png", 300, 342);
 
+	m_Projectiles = new CircleProjectile[200];
 }
 
 SwordBoss::~SwordBoss()
@@ -11,12 +12,12 @@ SwordBoss::~SwordBoss()
 
 }
 
-void SwordBoss::Render()
+void SwordBoss::render()
 {
-	m_tex.Render(0, 0);
+	m_texture.render(0, 0);
 }
 
-void SwordBoss::Update()
+void SwordBoss::update()
 {
 	if (m_phaseNumber == 1)
 		phaseOne();

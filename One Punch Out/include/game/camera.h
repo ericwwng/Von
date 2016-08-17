@@ -12,21 +12,21 @@
 class Camera : public Singleton<Camera>
 {
     public:
-		Camera() { collisionBox = { Vector2f(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT }; }
+		Camera() { m_collisionBox = { Vector2f(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT }; }
 
-		void Update()
+		void update()
 		{
 			glMatrixMode(GL_MODELVIEW);
 			glPopMatrix();
 				glLoadIdentity();
 
-				glTranslatef(-collisionBox.position.x, -collisionBox.position.y, 0.f);
+				glTranslatef(-m_collisionBox.position.x, -m_collisionBox.position.y, 0.f);
 
 			glPushMatrix();
 		}
 
-		void setCoords(Vector2f pos) { collisionBox.position = pos; }
-		void addCoords(Vector2f pos) { collisionBox.position = collisionBox.position + pos; }
+		void setCoords(Vector2f pos) { m_collisionBox.position = pos; }
+		void addCoords(Vector2f pos) { m_collisionBox.position = m_collisionBox.position + pos; }
 
-		AABB collisionBox;
+		AABB m_collisionBox;
 };

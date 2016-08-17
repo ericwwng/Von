@@ -14,16 +14,19 @@ class Weapon : public Entity
     public:
         virtual ~Weapon() {}
 
-        virtual void Render() const {}
-		virtual void Update(Vector2f& pos, float angle, float deltaTime) {  }
+        virtual void render() const {}
+		virtual void update(
+			Vector2f& pos,
+			float angle,
+			float deltaTime) {}
 
-        virtual void Action() {}
+        virtual void action() {}
 
-        void setDirection(Vector2f& dir) {weaponDirection = dir;}
+        void setDirection(Vector2f& dir) { m_weaponDirection = dir; }
     protected:
-		Vector2f UpdateRotation();
+		Vector2f updateRotation();
 
-        Vector2f weaponDirection;
+        Vector2f m_weaponDirection;
 
-        Timer rateOfFire;
+        Timer m_rateOfFire;
 };

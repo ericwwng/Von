@@ -18,21 +18,23 @@
 class EditorState : public GameState
 {
 	public:
-		EditorState(std::string filename);
+		EditorState(
+			std::string filename);
 		~EditorState();
 
-		void Render() const;
-		void Update(float deltaTime);
-		void HandleEvents();
+		void render() const;
+		void update(
+			float deltaTime);
+		void handleEvents();
 	private:
-		DIR* dir;
-		struct dirent *ent;
+		DIR* m_dir;
+		struct dirent *m_ent;
 
-		bool goToEditorState;
+		bool m_goToEditorState;
 
 		Map* m_dungeon;
 
-		Uint8 id;
+		Uint8 m_id;
 		std::stringstream m_selectorID;
 		Texture m_selectorText;
 };

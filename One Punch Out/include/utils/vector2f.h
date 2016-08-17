@@ -14,11 +14,11 @@ class Vector2f
 		const inline Vector2f operator*(GLfloat s) const { return Vector2f(x * s, y * s); }
 		const inline Vector2f operator/(GLfloat s) const { return Vector2f(x / s, y / s); }
 
-        const inline float Length() const { return sqrt(x*x + y*y); }
+        const inline float length() const { return sqrt(x*x + y*y); }
         //Used for comparing multiple distances
-        const inline float LengthSqr() const { return (x*x + y*y); }
+        const inline float lengthSqr() const { return (x*x + y*y); }
 
-        const inline Vector2f Normalized() const { return Vector2f((*this) / Length()); }
+        const inline Vector2f normalized() const { return Vector2f((*this) / length()); }
 
         GLfloat x, y;
 };

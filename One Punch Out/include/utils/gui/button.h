@@ -17,24 +17,33 @@ class Button
 {
 	public:
 		Button() {};
-		Button(Vector2f pos, GLuint w, GLuint h, char* msg);
+		Button(
+			Vector2f pos,
+			GLuint w,
+			GLuint h,
+			char* msg);
 		~Button();
 
-		void Render() const;
-		void HandleEvents();
+		void render() const;
+		void handleEvents();
 
-		bool getClicked() { return click; }
+		bool getClicked() { return m_click; }
 	private:
-		AABB collisionBox;
+		AABB m_collisionBox;
 
-		Texture buttonTex;
-		Texture messageTex;
+		Texture m_buttonTex;
+		Texture m_messageTex;
 
-		bool hover;
-		bool click;
+		bool m_hover;
+		bool m_click;
 
-		Sfx menuHover;
-		Sfx menuClick;
+		Sfx m_menuHover;
+		Sfx m_menuClick;
 };
 
-void AddButton(std::vector<Button*> &buttons, char* message, Vector2f pos, GLuint w, GLuint h);
+void addButton(
+	std::vector<Button*> &buttons,
+	char* message, 
+	Vector2f pos, 
+	GLuint w,
+	GLuint h);

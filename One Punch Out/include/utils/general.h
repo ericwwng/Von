@@ -17,10 +17,10 @@ constexpr unsigned SCREEN_TICKS_PER_FRAME =	1000 / SCREEN_FPS;
 
 constexpr double PI = 3.14159265;
 
-extern SDL_Window* gWindow;
-extern SDL_Event event;
-extern TTF_Font* Font;
+extern SDL_Window* g_window;
+extern SDL_Event g_event;
+extern TTF_Font* g_font;
 
-extern bool showCollisionBox;
+extern bool g_showCollisionBox;
 
-extern GameState* gameState;
+extern GameState* g_gameState;

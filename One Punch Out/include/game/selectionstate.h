@@ -19,19 +19,21 @@
 class SelectionState : public GameState
 {
 	public:
-		SelectionState(bool goToEditor);
+		SelectionState(
+			bool goToEditor);
 		~SelectionState();
 
-		void Render() const;
-		void Update(float deltaTime);
-		void HandleEvents();
+		void render() const;
+		void update(
+			float deltaTime);
+		void handleEvents();
 	private:
-		Texture previewBackground;
+		Texture m_previewBackground;
 
-		std::vector<SelectionItem*> selectionItems;
+		std::vector<SelectionItem*> m_selectionItems;
 
-		DIR* dir;
-		struct dirent *ent;
+		DIR* m_dir;
+		struct dirent *m_ent;
 
-		bool goToEditorState;
+		bool m_goToEditorState;
 };

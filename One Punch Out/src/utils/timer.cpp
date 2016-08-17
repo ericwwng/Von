@@ -2,28 +2,28 @@
 
 Timer::Timer()
 {
-    startTicks = 0;
+	m_startTicks = 0;
 }
 
 void Timer::start()
 {
-    started = true;
+	m_started = true;
 
     //Get the current clock time
-    startTicks = SDL_GetTicks();
+	m_startTicks = SDL_GetTicks();
 }
 
 void Timer::stop()
 {
-    started = false;
+	m_started = false;
 
-	startTicks = 0;
+	m_startTicks = 0;
 }
 
 unsigned int Timer::getTicks() const
 {
-    if(started)
-        return SDL_GetTicks() - startTicks;
+    if(m_started)
+        return SDL_GetTicks() - m_startTicks;
 
     return SDL_GetTicks();
 }

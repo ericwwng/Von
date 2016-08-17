@@ -2,7 +2,7 @@
 
 Application::Application() :
     m_appState(appRunning),
-    countedFrames(0)
+	m_countedFrames(0)
 {
     printf("Application Initializing... \n");
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -13,12 +13,12 @@ Application::Application() :
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	
-		gWindow = SDL_CreateWindow("One Punch Out", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-		if(gWindow == NULL)
+		g_window = SDL_CreateWindow("One Punch Out", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		if(g_window == NULL)
 			printf("Window could not be created!\n");
 		else
 		{
-			m_context = SDL_GL_CreateContext(gWindow);
+			m_context = SDL_GL_CreateContext(g_window);
 			if (m_context == NULL)
 				printf("OpenGL Context could not be created!\n");
 			else
@@ -67,8 +67,8 @@ Application::Application() :
 
 	changeFontSize(64);
 
-	gameState = new Menu();
-	//gameState = new Level("Dungeons/World/World.dmm");
+	g_gameState = new Menu();
+	//g_gameState = new Level("Dungeons/World/World.dmm");
 	
 	changeFontSize(16);
 }
@@ -76,9 +76,9 @@ Application::Application() :
 Application::~Application()
 {
 	SDL_GL_DeleteContext(m_context);
-	SDL_DestroyWindow(gWindow);
+	SDL_DestroyWindow(g_window);
 
-	delete gameState;
+	delete g_gameState;
 
 	SDL_Quit();
     IMG_Quit();
@@ -111,27 +111,27 @@ void Application::loop()
 	if (SDL_GetTicks() - lastTime >= 1000)
 	{
 		m_fpsTime.str("");
-		m_fpsTime << "FPS: " << countedFrames;
+		m_fpsTime << "FPS: " << m_countedFrames;
 		m_fpsTex.loadFromText(m_fpsTime.str().c_str(), color(255, 255, 255, 255));
 		lastTime = SDL_GetTicks();
-		countedFrames = 0;
+		m_countedFrames = 0;
 	}
     ///----------------
     /// Game Update
     ///----------------
-	while (SDL_PollEvent(&event) != 0)
+	while (SDL_PollEvent(&g_event) != 0)
 	{
-		if (event.type == SDL_QUIT)
+		if (g_event.type == SDL_QUIT)
 			m_appState = appExiting;
 		
-		if (event.type == SDL_KEYUP)
-			if (event.key.keysym.sym == SDLK_LSHIFT)
-				showCollisionBox = !showCollisionBox;
+		if (g_event.type == SDL_KEYUP)
+			if (g_event.key.keysym.sym == SDLK_LSHIFT)
+				g_showCollisionBox = !g_showCollisionBox;
 
-		gameState->HandleEvents();
+		g_gameState->handleEvents();
 	}
     //Update current game state
-    gameState->Update(deltaTime_f);
+    g_gameState->update(deltaTime_f);
 
     ///----------------
     /// Game Rendering
@@ -139,12 +139,12 @@ void Application::loop()
 	glClear(GL_COLOR_BUFFER_BIT);
 
     //Render current game state
-    gameState->Render();
-	m_fpsTex.Render(Camera::getInstance().collisionBox.position.x, Camera::getInstance().collisionBox.position.y);
+    g_gameState->render();
+	m_fpsTex.render(Camera::getInstance().m_collisionBox.position.x, Camera::getInstance().m_collisionBox.position.y);
 
-	SDL_GL_SwapWindow(gWindow);
+	SDL_GL_SwapWindow(g_window);
 
-	countedFrames++;
+	m_countedFrames++;
 	//Cap fps to SCREEN_FPS
 	int frameTicks = m_fpsTimer.getTicks();
 	//if (frameTicks < SCREEN_TICKS_PER_FRAME) { SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks); }

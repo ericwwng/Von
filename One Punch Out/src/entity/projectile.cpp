@@ -1,25 +1,31 @@
 #include "entity/projectile.h"
 
-void Projectile::Reload(Vector2f pos, Vector2f vel, float a, float s)
+void Projectile::reload(
+	Vector2f pos,
+	Vector2f vel, 
+	float a, 
+	float s)
 {
-	position = pos;
-	velocity = vel * s;
-	projectileSpeed = (int)s;
-	angle = a;
-	active = false;
+	m_position = pos;
+	m_velocity = vel * s;
+	m_projectileSpeed = (int)s;
+	m_angle = a;
+	m_active = false;
 }
 
-void Projectile::setProjectileSpeed(int speed)
+void Projectile::setProjectileSpeed(
+	int speed)
 {
-    projectileSpeed = speed;
+	m_projectileSpeed = speed;
 }
 
-void Projectile::setActive(bool a)
+void Projectile::setActive(
+	bool a)
 {
-    active = a;
+	m_active = a;
 }
 
 bool Projectile::isActive() const
 {
-   return active;
+   return m_active;
 }

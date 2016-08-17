@@ -18,14 +18,15 @@ class Menu : public GameState
 		Menu();
 		~Menu();
 
-		void Render() const;
-		void Update(float deltaTime_f);
-		void HandleEvents();
+		void render() const;
+		void update(
+			float deltaTime_f);
+		void handleEvents();
 
 	private:
 		std::vector<Button*> m_buttons;
 
 		Texture m_background;
 
-		Bgm menuTheme;
+		Bgm m_menuTheme;
 };

@@ -1,11 +1,21 @@
 #include "game/map.h"
 
-Map::Map(std::string filename) 
+Map::Map(
+	std::string filename,
+	std::string worldName) 
 {
 	m_solidTiles = NULL;
 	m_filename = filename;
+	m_worldName = worldName;
 
 	loadMap(filename);
+
+	if (m_worldName == "0.opo") //SwordBoss
+	{
+	}
+	else
+	{
+	}
 
 	//enemyEntities.push_back(e);
 	
@@ -16,9 +26,9 @@ Map::~Map()
 	delete[] m_solidTiles;
 }
 
-void Map::Render()
+void Map::render()
 {
-	m_background.Render(0, 0);
+	m_background.render(0, 0);
 }
 
 void Map::renderSolidTiles()
@@ -28,7 +38,7 @@ void Map::renderSolidTiles()
 		{
 			//Rectf box = { ii * 16, i * 16, 16.f, 16.f};
 			//renderEmptyBox(box);
-			m_solidTiles[i * m_width + ii].Render();
+			m_solidTiles[i * m_width + ii].render();
 		}
 }
 
@@ -48,19 +58,25 @@ void Map::renderSolidTiles()
 }
 */
 
-void writeInt(std::ofstream& p_fileStream, GLuint p_uint)
+void writeInt(
+	std::ofstream& p_fileStream,
+	GLuint p_uint)
 {
 	p_fileStream << GLubyte((p_uint & 0xFF000000) >> 24);
 	p_fileStream << GLubyte((p_uint & 0xFF0000) >> 16);
 	p_fileStream << GLubyte((p_uint & 0xFF00) >> 8);
 	p_fileStream << GLubyte((p_uint & 0xFF));
 }
-void writeShort(std::ofstream& p_fileStream, GLushort p_ushort)
+void writeShort(
+	std::ofstream& p_fileStream,
+	GLushort p_ushort)
 {
 	p_fileStream << GLubyte((p_ushort & 0xFF00) >> 8);
 	p_fileStream << GLubyte((p_ushort & 0xFF));
 }
-void writeChar(std::ofstream& p_fileStream, GLubyte p_uchar)
+void writeChar(
+	std::ofstream& p_fileStream,
+	GLubyte p_uchar)
 {
 	p_fileStream << p_uchar;
 }
@@ -84,7 +100,7 @@ void Map::saveMap()
 	GLubyte _count = 0;
 	for (int i = 0; i < m_width * m_height; i++)
 	{
-		if (_count >= 255 || (int)_lastId != (int)m_solidTiles[i].id)
+		if (_count >= 255 || (int)_lastId != (int)m_solidTiles[i].m_id)
 		{
 			if (_count > 0)
 			{
@@ -92,7 +108,7 @@ void Map::saveMap()
 				writeChar(_file, _lastId);
 				_count = 0;
 			}
-			_lastId = m_solidTiles[i].id;
+			_lastId = m_solidTiles[i].m_id;
 		}
 		_count++;
 	}
@@ -108,13 +124,17 @@ void Map::saveMap()
 	std::cout << "Map saved." << std::endl;
 }
 
-GLubyte readChar(char* p_file, long& p_index)
+GLubyte readChar(
+	char* p_file,
+	long& p_index)
 {
 	p_index = p_index + 1;
 	return GLubyte(p_file[p_index - 1]);
 }
 
-GLushort readShort(char* p_file, long& p_index)
+GLushort readShort(
+	char* p_file,
+	long& p_index)
 {
 	GLushort _value;
 	_value = readChar(p_file, p_index) << 8;
@@ -122,7 +142,9 @@ GLushort readShort(char* p_file, long& p_index)
 	return _value;
 }
 
-GLuint readInt(char* p_file, long& p_index)
+GLuint readInt(
+	char* p_file,
+	long& p_index)
 {
 	GLushort _value;
 	_value = readShort(p_file, p_index) << 16;
@@ -130,15 +152,18 @@ GLuint readInt(char* p_file, long& p_index)
 	return _value;
 }
 
-void Map::loadMap(std::string p_filename)
+void Map::loadMap(
+	std::string p_filename)
 {
+	printf("Reading %s of file %s\n", m_worldName.c_str(), p_filename.c_str());
+
 	std::ifstream _file;
 	_file.open(p_filename.c_str(), std::ios::binary);
 
 	if(!_file.good())
 	{
 		std::cout << "Error finding file " << p_filename << "." << std::endl;
-		//Create an empty map?
+		//TODO: Create an empty map?
 		return;
 	}
 
@@ -165,7 +190,8 @@ void Map::loadMap(std::string p_filename)
 	m_width = readChar(_data, _index);
 	m_height = readChar(_data, _index);
 	m_playerSpawnPosition = Vector2f(readShort(_data, _index), readShort(_data, _index));
-	printf("Map Width: %d\nMap Height: %d \nPlayer Spawn: (%f, %f)\n", m_width, m_height, m_playerSpawnPosition.x, m_playerSpawnPosition.y);
+	printf("Map Width: %d\nMap Height: %d \nPlayer Spawn: (%d, %d)\n",
+		m_width, m_height, (int)m_playerSpawnPosition.x / 16, (int)m_playerSpawnPosition.y / 16);
 
 	int i = 0;
 	GLubyte _amt = 0;
@@ -183,46 +209,53 @@ void Map::loadMap(std::string p_filename)
 			i++;
 		}
 	}
-	printf("Map Loaded\n");
+	printf("Map Loaded\n\n");
 	
 	_file.close();
 	delete[] _data;
 }
 
 Tile::Tile() :
-id(0)
+	m_id(0)
 {
-	collisionBox = { Vector2f(0, 0), 32, 32 };
+	m_collisionBox = { Vector2f(0, 0), 32, 32 };
 }
-Tile::Tile(Vector2f pos, GLubyte tileType) :
-id(tileType)
+Tile::Tile(
+	Vector2f pos,
+	GLubyte tileType) :
+	m_id(tileType)
 {
-	collisionBox = { pos, 32, 32 };
+	m_collisionBox = { pos, 32, 32 };
 }
 
-void Tile::Render()
+void Tile::render()
 {
-	Rectf box = { collisionBox.position.x, collisionBox.position.y, 16.f, 16.f };
-	if (showCollisionBox) renderEmptyBox(box, color(64, 64, 64, 128));
-	if (showCollisionBox)
+	Rectf box = { m_collisionBox.position.x, m_collisionBox.position.y, 16.f, 16.f };
+	if (g_showCollisionBox) renderEmptyBox(box, color(64, 64, 64, 128));
+	if (g_showCollisionBox)
 	{
-		switch(id)
+		switch(m_id)
 		{
 			case 0: //No collision - transparent
-			
-			break;
+			{
+
+			} break;
 			case 1: //Solid - GRAY
+			{
 				renderFillRect(box, color(200, 200, 200, 255));
-			break;
+			} break;
 			case 2: //Slow - GREEN
+			{
 				renderFillRect(box, color(0, 255, 0, 128));
-			break;
+			} break;
 			case 3: //Slippery - BLUE
+			{
 				renderFillRect(box, color(0, 0, 255, 128));
-			break;
+			} break;
 			case 4: //DEATH - RED
+			{
 				renderFillRect(box, color(255, 0, 0, 128));
-			break;
+			} break;
 		}
 	}
 }

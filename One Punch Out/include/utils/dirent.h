@@ -583,7 +583,7 @@ opendir(
  * console is typically formatted on another code page.  Thus, non-ASCII
  * characters in file names will not usually display correctly on console.  The
  * problem can be fixed in two ways: (1) change the character set of console
- * to 1252 using chcp utility and use Lucida Console font, or (2) use
+ * to 1252 using chcp utility and use Lucida Console g_font, or (2) use
  * _cprintf function when writing to console.  The _cprinf() will re-encode
  * ANSI strings to the console code page so many non-ASCII characters will
  * display correcly.

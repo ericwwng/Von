@@ -18,40 +18,48 @@
 #include "entity/weapon.h"
 #include "entity/weapons/gun.h"
 
-class Player : public Entity
+class Player : public Singleton<Player>, public Entity
 {
     public:
-        Player(Vector2f pos);
-        ~Player();
+		Player();
 
-        void Render() const;
-		void RenderUI() const;
-		void Update(float deltaTime, Tile* tileTypes, int dimW, int dimH);
-        void HandleEvents();
+        void render() const;
+		void renderUI() const;
+		void update(
+			float deltaTime,
+			Tile* tileTypes,
+			int dimW,
+			int dimH);
+        void handleEvents();
+
+		void setSpawnPosition(
+			Vector2f pos) { m_position = pos; }
+		
+		void checkCollisionTypes(
+			Tile* tileTypes,
+			int dimW);
 
         //Weapon action on activation of space key.
-        void Action();
+        void action();
     private:
-		void CheckCollisionTypes(Tile* tileTypes, int dimW);
+        Vector2f m_velocityGoal;
+        int m_playerSpeed;
+		int m_slipAmount;
 
-        Vector2f velocityGoal;
-        int playerSpeed;
-		int slipAmount;
-
-        bool isCollided;
+        bool m_isCollided;
 
 		//Attributes
-		Texture staminaBar;
-		int stamina;
+		Texture m_staminaBar;
+		int m_stamina;
 
-		Weapon* weapon;
+		Weapon* m_weapon;
 };
 
 class Cursor : public Singleton<Cursor>, public Entity
 {
     public:
-        Cursor() {tex.loadFromFile("res/cursor.png");}
+        Cursor() { m_texture.loadFromFile("res/cursor.png") ;}
 
-        void Render() const;
-        void Update(float deltaTime);
+        void render() const;
+        void update(float deltaTime);
 };

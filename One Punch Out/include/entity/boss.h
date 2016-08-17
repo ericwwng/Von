@@ -10,9 +10,9 @@
 class Boss
 {
 	public:
-		void Render() {};
-		void Update() {};
-		void HandleEvents() {};
+		void render() {};
+		void update() {};
+		void handleEvents() {};
 
 		void phaseOne() {};
 		void phaseTwo() {};
@@ -30,7 +30,7 @@ class Boss
 
 		AABB m_collisionBox;
 
-		Texture m_tex;
+		Texture m_texture;
 		SpriteSheet m_spriteSheet;
 
 		GLubyte m_phaseNumber;

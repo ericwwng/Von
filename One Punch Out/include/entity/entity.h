@@ -10,22 +10,22 @@
 class Entity
 {
     public:
-        void Render() {};
-        void Update() {};
-        void HandleEvents() {};
+        void render() {};
+        void update() {};
+        void handleEvents() {};
 
-        Vector2f& getPosition() {return position;}
+        Vector2f& getPosition() { return m_position; }
 
-        AABB& getCollisionBox() {return collisionBox;}
+        AABB& getCollisionBox() { return m_collisionBox; }
     protected:
-        Vector2f position;
-        Vector2f velocity;
-        Vector2f direction;
+        Vector2f m_position;
+        Vector2f m_velocity;
+        Vector2f m_direction;
 
-        float angle;
+        float m_angle;
 
-        AABB collisionBox;
+        AABB m_collisionBox;
 
-        Texture tex;
-		SpriteSheet spriteSheet;
+        Texture m_texture;
+		SpriteSheet m_spriteSheet;
 };

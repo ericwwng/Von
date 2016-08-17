@@ -9,18 +9,27 @@ class Projectile : public Entity
     public:
         virtual ~Projectile() {}
 
-		virtual void Reload(Vector2f pos, Vector2f vel, float a, float s);
+		virtual void reload(
+			Vector2f pos,
+			Vector2f vel,
+			float a,
+			float s);
 
-		virtual void Render() const {}
-		virtual void Update(float deltaTime) {}
+		virtual void render() const {}
+		virtual void update(
+			float deltaTime) {}
 
-        void setProjectileSpeed(int speed);
+        void setProjectileSpeed(
+			int speed);
 
-        void setActive(bool a);
+        void setActive(
+			bool a);
         bool isActive() const;
     protected:
-        int projectileSpeed;
+        int m_projectileSpeed;
 
         //whether projectile is on screen or not
-        bool active;
+        bool m_active;
+
+		AABB m_collisionBox;
 };

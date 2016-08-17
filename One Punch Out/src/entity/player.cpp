@@ -1,147 +1,160 @@
 #include "entity/player.h"
 
-void Cursor::Render() const
+void Cursor::render() const
 {
-	Vector2f rotationPoint = { tex.getWidth() / 2.f, tex.getHeight() / 2.f };
-	tex.Render(position.x - tex.getWidth() / 2.f, position.y - tex.getHeight() / 2.f, NULL, angle, &rotationPoint);
+	Vector2f rotationPoint = { m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
+	m_texture.render(m_position.x - m_texture.getWidth() / 2.f, m_position.y - m_texture.getHeight() / 2.f, NULL, m_angle, &rotationPoint);
 }
 
-void Cursor::Update(float deltaTime)
+void Cursor::update(
+	float deltaTime)
 {
     int x, y;
     SDL_GetMouseState(&x, &y);
 
-	position.x = (GLfloat)x + Camera::getInstance().collisionBox.position.x;
-	position.y = (GLfloat)y + Camera::getInstance().collisionBox.position.y;
-    angle += 100 * deltaTime;
-    collisionBox = {Vector2f(position.x, position.y), 1, 1};
+	m_position.x = (GLfloat)x + Camera::getInstance().m_collisionBox.position.x;
+	m_position.y = (GLfloat)y + Camera::getInstance().m_collisionBox.position.y;
+	m_angle += 100 * deltaTime;
+	m_collisionBox = {Vector2f(m_position.x, m_position.y), 1, 1};
 }
 
-Player::Player(Vector2f pos)
+Player::Player()
 {
-    angle = 0.f;
-    position = pos;
+	m_angle = 0.f;
+	m_position = {0, 0};
 
-    playerSpeed = 4; //Will become 4 * 100 = 400 afted deltatime inclusion
-	slipAmount = 15; //Default
+	m_playerSpeed = 4; //Will become 4 * 100 = 400 afted deltatime inclusion
+	m_slipAmount = 15; //Default
 
-    tex.loadFromFile("res/player.png");
+	m_texture.loadFromFile("res/player.png");
 
-	staminaBar.loadFromFile("res/GUI/staminabar.png");
-	stamina = 256;
+	m_staminaBar.loadFromFile("res/GUI/staminabar.png");
+	m_stamina = 256;
 
-	weapon = new Gun();
+	m_weapon = new Gun();
 }
 
-Player::~Player()
+void Player::render() const
 {
-	delete weapon;
+	Vector2f _rotationPoint = { m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
+	m_texture.render(m_position.x, m_position.y, NULL, m_angle, &_rotationPoint);
+	Rectf _box = { m_collisionBox.position.x, m_collisionBox.position.y, 32, 32 };
+	if (g_showCollisionBox) renderEmptyBox(_box, color(0, 255, 0, 255));
+	m_weapon->render();
 }
 
-void Player::Render() const
+void Player::renderUI() const
 {
-	Vector2f rotationPoint = { tex.getWidth() / 2.f, tex.getHeight() / 2.f };
-	tex.Render(position.x, position.y, NULL, angle, &rotationPoint);
-	Rectf box = { collisionBox.position.x, collisionBox.position.y, 32, 32 };
-	if (showCollisionBox) renderEmptyBox(box, color(0, 255, 0, 255));
-	weapon->Render();
+	Rectf _staminaBarClip = { 0.f, 0.f, (GLfloat)m_stamina, 32.f };
+	m_staminaBar.render(Camera::getInstance().m_collisionBox.position.x + 32,
+		Camera::getInstance().m_collisionBox.position.y + 64, &_staminaBarClip);
 }
 
-void Player::RenderUI() const
+void Player::handleEvents()
 {
-	Rectf staminaBarClip = { 0.f, 0.f, (GLfloat)stamina, 32.f };
-	staminaBar.Render(Camera::getInstance().collisionBox.position.x + 32, Camera::getInstance().collisionBox.position.y + 64, &staminaBarClip);
-}
+	m_velocityGoal = { 0, 0 };
+    const Uint8* _currentKeyStates = SDL_GetKeyboardState( NULL );
 
-void Player::HandleEvents()
-{
-    velocityGoal = { 0, 0 };
-    const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+    if (_currentKeyStates[SDL_SCANCODE_W])        m_velocityGoal.y = (float)-m_playerSpeed;
+    if (_currentKeyStates[SDL_SCANCODE_A])        m_velocityGoal.x = (float)-m_playerSpeed;
+    if (_currentKeyStates[SDL_SCANCODE_S])        m_velocityGoal.y = (float)m_playerSpeed;
+    if (_currentKeyStates[SDL_SCANCODE_D])        m_velocityGoal.x = (float)m_playerSpeed;
+	if (_currentKeyStates[SDL_SCANCODE_SPACE])    m_weapon->action();
 
-    if (currentKeyStates[SDL_SCANCODE_W])        velocityGoal.y = (float)-playerSpeed;
-    if (currentKeyStates[SDL_SCANCODE_A])        velocityGoal.x = (float)-playerSpeed;
-    if (currentKeyStates[SDL_SCANCODE_S])        velocityGoal.y = (float)playerSpeed;
-    if (currentKeyStates[SDL_SCANCODE_D])        velocityGoal.x = (float)playerSpeed;
-	if (currentKeyStates[SDL_SCANCODE_SPACE])    weapon->Action();
-
-	if (event.type == SDL_MOUSEBUTTONDOWN)
-		weapon->Action();
+	if (g_event.type == SDL_MOUSEBUTTONDOWN)
+		m_weapon->action();
 }
 
 //Collision for player to tile handling
-void Player::CheckCollisionTypes(Tile* tileTypes, int dimW)
+void Player::checkCollisionTypes(
+	Tile* tileTypes, 
+	int dimW)
 {
 	for (int i = 0; i < 5; i++)
 		for (int ii = 0; ii < 5; ii++)
-			if((i + (int)floor(collisionBox.position.y / 16)) * dimW + (ii + (int)floor(collisionBox.position.x / 16)) > 0)
-				if (Collision(collisionBox, tileTypes[(i + (int)floor(collisionBox.position.y / 16)) * dimW + (ii + (int)floor(collisionBox.position.x / 16))].collisionBox))
+			if((i + (int)floor(m_collisionBox.position.y / 16)) * dimW + (ii + (int)floor(m_collisionBox.position.x / 16)) > 0)
+				if (Collision(m_collisionBox, tileTypes[(i + (int)floor(m_collisionBox.position.y / 16)) * dimW + 
+					(ii + (int)floor(m_collisionBox.position.x / 16))].m_collisionBox))
 				{
-					switch (tileTypes[(i + (int)floor(collisionBox.position.y / 16)) * dimW + (ii + (int)floor(collisionBox.position.x / 16))].id)
+					switch (tileTypes[(i + (int)floor(m_collisionBox.position.y / 16)) * dimW +
+						(ii + (int)floor(m_collisionBox.position.x / 16))].m_id)
 					{
 						case 1: //Solid
-							isCollided = true;
-						break;
+						{
+							m_isCollided = true;
+						} break;
 
 						case 2: //Slow
-							playerSpeed = 2;
-						break;
+						{
+							m_playerSpeed = 2;
+						} break;
 
 						case 3: //Slippery
-							slipAmount = 10;
-							playerSpeed = 6;
-						break;
+						{
+							m_slipAmount = 10;
+							m_playerSpeed = 6;
+						} break;
 
 						case 4: //Solid
-							isCollided = true;
-						break;
+						{
+							m_isCollided = true;
+						} break;
 
 						case 5: //Solid
-							isCollided = true;
-						break;
+						{
+							m_isCollided = true;
+						} break;
 					}
 				}
 }
 
-void Player::Update(float deltaTime, Tile* tileTypes, int dimW, int dimH)
+void Player::update(
+	float deltaTime,
+	Tile* tileTypes,
+	int dimW,
+	int dimH)
 {
-	static Vector2f tempVelocity;
-	playerSpeed = 4;
+	static Vector2f _tempVelocity;
+	m_playerSpeed = 4;
 
-	tempVelocity.x = LerpApproach(velocityGoal.x, tempVelocity.x, deltaTime * slipAmount);
-	tempVelocity.y = LerpApproach(velocityGoal.y, tempVelocity.y, deltaTime * slipAmount);
-	velocity = tempVelocity * deltaTime * 100;
+	_tempVelocity.x = lerpApproach(m_velocityGoal.x, _tempVelocity.x, deltaTime * m_slipAmount);
+	_tempVelocity.y = lerpApproach(m_velocityGoal.y, _tempVelocity.y, deltaTime * m_slipAmount);
+	m_velocity = _tempVelocity * deltaTime * 100;
 
-	slipAmount = 20;
+	m_slipAmount = 20;
 
 	//Update x values to allow wall sliding
-	isCollided = false;
-	position.x = position.x + velocity.x;
-	collisionBox = { Vector2f(position.x + 20, position.y + 20), 32, 32 };
-	CheckCollisionTypes(tileTypes, dimW);
-	if (isCollided || collisionBox.position.x < 0 || collisionBox.position.x + collisionBox.width > dimW * 16)
-		position.x = position.x - velocity.x;
+	m_isCollided = false;
+	m_position.x = m_position.x + m_velocity.x;
+	m_collisionBox = { Vector2f(m_position.x + 20, m_position.y + 20), 32, 32 };
+	checkCollisionTypes(tileTypes, dimW);
+	if (m_isCollided || m_collisionBox.position.x < 0 || m_collisionBox.position.x + m_collisionBox.width > dimW * 16)
+		m_position.x = m_position.x - m_velocity.x;
 
 	//Update y values to allow wall sliding
-	isCollided = false;
-	position.y = position.y + velocity.y;
-	collisionBox = { Vector2f(position.x + 20, position.y + 20), 32, 32 };
-	CheckCollisionTypes(tileTypes, dimW);
-	if (isCollided || collisionBox.position.y < 0 || collisionBox.position.y + collisionBox.height > dimH * 16)
-		position.y = position.y - velocity.y;
+	m_isCollided = false;
+	m_position.y = m_position.y + m_velocity.y;
+	m_collisionBox = { Vector2f(m_position.x + 20, m_position.y + 20), 32, 32 };
+	checkCollisionTypes(tileTypes, dimW);
+	if (m_isCollided || m_collisionBox.position.y < 0 || m_collisionBox.position.y + m_collisionBox.height > dimH * 16)
+		m_position.y = m_position.y - m_velocity.y;
 
-	Camera::getInstance().collisionBox.position.x = position.x - SCREEN_WIDTH / 2;
-	Camera::getInstance().collisionBox.position.y = position.y - SCREEN_HEIGHT / 2;
+	Camera::getInstance().m_collisionBox.position.x = m_position.x - SCREEN_WIDTH / 2;
+	Camera::getInstance().m_collisionBox.position.y = m_position.y - SCREEN_HEIGHT / 2;
 	
-	if (Camera::getInstance().collisionBox.position.x < 0) Camera::getInstance().collisionBox.position.x = 0;
-	if (Camera::getInstance().collisionBox.position.y < 0) Camera::getInstance().collisionBox.position.y = 0;
-	if (Camera::getInstance().collisionBox.position.x + Camera::getInstance().collisionBox.width > dimW * 16) Camera::getInstance().collisionBox.position.x = dimW * 16.f - Camera::getInstance().collisionBox.width;
-	if (Camera::getInstance().collisionBox.position.y + Camera::getInstance().collisionBox.height > dimH * 16) Camera::getInstance().collisionBox.position.y = dimH * 16.f - Camera::getInstance().collisionBox.height;
+	if (Camera::getInstance().m_collisionBox.position.x < 0) Camera::getInstance().m_collisionBox.position.x = 0;
+	if (Camera::getInstance().m_collisionBox.position.y < 0) Camera::getInstance().m_collisionBox.position.y = 0;
+	if (Camera::getInstance().m_collisionBox.position.x + Camera::getInstance().m_collisionBox.width > dimW * 16)
+		Camera::getInstance().m_collisionBox.position.x = dimW * 16.f - Camera::getInstance().m_collisionBox.width;
+	if (Camera::getInstance().m_collisionBox.position.y + Camera::getInstance().m_collisionBox.height > dimH * 16)
+		Camera::getInstance().m_collisionBox.position.y = dimH * 16.f - Camera::getInstance().m_collisionBox.height;
   
-	weapon->Update(position, angle, deltaTime);
-	direction = Cursor::getInstance().getPosition() - Vector2f(position.x + collisionBox.width / 2, position.y + collisionBox.height / 2);
-	direction = direction.Normalized();
-	angle = (float)(atan2(direction.y, direction.x) * (180.f / PI));
-	direction = Cursor::getInstance().getPosition() - weapon->getPosition();
-	direction = direction.Normalized();
-	weapon->setDirection(direction);
+	m_weapon->update(m_position, m_angle, deltaTime);
+	m_direction = Cursor::getInstance().getPosition() - 
+		Vector2f(m_position.x + m_collisionBox.width / 2, m_position.y + m_collisionBox.height / 2);
+	m_direction = m_direction.normalized();
+	m_angle = (float)(atan2(m_direction.y, m_direction.x) * (180.f / PI));
+	m_direction = Cursor::getInstance().getPosition() - m_weapon->getPosition();
+	m_direction = m_direction.normalized();
+	m_weapon->setDirection(m_direction);
 }
