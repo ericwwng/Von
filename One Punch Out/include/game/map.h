@@ -10,26 +10,29 @@
 #include "game/camera.h"
 
 #include "entity/enemy.h"
-#include "entity/bosses/swordboss.h"
+#include "entity/bosses/satoriboss.h"
+#include "entity/bosses/pikachuboss.h"
 
 #include "gfx/spritesheet.h"
 #include "gfx/texutils.h"
 
+#include "sfx/music.h"
+
 #include "utils/Vector2f.h"
 #include "physics/AABB.h"
 
-struct Tile
+class Tile
 {
-public:
-	Tile();
-	Tile(
-		Vector2f pos,
-		GLubyte tileType);
+	public:
+		Tile();
+		Tile(
+			Vector2f pos,
+			GLubyte tileType);
 
-	void render();
+		void render();
 
-	AABB m_collisionBox;
-	GLubyte m_id; //on the tilesheet
+		AABB m_collisionBox;
+		GLubyte m_id; //on the tilesheet
 };
 
 class Map
@@ -43,7 +46,7 @@ class Map
         void renderSolidTiles();
 
 		void saveMap();
-		void loadMap(
+		int loadMap(
 			std::string p_filename);
 		std::string getFilename() { return m_filename; }
 
@@ -59,7 +62,12 @@ class Map
 		void setSolid(
 			GLuint tileIndex
 			, Uint8 id) { m_solidTiles[tileIndex].m_id = id; }
-    private:
+
+		bool hasBoss() { return m_boss != NULL ? true : false; }
+		Boss* getBoss() { return m_boss; }
+
+		Bgm* getBgm() { return &m_levelBgm; }
+	private:
 		std::string m_filename;
 		std::string m_worldName;
 
@@ -73,5 +81,7 @@ class Map
 
         GLubyte m_width, m_height; //should be image res / 8
 
-		SwordBoss* m_boss;
+		Bgm m_levelBgm;
+
+		Boss* m_boss;
 };

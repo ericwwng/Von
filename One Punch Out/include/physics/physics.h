@@ -7,7 +7,7 @@ float lerpApproach(
 	float Current, 
 	float deltaTime);
 
-inline GLdouble distanceSquared(
+GLdouble distanceSquared(
 	Vector2f a,
 	Vector2f b);
 

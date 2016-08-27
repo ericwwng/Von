@@ -15,6 +15,7 @@ class Entity
         void handleEvents() {};
 
         Vector2f& getPosition() { return m_position; }
+		inline void setPosition(Vector2f pos) { m_position = pos; }
 
         AABB& getCollisionBox() { return m_collisionBox; }
     protected:

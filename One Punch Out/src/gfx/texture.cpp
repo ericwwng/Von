@@ -18,8 +18,9 @@ Texture::~Texture()
 
 void Texture::loadFromFile(
 	const char* path,
-	GLuint w, 
-	GLuint h)
+	GLuint w,
+	GLuint h,
+	bool printLoaded)
 {
 	free();
 
@@ -69,7 +70,7 @@ void Texture::loadFromFile(
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
 	if (glGetError() != GL_NO_ERROR)
-		printf("Error loading texture! %s\n", gluErrorString(glGetError()));
+		printf("Error loading texture! %s Path:%s \n", gluErrorString(glGetError()), path);
 
 	///Initialize VBO
 	if (m_texture != 0 && m_VBOid == 0)
@@ -97,6 +98,8 @@ void Texture::loadFromFile(
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
 	}
+
+	if(printLoaded) printf("Loaded %s\n", path);
 
 	SDL_FreeSurface(_surface);
 }
@@ -189,11 +192,13 @@ void Texture::setAlpha(
 }
 
 void Texture::render(
-	GLfloat x, 
-	GLfloat y, 
-	Rectf* clip, 
-	float angle, 
-	Vector2f* center, 
+	GLfloat x,
+	GLfloat y,
+	Rectf* clip,
+	GLfloat stretchWidth,
+	GLfloat stretchHeight,
+	float angle,
+	Vector2f* center,
 	SDL_Color color) const
 {
 	if (m_texture != 0)
@@ -206,16 +211,26 @@ void Texture::render(
 		if (clip != NULL)
 		{
 			//Convert to texture coordinates
-			texCoords = { clip->y / m_height, (clip->y + clip->h) / m_height, clip->x / m_width, (clip->x + clip->w) / m_width };
+			texCoords = { clip->y / m_height, (clip->y + clip->h) / m_height,
+				 clip->x / m_width, (clip->x + clip->w) / m_width };
 
 			quadWidth = clip->w;
 			quadHeight = clip->h;
 		}
 
+		if (stretchWidth || stretchHeight)
+		{
+			//(TODO) Possibly add an if statement for clipping
+			quadWidth = stretchWidth;
+			quadHeight = stretchHeight;
+		}
+
+
 		glPopMatrix();
 		glPushMatrix();
 
 		glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+		if(g_isPlayerDead) glColor4f(255.f, 0, 0, 255.f);
 
 		glTranslatef(x, y, 0.f);
 
@@ -237,7 +252,7 @@ void Texture::render(
 		vData[1].position.x = quadWidth;	vData[1].position.y = 0.f;
 		vData[2].position.x = quadWidth;	vData[2].position.y = quadHeight;
 		vData[3].position.x = 0.f;			vData[3].position.y = quadHeight;
-	
+
 		glBindTexture(GL_TEXTURE_2D, m_texture);
 
 		glEnableClientState(GL_VERTEX_ARRAY);

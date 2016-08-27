@@ -1,7 +1,7 @@
 #include "game/application.h"
 
 Application::Application() :
-    m_appState(appRunning),
+    m_appState(APP_INITIALZING),
 	m_countedFrames(0)
 {
     printf("Application Initializing... \n");
@@ -12,7 +12,7 @@ Application::Application() :
 		//Use OpenGL 2.1
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-	
+
 		g_window = SDL_CreateWindow("One Punch Out", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 		if(g_window == NULL)
 			printf("Window could not be created!\n");
@@ -65,11 +65,13 @@ Application::Application() :
 	if (glGetError() != GL_NO_ERROR)
 		printf("Error initializing OpenGL! %s\n", gluErrorString(glGetError()));
 
+	srand(static_cast <unsigned> (time(0)));
+
 	changeFontSize(64);
 
 	g_gameState = new Menu();
 	//g_gameState = new Level("Dungeons/World/World.dmm");
-	
+
 	changeFontSize(16);
 }
 
@@ -86,11 +88,16 @@ Application::~Application()
 	Mix_Quit();
 }
 
+void Application::setAppState(appstate appState)
+{
+    m_appState = appState;
+}
+
 void Application::run()
 {
-	m_appState = appRunning;
+	m_appState = APP_RUNNING;
     printf("Application State: Running \n");
-	while (m_appState != appExiting)
+	while (m_appState != APP_EXITING)
     {
 		m_fpsTimer.start();
 		deltaTime_f = m_deltaTimer.getTicks() / 1000.f;
@@ -119,11 +126,8 @@ void Application::loop()
     ///----------------
     /// Game Update
     ///----------------
-	while (SDL_PollEvent(&g_event) != 0)
+	while (SDL_PollEvent(&g_event))
 	{
-		if (g_event.type == SDL_QUIT)
-			m_appState = appExiting;
-		
 		if (g_event.type == SDL_KEYUP)
 			if (g_event.key.keysym.sym == SDLK_LSHIFT)
 				g_showCollisionBox = !g_showCollisionBox;

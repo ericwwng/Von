@@ -12,8 +12,6 @@
 
 #include "gfx/texture.h"
 
-#include "utils/Vector2f.h"
-
 #include "entity/entity.h"
 #include "entity/weapon.h"
 #include "entity/weapons/gun.h"
@@ -29,15 +27,17 @@ class Player : public Singleton<Player>, public Entity
 			float deltaTime,
 			Tile* tileTypes,
 			int dimW,
-			int dimH);
+			int dimH,
+			CircleProjectile* projectiles);
         void handleEvents();
 
-		void setSpawnPosition(
-			Vector2f pos) { m_position = pos; }
-		
+		void setSpawnPosition(Vector2f pos) { m_position = pos; }
+
 		void checkCollisionTypes(
 			Tile* tileTypes,
 			int dimW);
+
+        void setPlayerHealth(int health) { m_health = health; }
 
         //Weapon action on activation of space key.
         void action();
@@ -49,10 +49,14 @@ class Player : public Singleton<Player>, public Entity
         bool m_isCollided;
 
 		//Attributes
-		Texture m_staminaBar;
-		int m_stamina;
+		Texture m_healthBar;
+		int m_health;
 
 		Weapon* m_weapon;
+
+        CircleProjectile m_collisionCircle;
+
+        Timer m_collisionTimer;
 };
 
 class Cursor : public Singleton<Cursor>, public Entity

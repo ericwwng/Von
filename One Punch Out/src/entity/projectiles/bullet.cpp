@@ -2,7 +2,7 @@
 
 Bullet::Bullet()
 {
-	m_texture.loadFromFile("res/Projectile/bullet.png");
+	m_texture.loadFromFile("res/Projectile/bullet.png", 8, 8);
 	m_active = false;
 }
 
@@ -14,7 +14,7 @@ Bullet::~Bullet()
 void Bullet::render() const
 {
 	Vector2f _rotationPoint = { m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
-	m_texture.render(m_position.x, m_position.y, NULL, m_angle, &_rotationPoint);
+	m_texture.render(m_position.x, m_position.y, NULL, NULL, NULL, m_angle, &_rotationPoint);
 	Rectf _box = { m_position.x, m_position.y, (GLfloat)m_texture.getWidth(), (GLfloat)m_texture.getHeight() };
 	if (g_showCollisionBox) renderEmptyBox(_box, color(0, 255, 0, 255));
 }

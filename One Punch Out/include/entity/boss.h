@@ -1,5 +1,7 @@
 #pragma once
 
+#include "entity/projectiles/circleprojectile.h"
+
 #include "utils/Vector2f.h"
 
 #include "physics/AABB.h"
@@ -10,10 +12,11 @@
 class Boss
 {
 	public:
-		void render() {};
-		void update() {};
-		void handleEvents() {};
+		virtual void render() {};
+		virtual void update(float deltaTime) {};
+		virtual void handleEvents() {};
 
+		//This is more of an outline
 		void phaseOne() {};
 		void phaseTwo() {};
 		void phaseThree() {};
@@ -21,6 +24,8 @@ class Boss
 		Vector2f& getPosition() { return m_position; }
 
 		AABB& getCollisionBox() { return m_collisionBox; }
+
+		CircleProjectile* getProjectiles() { return m_Projectiles; }
 	protected:
 		Vector2f m_position;
 		Vector2f m_velocity;
@@ -28,10 +33,14 @@ class Boss
 
 		float m_angle;
 
+		float m_health;
+
 		AABB m_collisionBox;
 
 		Texture m_texture;
 		SpriteSheet m_spriteSheet;
 
-		GLubyte m_phaseNumber;
+		uint8_t m_phaseNumber;
+
+		CircleProjectile* m_Projectiles;
 };

@@ -5,17 +5,14 @@ SelectionItem::SelectionItem(
 	Vector2f pos, 
 	GLuint w,
 	GLuint h)
-{
+{	
 	m_worldName = path;
-	if (path == "0.opo")
-	{
-		m_messageTex.loadFromText("Boss 1", color(0, 0, 0, 255));
-	}
-	else
-		m_messageTex.loadFromText(path.c_str(), color(0, 0, 0, 255));
+
+	path.erase(path.end() - 4, path.end());
 	
+	m_messageTex.loadFromText(path.c_str(), color(0, 0, 0, 255));
 	
-	m_buttonTex.loadFromFile("res/GUI/button.png");
+	m_buttonTex.loadFromFile("res/GUI/button.png", w, h, false);
 	m_collisionBox = { Vector2f(pos.x, pos.y), w, h };
 
 	m_menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
@@ -32,32 +29,16 @@ SelectionItem::~SelectionItem()
 
 void SelectionItem::render() const
 {
-	glPopMatrix();
-		glTranslatef(m_collisionBox.position.x, m_collisionBox.position.y, 0.f);
-		glScalef((GLfloat)m_collisionBox.width / (GLfloat)m_buttonTex.getWidth(), (GLfloat)m_collisionBox.height / (GLfloat)m_buttonTex.getHeight(), 1.f);
-		glTranslatef(-m_collisionBox.position.x, -m_collisionBox.position.y, 0.f);
-	glPushMatrix();
-	m_buttonTex.render(m_collisionBox.position.x, m_collisionBox.position.y);
-	glPopMatrix();
-		glTranslatef(m_collisionBox.position.x, m_collisionBox.position.y, 0.f);
-		glScalef((GLfloat)m_buttonTex.getWidth() / (GLfloat)m_collisionBox.width, (GLfloat)m_buttonTex.getHeight() / (GLfloat)m_collisionBox.height, 1.f);
-		glTranslatef(-m_collisionBox.position.x, -m_collisionBox.position.y, 0.f);
-	glPushMatrix();
+	m_buttonTex.render(m_collisionBox.position.x, m_collisionBox.position.y, NULL, (GLfloat)m_collisionBox.width, (GLfloat)m_collisionBox.height);
 
-	glPopMatrix();
-		glTranslatef(m_collisionBox.position.x + (m_collisionBox.width / 6), m_collisionBox.position.y + (m_collisionBox.height / 6), 0.f);
-		glScalef((GLfloat)m_collisionBox.width / (GLfloat)m_messageTex.getWidth() / 1.5f, (GLfloat)m_collisionBox.height / (GLfloat)m_messageTex.getHeight() / 1.5f, 1.f);
-		glTranslatef(-m_collisionBox.position.x - (m_collisionBox.width / 6), -m_collisionBox.position.y - (m_collisionBox.height / 6), 0.f);
-	glPushMatrix();
-	m_messageTex.render(m_collisionBox.position.x + (m_collisionBox.width / 6), m_collisionBox.position.y + (m_collisionBox.height / 6));
-	glPopMatrix();
-		glTranslatef(m_collisionBox.position.x + (m_collisionBox.width / 6), m_collisionBox.position.y + (m_collisionBox.height / 6), 0.f);
-		glScalef((GLfloat)m_messageTex.getWidth() / (GLfloat)m_collisionBox.width * 1.5f, (GLfloat)m_messageTex.getHeight() / (GLfloat)m_collisionBox.height * 1.5f, 1.f);
-		glTranslatef(-m_collisionBox.position.x - (m_collisionBox.width / 6), -m_collisionBox.position.y - (m_collisionBox.height / 6), 0.f);
-	glPushMatrix();
+	m_messageTex.render(m_collisionBox.position.x + (m_collisionBox.width / 6),
+		m_collisionBox.position.y + (m_collisionBox.height / 6), NULL, (GLfloat)m_collisionBox.width / 1.5f, (GLfloat)m_collisionBox.height / 1.5f);
 
 	if (m_hover)
 	{
+		glPopMatrix();
+			glLoadIdentity();
+		glPushMatrix();
 		glColor4f(1.f, 1.f, 1.f, 0.5f);
 		glTranslatef(m_collisionBox.position.x, m_collisionBox.position.y, 0.f);
 		glBegin(GL_QUADS);

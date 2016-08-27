@@ -5,6 +5,12 @@ Timer::Timer()
 	m_startTicks = 0;
 }
 
+Timer::Timer(bool initialStart)
+{
+	m_startTicks = 0;
+	if(initialStart) start();
+}
+
 void Timer::start()
 {
 	m_started = true;

@@ -18,4 +18,5 @@ class Gun : public Weapon
 			float deltaTime);
     private:
         Projectile* m_bullets;
+        const int MAX_BULLET_AMOUNT = 3;
 };

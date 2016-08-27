@@ -1,12 +1,13 @@
 #include "game/editorstate.h"
 
 EditorState::EditorState(
-	std::string filename)
+	std::string filename,
+	std::string worldName)
 {
 	Camera::getInstance().setCoords(Vector2f(0, 0));
 	changeFontSize(16);
 
-	m_dungeon = new Map(filename, "");
+	m_dungeon = new Map(filename, worldName);
 
 	m_id = 0;
 
@@ -62,7 +63,7 @@ void EditorState::handleEvents()
 				{
 					m_id += 1;
 				} break;
-				case SDLK_4: 
+				case SDLK_4:
 				{
 					m_id += 10;
 				}break;
@@ -79,7 +80,7 @@ void EditorState::handleEvents()
 			SDL_GetMouseState(&x, &y);
 			switch (g_event.key.keysym.sym)
 			{
-				case SDLK_LEFT: 
+				case SDLK_LEFT:
 				{
 					SDL_WarpMouseInWindow(g_window, x - 16, y);
 				} break;
@@ -122,4 +123,13 @@ void EditorState::handleEvents()
 		m_dungeon->setSolid((m_dungeon->getDimW() * (y / 16)) + (x / 16), m_id);
 	}
 
+	while(SDL_PollEvent(&g_event))
+	{
+		if (g_event.type == SDL_QUIT)
+		{
+			changeFontSize(64);
+			m_dungeon->getBgm()->stopMusic();
+			g_gameState = new Menu();
+		}
+	}
 }

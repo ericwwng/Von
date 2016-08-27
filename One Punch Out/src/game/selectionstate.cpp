@@ -1,15 +1,17 @@
 #include "game/selectionstate.h"
 
 SelectionState::SelectionState(
-	bool goToEditor) :
+	bool goToEditor,
+	Bgm *menuTheme) :
 	m_goToEditorState(goToEditor)
 {
+	m_menuTheme = *menuTheme;
 	changeFontSize(64);
 
-	m_previewBackground.loadFromFile("res/GUI/menu-background.png");
+	m_previewBackground.loadFromFile("res/GUI/menu-background.png", 1280, 720);
 
-	int index = 0;
-	int skip = 0; //skip . and ..
+	int _index = 0;
+	int _skip = 0; //skip . and ..
 
 	printf("Loading levels...\n");
 
@@ -18,14 +20,15 @@ SelectionState::SelectionState(
 	{
 		while (m_ent = readdir(m_dir))
 		{
-			if (skip < 2)
+			if (_skip < 2)
 			{
-				skip++;
+				_skip++;
 				continue;
 			}
-			addSelectionItem(m_selectionItems, m_ent->d_name, Vector2f(SCREEN_WIDTH * 0.66f, (GLfloat)index * SCREEN_HEIGHT / 8), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 8);
-			
-			index++;
+			addSelectionItem(m_selectionItems, m_ent->d_name,
+				Vector2f(SCREEN_WIDTH * 0.66f, (GLfloat)_index * SCREEN_HEIGHT / 8), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 8);
+
+			_index++;
 		}
 		closedir(m_dir);
 	}
@@ -47,17 +50,7 @@ void SelectionState::render() const
 {
 	Camera::getInstance().update();
 
-	glPopMatrix();
-		glTranslatef(Camera::getInstance().m_collisionBox.position.x, Camera::getInstance().m_collisionBox.position.y, 0.f);
-		glScalef((GLfloat)SCREEN_WIDTH / (GLfloat)m_previewBackground.getWidth(), (GLfloat)SCREEN_HEIGHT / (GLfloat)m_previewBackground.getHeight(), 1.f);
-		glTranslatef(-Camera::getInstance().m_collisionBox.position.x, -Camera::getInstance().m_collisionBox.position.y, 0.f);
-	glPushMatrix();
-	m_previewBackground.render(Camera::getInstance().m_collisionBox.position.x, Camera::getInstance().m_collisionBox.position.y);
-	glPopMatrix();
-		glTranslatef(Camera::getInstance().m_collisionBox.position.x, Camera::getInstance().m_collisionBox.position.y, 0.f);
-		glScalef((GLfloat)m_previewBackground.getWidth() / (GLfloat)SCREEN_WIDTH, (GLfloat)m_previewBackground.getHeight() / (GLfloat)SCREEN_HEIGHT, 1.f);
-		glTranslatef(-Camera::getInstance().m_collisionBox.position.x, -Camera::getInstance().m_collisionBox.position.y, 0.f);
-	glPushMatrix();
+	m_previewBackground.render(0, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
 
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 		if (Collision(Camera::getInstance().m_collisionBox, m_selectionItems[i]->getCollisionBox()))
@@ -69,19 +62,20 @@ void SelectionState::render() const
 void SelectionState::update(
 	float deltaTime)
 {
-	if (Camera::getInstance().m_collisionBox.position.y + Camera::getInstance().m_collisionBox.height > 
+	if (Camera::getInstance().m_collisionBox.position.y + Camera::getInstance().m_collisionBox.height >
 		(SCREEN_HEIGHT / 8 * m_selectionItems.size())) Camera::getInstance().m_collisionBox.position.y =
 		(SCREEN_HEIGHT / 8 * m_selectionItems.size()) - (float)Camera::getInstance().m_collisionBox.height;
 	if (Camera::getInstance().m_collisionBox.position.y < 0) Camera::getInstance().m_collisionBox.position.y = 0;
-	
+
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 	{
 		if (m_selectionItems[i]->getClicked())
 		{
+			m_menuTheme.stopMusic();
 			std::string filepath = "Levels/" + m_selectionItems[i]->getWorldName();
 
 			if (m_goToEditorState)
-				g_gameState = new EditorState(filepath);
+				g_gameState = new EditorState(filepath, m_selectionItems[i]->getWorldName());
 			else
 				g_gameState = new Level(filepath, m_selectionItems[i]->getWorldName());
 		}
@@ -104,4 +98,13 @@ void SelectionState::handleEvents()
 		}
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 		m_selectionItems[i]->handleEvents();
+
+	while(SDL_PollEvent(&g_event))
+	{
+		if (g_event.type == SDL_QUIT)
+		{
+			changeFontSize(64);
+			g_gameState = new Menu();
+		}
+	}
 }

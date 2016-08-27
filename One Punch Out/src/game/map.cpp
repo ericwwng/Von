@@ -2,23 +2,39 @@
 
 Map::Map(
 	std::string filename,
-	std::string worldName) 
+	std::string worldName)
 {
 	m_solidTiles = NULL;
 	m_filename = filename;
 	m_worldName = worldName;
 
+	m_worldName.erase(m_worldName.end() - 4, m_worldName.end());
+
 	loadMap(filename);
 
-	if (m_worldName == "0.opo") //SwordBoss
+	m_boss = NULL;
+
+	if (m_worldName == "Satori")
 	{
+		printf("Boss is Satori\n");
+		m_boss = new Satori();
+		m_levelBgm.loadMusicFile("res/Music/bgm/3rdeyerag.ogg", 100);
+		m_levelBgm.playMusic();
+	}
+	else if (m_worldName == "Pikachu")
+	{
+		printf("Boss is Pikachu\n");
+		m_boss = new PikachuBoss();
+		m_levelBgm.loadMusicFile("res/Music/bgm/pikachuboss.mp3", 100);
+		m_levelBgm.playMusic();
 	}
 	else
 	{
+
 	}
 
 	//enemyEntities.push_back(e);
-	
+
 }
 
 Map::~Map()
@@ -42,7 +58,7 @@ void Map::renderSolidTiles()
 		}
 }
 
-/*void Map::renderObjectTiles() 
+/*void Map::renderObjectTiles()
 {
 	for (int i = 0; i < SCREEN_HEIGHT / 32 + 2; i++)
 		for (int ii = 0; ii < SCREEN_WIDTH / 32 + 2; ii++)
@@ -58,7 +74,7 @@ void Map::renderSolidTiles()
 }
 */
 
-void writeInt(
+inline static void writeInt(
 	std::ofstream& p_fileStream,
 	GLuint p_uint)
 {
@@ -67,14 +83,16 @@ void writeInt(
 	p_fileStream << GLubyte((p_uint & 0xFF00) >> 8);
 	p_fileStream << GLubyte((p_uint & 0xFF));
 }
-void writeShort(
+
+inline static void writeShort(
 	std::ofstream& p_fileStream,
 	GLushort p_ushort)
 {
 	p_fileStream << GLubyte((p_ushort & 0xFF00) >> 8);
 	p_fileStream << GLubyte((p_ushort & 0xFF));
 }
-void writeChar(
+
+inline static void writeChar(
 	std::ofstream& p_fileStream,
 	GLubyte p_uchar)
 {
@@ -124,7 +142,7 @@ void Map::saveMap()
 	std::cout << "Map saved." << std::endl;
 }
 
-GLubyte readChar(
+inline static GLubyte readChar(
 	char* p_file,
 	long& p_index)
 {
@@ -132,7 +150,7 @@ GLubyte readChar(
 	return GLubyte(p_file[p_index - 1]);
 }
 
-GLushort readShort(
+inline static GLushort readShort(
 	char* p_file,
 	long& p_index)
 {
@@ -142,7 +160,7 @@ GLushort readShort(
 	return _value;
 }
 
-GLuint readInt(
+inline static GLuint readInt(
 	char* p_file,
 	long& p_index)
 {
@@ -152,7 +170,7 @@ GLuint readInt(
 	return _value;
 }
 
-void Map::loadMap(
+int Map::loadMap(
 	std::string p_filename)
 {
 	printf("Reading %s of file %s\n", m_worldName.c_str(), p_filename.c_str());
@@ -163,8 +181,7 @@ void Map::loadMap(
 	if(!_file.good())
 	{
 		std::cout << "Error finding file " << p_filename << "." << std::endl;
-		//TODO: Create an empty map?
-		return;
+		return 1;
 	}
 
 	_file.seekg(0, _file.end);
@@ -178,7 +195,8 @@ void Map::loadMap(
 	if(_data[0] != '.' || _data[1] != 'O' || _data[2] != 'P' || _data[3] != 'O')
 	{
 		std::cout << "First 4 characters are not .OPO, file not trusted." << std::endl;
-		return;
+		//TODO: Create an empty map?
+		return 2;
 	}
 	_index = 4;
 
@@ -189,9 +207,11 @@ void Map::loadMap(
 
 	m_width = readChar(_data, _index);
 	m_height = readChar(_data, _index);
-	m_playerSpawnPosition = Vector2f(readShort(_data, _index), readShort(_data, _index));
+	GLushort _x = readShort(_data, _index);
+	GLushort _y = readShort(_data, _index);
+	m_playerSpawnPosition = Vector2f(_x, _y);
 	printf("Map Width: %d\nMap Height: %d \nPlayer Spawn: (%d, %d)\n",
-		m_width, m_height, (int)m_playerSpawnPosition.x / 16, (int)m_playerSpawnPosition.y / 16);
+		m_width, m_height, (int)m_playerSpawnPosition.x, (int)m_playerSpawnPosition.y);
 
 	int i = 0;
 	GLubyte _amt = 0;
@@ -210,9 +230,10 @@ void Map::loadMap(
 		}
 	}
 	printf("Map Loaded\n\n");
-	
+
 	_file.close();
 	delete[] _data;
+	return 0;
 }
 
 Tile::Tile() :
@@ -231,7 +252,7 @@ Tile::Tile(
 void Tile::render()
 {
 	Rectf box = { m_collisionBox.position.x, m_collisionBox.position.y, 16.f, 16.f };
-	if (g_showCollisionBox) renderEmptyBox(box, color(64, 64, 64, 128));
+	//if (g_showCollisionBox) renderEmptyBox(box, color(64, 64, 64, 128));
 	if (g_showCollisionBox)
 	{
 		switch(m_id)

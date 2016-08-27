@@ -8,7 +8,7 @@
 #include "game/camera.h"
 #include "game/map.h"
 
-#include "entity/player.h" 
+#include "entity/player.h"
 
 #include "gfx/texture.h"
 
@@ -19,7 +19,8 @@ class EditorState : public GameState
 {
 	public:
 		EditorState(
-			std::string filename);
+			std::string filename,
+			std::string worldName);
 		~EditorState();
 
 		void render() const;

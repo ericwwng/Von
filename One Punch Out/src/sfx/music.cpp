@@ -9,6 +9,7 @@ Bgm::Bgm(
 	const char* filename)
 {
 	m_Music = Mix_LoadMUS(filename);
+	Mix_VolumeMusic(m_volume);
 	if (m_Music == NULL)
 		printf("Failed to load music! Mix_GetError: %s\n", Mix_GetError());
 }
@@ -20,8 +21,11 @@ Bgm::~Bgm()
 }
 
 void Bgm::loadMusicFile(
-	const char* filename)
+	const char* filename,
+	int vol) 
 {
+	m_volume = vol;
+	Mix_VolumeMusic(m_volume);
 	Mix_FreeMusic(m_Music);
 	m_Music = Mix_LoadMUS(filename);
 	if (m_Music == NULL)
@@ -52,6 +56,24 @@ void Bgm::resumeMusic()
 	{
 		Mix_ResumeMusic();
 	}
+}
+
+void Bgm::fadeStopMusic()
+{
+	static bool _started = false;
+	if (!_started)
+	{
+		_started = true;
+		m_fadeStop.start();
+	}
+	if (m_fadeStop.getTicks() > 100)
+	{
+		m_volume -= 10;
+		Mix_VolumeMusic(m_volume);
+		m_fadeStop.start();
+	}
+	if(m_volume <= 0)
+		Mix_HaltMusic();
 }
 
 void Bgm::stopMusic()

@@ -4,6 +4,7 @@ SDL_Window* g_window = NULL;
 TTF_Font* g_font = NULL;
 SDL_Event g_event;
 bool g_showCollisionBox = false;
+bool g_isPlayerDead = false;
 GameState* g_gameState = NULL;
 
 FILE _iob[] = { *stdin, *stdout, *stderr };

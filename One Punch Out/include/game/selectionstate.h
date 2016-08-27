@@ -8,7 +8,7 @@
 #include "game/level.h"
 #include "game/camera.h"
 
-#include "entity/player.h" 
+#include "entity/player.h"
 
 #include "gfx/texture.h"
 
@@ -20,7 +20,8 @@ class SelectionState : public GameState
 {
 	public:
 		SelectionState(
-			bool goToEditor);
+			bool goToEditor,
+			Bgm *menuTheme);
 		~SelectionState();
 
 		void render() const;
@@ -36,4 +37,6 @@ class SelectionState : public GameState
 		struct dirent *m_ent;
 
 		bool m_goToEditorState;
+
+		Bgm m_menuTheme;
 };

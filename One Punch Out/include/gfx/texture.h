@@ -18,7 +18,8 @@ class Texture
 		void loadFromFile(
 			const char* path,
 			GLuint w = 32,
-			GLuint h = 32);
+			GLuint h = 32,
+			bool printLoaded = true);
 		void loadFromText(
 			const char* text,
 			SDL_Color color);
@@ -31,8 +32,10 @@ class Texture
 
 		void render(
 			GLfloat x,
-			GLfloat y, 
+			GLfloat y,
 			Rectf* clip = NULL,
+			GLfloat stretchWidth = NULL,
+            GLfloat stretchHeight = NULL,
 			float angle = 0.f,
 			Vector2f* center = NULL,
 			SDL_Color color = color(255, 255, 255, 255)) const;

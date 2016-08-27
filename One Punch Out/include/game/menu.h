@@ -1,10 +1,7 @@
 #pragma once
 
-#include "game/gamestate.h"
-#include "game/level.h"
+#include "game/application.h"
 #include "game/selectionstate.h"
-
-#include "entity/player.h"
 
 #include "gfx/texture.h"
 

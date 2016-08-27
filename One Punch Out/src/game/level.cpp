@@ -6,6 +6,7 @@ Level::Level(
 {
 	m_dungeon = new Map(filename, worldName);
 	Player::getInstance().setSpawnPosition(m_dungeon->getPlayerSpawn());
+	Player::getInstance().setPlayerHealth(3);
 }
 
 Level::~Level()
@@ -17,17 +18,21 @@ void Level::render() const
 {
 	Camera::getInstance().update();
 	m_dungeon->render();
-	Player::getInstance().render();
 	m_dungeon->renderSolidTiles();
+	if (m_dungeon->hasBoss()) m_dungeon->getBoss()->render();
+	Player::getInstance().render();
 	Player::getInstance().renderUI();
-    Cursor::getInstance().render();
+	Cursor::getInstance().render();
 }
 
 void Level::update(
 	float deltaTime)
 {
-	Player::getInstance().update(deltaTime, m_dungeon->getSolids(), m_dungeon->getDimW(), m_dungeon->getDimH());
-    Cursor::getInstance().update(deltaTime);
+	Player::getInstance().update(deltaTime, m_dungeon->getSolids(),
+ 		m_dungeon->getDimW(), m_dungeon->getDimH(), m_dungeon->getBoss()->getProjectiles());
+	if(m_dungeon->hasBoss()) m_dungeon->getBoss()->update(deltaTime);
+
+	Cursor::getInstance().update(deltaTime);
 }
 
 void Level::handleEvents()
@@ -41,4 +46,14 @@ void Level::handleEvents()
 		}
 
 	Player::getInstance().handleEvents();
+
+	while(SDL_PollEvent(&g_event))
+	{
+		if (g_event.type == SDL_QUIT)
+		{
+			changeFontSize(64);
+			m_dungeon->getBgm()->stopMusic();
+			g_gameState = new Menu();
+		}
+	}
 }

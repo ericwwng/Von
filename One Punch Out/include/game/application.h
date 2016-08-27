@@ -1,8 +1,8 @@
 #pragma once
 
-#include "utils/general.h"
 #include <iostream>
 #include <sstream>
+#include <ctime>
 
 #include "utils/general.h"
 #include "utils/singleton.h"
@@ -15,10 +15,10 @@
 #include "game/menu.h"
 #include "game/level.h"
 
-enum AppState {
-    appInitializing,
-    appRunning,
-    appExiting
+enum appstate {
+    APP_INITIALZING,
+    APP_RUNNING,
+    APP_EXITING
 };
 
 class Application : public Singleton<Application>
@@ -30,10 +30,12 @@ class Application : public Singleton<Application>
         void run();
         void loop();
 
+        void setAppState(appstate appState);
+
     private:
 		SDL_GLContext m_context;
 
-        AppState m_appState;
+        appstate m_appState;
 
         Timer m_deltaTimer, m_fpsTimer;
         float deltaTime_f;

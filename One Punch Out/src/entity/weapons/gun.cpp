@@ -5,7 +5,7 @@ Gun::Gun()
 	m_angle = 0.f;
 	m_texture.loadFromFile("res/Weapon/gun.png");
 
-	m_bullets = new Bullet[3];
+	m_bullets = new Bullet[MAX_BULLET_AMOUNT];
 
 	m_rateOfFire.start();
 }
@@ -17,7 +17,7 @@ Gun::~Gun()
 
 void Gun::action()
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < MAX_BULLET_AMOUNT; i++)
 		if (!m_bullets[i].isActive() && m_rateOfFire.getTicks() >= 200)
 		{
 			m_bullets[i].reload(m_position, m_weaponDirection, m_angle, 1000);
@@ -29,8 +29,8 @@ void Gun::action()
 void Gun::render() const
 {
 	Vector2f _rotationPoint = { 0.f, 0.f };
-	m_texture.render(m_position.x, m_position.y, NULL, m_angle, &_rotationPoint);
-	for (int i = 0; i < 3; i++)
+	m_texture.render(m_position.x, m_position.y, NULL, NULL, NULL, m_angle, &_rotationPoint);
+	for (int i = 0; i < MAX_BULLET_AMOUNT; i++)
 		if (m_bullets[i].isActive())
 			m_bullets[i].render();
 }
@@ -47,7 +47,7 @@ void Gun::update(
 
 	m_collisionBox = { m_position, 32, 16 };
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < MAX_BULLET_AMOUNT; i++)
 	{
 		if (m_bullets[i].isActive())
 			m_bullets[i].update(deltaTime);

@@ -6,6 +6,7 @@ class Timer
 {
     public:
 		Timer();
+        Timer(bool initialStart);
 
 		void start();
 		void stop();
