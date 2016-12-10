@@ -20,7 +20,7 @@ class Projectile : public Entity
 		void update(
 			float deltaTime);
 
-        void setProjectileSpeed(int speed) { m_projectileSpeed = speed; }
+        void multiplyVelocity(float speed) { m_velocity = m_velocity * speed; }
 
         void setActive(bool a) { m_active = a; }
         bool isActive() const { return m_active; }

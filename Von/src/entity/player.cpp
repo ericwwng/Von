@@ -78,11 +78,13 @@ void Player::handleEvents()
 //Collision for player to tile handling
 void Player::checkCollisionTypes(
 	Tile* tileTypes,
-	int dimW)
+	int dimW,
+	int dimH)
 {
 	for (int i = 0; i < 5; i++)
 		for (int ii = 0; ii < 5; ii++)
-			if((i + (int)floor(m_collisionBox.position.y / 16)) * dimW + (ii + (int)floor(m_collisionBox.position.x / 16)) > 0)
+			if((i + (int)floor(m_collisionBox.position.y / 16)) * dimW + (ii + (int)floor(m_collisionBox.position.x / 16)) > 0 && 
+				(i + (int)floor(m_collisionBox.position.y / 16)) * dimW + (ii + (int)floor(m_collisionBox.position.x / 16)) < dimW * dimH)
 				if (Collision(m_collisionBox, tileTypes[(i + (int)floor(m_collisionBox.position.y / 16)) * dimW +
 					(ii + (int)floor(m_collisionBox.position.x / 16))].m_collisionBox))
 				{
@@ -138,7 +140,7 @@ void Player::update(
 	m_isCollided = false;
 	m_position.x = m_position.x + m_velocity.x;
 	m_collisionBox = { Vector2f(m_position.x + 20, m_position.y + 20), 32, 32 };
-	checkCollisionTypes(tileTypes, dimW);
+	checkCollisionTypes(tileTypes, dimW, dimH);
 	if (m_isCollided || m_collisionBox.position.x < 0 || m_collisionBox.position.x + m_collisionBox.width > dimW * 16)
 		m_position.x = m_position.x - m_velocity.x;
 
@@ -146,7 +148,7 @@ void Player::update(
 	m_isCollided = false;
 	m_position.y = m_position.y + m_velocity.y;
 	m_collisionBox = { Vector2f(m_position.x + 20, m_position.y + 20), 32, 32 };
-	checkCollisionTypes(tileTypes, dimW);
+	checkCollisionTypes(tileTypes, dimW, dimH);
 	if (m_isCollided || m_collisionBox.position.y < 0 || m_collisionBox.position.y + m_collisionBox.height > dimH * 16)
 		m_position.y = m_position.y - m_velocity.y;
 

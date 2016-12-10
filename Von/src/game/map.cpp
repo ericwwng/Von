@@ -10,25 +10,6 @@ Map::Map(
 
 	loadMap(filename);
 
-	if (m_worldName == "Satori")
-	{
-		printf("Boss is Satori\n");
-		m_levelBgm.loadMusicFile("res/Music/bgm/3rdeyerag.ogg", 100);
-		m_levelBgm.playMusic();
-	}
-	else if (m_worldName == "Pikachu")
-	{
-		printf("Boss is Pikachu\n");
-		m_levelBgm.loadMusicFile("res/Music/bgm/pikachunouta.ogg", 100);
-		m_levelBgm.playMusic();
-	}
-	else
-	{
-
-	}
-
-	//enemyEntities.push_back(e);
-
 }
 
 Map::~Map()
@@ -109,7 +90,7 @@ void Map::newMap(
 	std::cout << "Saving map " << m_filename << std::endl;
 
 	_mkdir(std::string("Levels\\").c_str());
-	std::ofstream _file(m_filename, std::ios::binary);
+	std::ofstream _file("Levels\\" + m_filename, std::ios::binary);
 
 	_file << ".OPO";
 	writeChar(_file, m_backgroundNumber);
@@ -254,8 +235,9 @@ int Map::loadMap(
 	_index = 4;
 
 	m_backgroundNumber = readChar(_data, _index);
-	m_background.loadFromFile(std::string("res\\Backgrounds\\").append(1, m_backgroundNumber + '0').append(".png").c_str(), 1280, 1080);
-	std::string backgroundFile = std::string("res\\Backgrounds\\").append(1, m_backgroundNumber + '0').append(".png");
+	std::string backgroundFile = "res\\Backgrounds\\" + std::to_string(m_backgroundNumber);
+	backgroundFile.append(".png");
+	m_background.loadFromFile(backgroundFile.c_str(), 1280, 1080);
 	printf("Background number: %d  // Background: %s\n", m_backgroundNumber, backgroundFile.c_str());
 
 	m_width = readChar(_data, _index);

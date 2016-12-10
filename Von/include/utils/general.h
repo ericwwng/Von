@@ -30,4 +30,6 @@ extern TTF_Font* g_font;
 extern bool g_showCollisionBox;
 extern bool g_isPlayerDead;
 
+extern float g_volume;
+
 extern GameState* g_gameState;

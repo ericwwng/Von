@@ -9,8 +9,6 @@
 
 #include "game/camera.h"
 
-#include "entity/enemy.h"
-
 #include "gfx/spritesheet.h"
 #include "gfx/texutils.h"
 
@@ -67,14 +65,11 @@ class Map
 		void setSolid(
 			GLuint tileIndex
 			, Uint8 id) { m_solidTiles[tileIndex].m_id = id; }
-
-		Bgm* getBgm() { return &m_levelBgm; }
 	private:
 		std::string m_filename;
 		std::string m_worldName;
 
 		Tile* m_solidTiles;
-		std::vector<Enemy*> m_enemyEntities;
 
 		Vector2f m_playerSpawnPosition;
 
@@ -82,6 +77,4 @@ class Map
 		Texture m_background;
 
         GLubyte m_width, m_height; //should be image res / 8
-
-		Bgm m_levelBgm;
 };

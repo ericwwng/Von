@@ -13,8 +13,7 @@
 #include "gfx/texture.h"
 
 #include "entity/entity.h"
-#include "entity/weapon.h"
-#include "entity/weapons/gun.h"
+#include "entity/gun.h"
 
 class Player : public Singleton<Player>, public Entity
 {
@@ -34,10 +33,13 @@ class Player : public Singleton<Player>, public Entity
 
 		void checkCollisionTypes(
 			Tile* tileTypes,
-			int dimW);
+			int dimW,
+			int dimH);
 
         void setPlayerHealth(int health) { m_health = health; }
         int getPlayerHealth() { return m_health; }
+
+		Gun* getWeapon() { return m_weapon; }
 
         //Weapon action on activation of space key.
         void action();
@@ -52,7 +54,7 @@ class Player : public Singleton<Player>, public Entity
 		Texture m_healthBar;
 		int m_health;
 
-		Weapon* m_weapon;
+		Gun* m_weapon;
 
 		Projectile m_collisionCircle;
 };

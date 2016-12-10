@@ -20,6 +20,7 @@ class Satori : public Boss
 		void update(float deltaTime);
 
 		void phaseOne();
+		void phaseTwo();
 		void randomPhase();
 
 		void random360();

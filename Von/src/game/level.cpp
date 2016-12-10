@@ -12,12 +12,25 @@ Level::Level(
 
 	m_boss = NULL;
 
-	printf("%s", worldName.c_str());
+	printf("%s \n", worldName.c_str());
 
 	if (worldName == "Satori")
+	{
 		m_boss = new Satori();
-	else if (worldName == "Pikachu")
-		m_boss = new PikachuBoss();
+		m_levelBgm.loadMusicFile("res/Music/bgm/3rdeyerag.ogg");
+		m_levelBgm.playMusic();
+	}
+	else if (worldName == "BigMoney")
+	{
+		m_boss = new BigMoney();
+		m_levelBgm.loadMusicFile("res/Music/bgm/Big Money.ogg");
+		m_levelBgm.repeatMusic();
+	}
+	else if (worldName == "Transition")
+	{
+		m_levelBgm.loadMusicFile("res/Music/bgm/lolol.ogg");
+		m_levelBgm.playMusic();
+	}
 	else
 	{
 
@@ -67,7 +80,6 @@ void Level::handleEvents()
 		if (g_event.type == SDL_QUIT)
 		{
 			changeFontSize(64);
-			m_dungeon->getBgm()->stopMusic();
 			g_gameState = new Menu();
 		}
 	}

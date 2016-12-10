@@ -105,6 +105,7 @@ void EditorState::handleEvents()
 		{
 			m_dungeon->saveMap();
 			printf("Creating New Map\n");
+			m_dungeon->newMap(80, 45, 3, "BigMoney.opo");
 		}
 
 		if (g_event.key.keysym.sym == SDLK_ESCAPE)
@@ -128,7 +129,6 @@ void EditorState::handleEvents()
 		if (g_event.type == SDL_QUIT)
 		{
 			changeFontSize(64);
-			m_dungeon->getBgm()->stopMusic();
 			g_gameState = new Menu();
 		}
 	}

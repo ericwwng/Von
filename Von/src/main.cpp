@@ -5,6 +5,7 @@ TTF_Font* g_font = NULL;
 SDL_Event g_event;
 bool g_showCollisionBox = false;
 bool g_isPlayerDead = false;
+float g_volume = 0.25f;
 GameState* g_gameState = NULL;
 
 int main(int argc, char* args[])

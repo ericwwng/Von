@@ -1,11 +1,8 @@
 #include "game/selectionstate.h"
 
-SelectionState::SelectionState(
-	bool goToEditor,
-	Bgm *menuTheme) :
+SelectionState::SelectionState(bool goToEditor) :
 	m_goToEditorState(goToEditor)
 {
-	m_menuTheme = *menuTheme;
 	changeFontSize(64);
 
 	m_previewBackground.loadFromFile("res/GUI/menu-background.png", 1280, 720);
@@ -59,8 +56,7 @@ void SelectionState::render() const
 	Cursor::getInstance().render();
 }
 
-void SelectionState::update(
-	float deltaTime)
+void SelectionState::update(float deltaTime)
 {
 	if (Camera::getInstance().m_collisionBox.position.y + Camera::getInstance().m_collisionBox.height >
 		(SCREEN_HEIGHT / 8 * m_selectionItems.size())) Camera::getInstance().m_collisionBox.position.y =
@@ -71,7 +67,6 @@ void SelectionState::update(
 	{
 		if (m_selectionItems[i]->getClicked())
 		{
-			m_menuTheme.stopMusic();
 			std::string filepath = "Levels/" + m_selectionItems[i]->getWorldName();
 
 			if (m_goToEditorState)
@@ -94,7 +89,7 @@ void SelectionState::handleEvents()
 		{
 			changeFontSize(64);
 			delete g_gameState;
-			g_gameState = new Menu();
+			g_gameState = new Menu(false);
 		}
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 		m_selectionItems[i]->handleEvents();
@@ -104,7 +99,7 @@ void SelectionState::handleEvents()
 		if (g_event.type == SDL_QUIT)
 		{
 			changeFontSize(64);
-			g_gameState = new Menu();
+			g_gameState = new Menu(false);
 		}
 	}
 }

@@ -3,8 +3,31 @@
 Menu::Menu()
 {
 	m_background.loadFromFile("res/GUI/menu-background.png", 1280, 720);
-	m_menuTheme.loadMusicFile("res/Music/bgm/Firestorm.ogg", 80);
-	//m_menuTheme.repeatMusic();
+
+	m_menuTheme.loadMusicFile("res/Music/bgm/Shiver.ogg");
+	m_menuTheme.repeatMusic();
+
+	GLfloat offsetWidth = SCREEN_WIDTH * 0.75;
+
+	addButton(m_buttons, "Play Game", Vector2f(offsetWidth, SCREEN_HEIGHT / 6), SCREEN_WIDTH / 4, SCREEN_HEIGHT / 7);
+	addButton(m_buttons, "Map Editor", Vector2f(offsetWidth, SCREEN_HEIGHT / 3), SCREEN_WIDTH / 4, SCREEN_HEIGHT / 7);
+	addButton(m_buttons, "How to Play", Vector2f(offsetWidth, SCREEN_HEIGHT / 2), SCREEN_WIDTH / 4, SCREEN_HEIGHT / 7);
+	addButton(m_buttons, "Options", Vector2f(offsetWidth, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3)), SCREEN_WIDTH / 4, SCREEN_HEIGHT / 7);
+	addButton(m_buttons, "Exit Game", Vector2f(offsetWidth, SCREEN_HEIGHT - (SCREEN_HEIGHT / 6)), SCREEN_WIDTH / 4, SCREEN_HEIGHT / 7);
+
+	g_isPlayerDead = false;
+
+	Camera::getInstance().setCoords(Vector2f(0, 0));
+}
+
+Menu::Menu(bool playBgm)
+{
+	m_background.loadFromFile("res/GUI/menu-background.png", 1280, 720);
+	if(playBgm)
+	{
+		m_menuTheme.loadMusicFile("res/Music/bgm/Shiver.ogg");
+		m_menuTheme.repeatMusic();
+	}
 
 	GLfloat offsetWidth = SCREEN_WIDTH * 0.75;
 
@@ -33,19 +56,18 @@ void Menu::render() const
 	Cursor::getInstance().render();
 }
 
-void Menu::update(
-	float deltaTime)
+void Menu::update(float deltaTime)
 {
 	//Play Game
 	if (m_buttons[0]->getClicked())
 	{
-		g_gameState = new SelectionState(false, &m_menuTheme);
+		g_gameState = new SelectionState(false);
 		g_showCollisionBox = false;
 	}
 	//Editor State
 	if (m_buttons[1]->getClicked())
 	{
-		g_gameState = new SelectionState(true, &m_menuTheme);
+		g_gameState = new SelectionState(true);
 		g_showCollisionBox = true;
 	}
 	//Exit Game

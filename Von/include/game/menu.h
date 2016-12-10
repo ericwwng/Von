@@ -13,6 +13,7 @@ class Menu : public GameState
 {
 	public:
 		Menu();
+		Menu(bool playBgm);
 		~Menu();
 
 		void render() const;

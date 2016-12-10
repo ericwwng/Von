@@ -19,14 +19,11 @@
 class SelectionState : public GameState
 {
 	public:
-		SelectionState(
-			bool goToEditor,
-			Bgm *menuTheme);
+		SelectionState(bool goToEditor);
 		~SelectionState();
 
 		void render() const;
-		void update(
-			float deltaTime);
+		void update(float deltaTime);
 		void handleEvents();
 	private:
 		Texture m_previewBackground;

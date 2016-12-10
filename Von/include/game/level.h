@@ -7,7 +7,7 @@
 
 #include "entity/player.h"
 #include "entity/bosses/satoriboss.h"
-#include "entity/bosses/pikachuboss.h"
+#include "entity/bosses/moneyboss.h"
 
 class Level : public GameState
 {
@@ -25,4 +25,6 @@ class Level : public GameState
     private:
 		Map* m_dungeon;
 		Boss* m_boss;
+
+		Bgm m_levelBgm;
 };
