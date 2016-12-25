@@ -3,6 +3,8 @@
 #include "game/application.h"
 #include "game/selectionstate.h"
 
+#include "entity/cursor.h"
+
 #include "gfx/texture.h"
 
 #include "sfx/music.h"
@@ -16,12 +18,14 @@ class Menu : public GameState
 		Menu(bool playBgm);
 		~Menu();
 
-		void render() const;
+		void render();
 		void update(
 			float deltaTime_f);
 		void handleEvents();
 
 	private:
+		Cursor* m_cursor;
+
 		std::vector<Button*> m_buttons;
 
 		Texture m_background;

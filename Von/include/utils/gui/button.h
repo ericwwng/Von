@@ -1,14 +1,13 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "physics/AABB.h"
 
 #include "gfx/texture.h"
 
 #include "sfx/music.h"
-
-#include "entity/player.h"
 
 #include "utils/general.h"
 #include "utils/vector2f.h"
@@ -25,7 +24,7 @@ class Button
 		~Button();
 
 		void render() const;
-		void handleEvents();
+		void handleEvents(AABB cursorCollisionBox);
 
 		bool getClicked() { return m_click; }
 	private:

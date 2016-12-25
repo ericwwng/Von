@@ -3,9 +3,11 @@
 Gun::Gun()
 {
 	m_angle = 0.f;
-	m_texture.loadFromFile("res/gun.png");
+	m_texture.loadFromFile("res/Entity/gun.png");
 
 	m_bullet = new Projectile();
+
+	m_shootSfx.loadSoundFile("res/Music/sfx/shoot.wav");
 
 	m_bullet->loadTexture("res/Projectile/bullet.png");
 	m_bullet->setCollisionBox(8, 8);
@@ -23,9 +25,10 @@ void Gun::action()
 {
 	if (m_rateOfFire.getTicks() >= 500)
 	{
-		m_bullet->reload(m_position, m_weaponDirection, m_angle, 1000);
+		m_bullet->reload(m_position, m_weaponDirection, m_angle, 2000);
 		m_bullet->setActive(true);
 		m_rateOfFire.start();
+		m_shootSfx.playSound();
 	}
 }
 

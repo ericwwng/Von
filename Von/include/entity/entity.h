@@ -10,9 +10,9 @@
 class Entity
 {
     public:
-        void render() {};
-        void update() {};
-        void handleEvents() {};
+        virtual void render() {};
+        virtual void update() {};
+        virtual void handleEvents() {};
 
         Vector2f& getPosition() { return m_position; }
 		inline void setPosition(Vector2f pos) { m_position = pos; }

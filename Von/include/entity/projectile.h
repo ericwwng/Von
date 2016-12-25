@@ -17,18 +17,15 @@ class Projectile : public Entity
 			float s);
 
 		void render() const;
-		void update(
-			float deltaTime);
+		void update(float deltaTime);
 
         void multiplyVelocity(float speed) { m_velocity = m_velocity * speed; }
 
         void setActive(bool a) { m_active = a; }
         bool isActive() const { return m_active; }
 
-        void setCircleType(
-			GLubyte circleType);
-		void loadTexture(
-			char* filename);
+        void setCircleType(GLubyte circleType);
+		void loadTexture(char* filename);
 
 		void setScale(GLfloat xscale, GLfloat yscale);
         void setCollisionBox(GLuint width, GLuint height);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "entity/boss.h"
-#include "entity/player.h"
+#include "entity/warp.h"
 
 #include "utils/timer.h"
 
@@ -17,18 +17,26 @@ class BigMoney : public Boss
 		~BigMoney();
 
 		void render();
-		void update(float deltaTime);
+		void update(float deltaTime, Player* player);
 
 		void phaseOne();
-		void phaseTwo();
+		void phaseTwo(float deltaTime, Player* player);
+		void phaseThree(float deltaTime);
 
 		void random360();
-		void aimedShot();
+		void aimedShot(Vector2f position);
 		void explodeAttack(Vector2f position);
+		void implodeAttack();
 
 	private:
-		Timer m_collisionTimer;
+		const int MAX_PROJECTILE_AMOUNT = 1000;
 
-		unsigned int m_shootingRate;
-		unsigned int m_shootingSpeed;
+		SDL_Color m_healthColor;
+
+		Timer m_blinkTimer;
+		Timer m_collisionTimer;
+		Timer m_bossCollisionTimer;
+
+		float m_shootingRate;
+		float m_shootingSpeed;
 };

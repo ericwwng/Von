@@ -23,7 +23,7 @@ class EditorState : public GameState
 			std::string worldName);
 		~EditorState();
 
-		void render() const;
+		void render();
 		void update(
 			float deltaTime);
 		void handleEvents();
@@ -33,6 +33,7 @@ class EditorState : public GameState
 
 		bool m_goToEditorState;
 
+		Camera* m_camera;
 		Map* m_dungeon;
 
 		Uint8 m_id;

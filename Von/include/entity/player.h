@@ -12,21 +12,27 @@
 
 #include "gfx/texture.h"
 
+#include "sfx/music.h"
+
 #include "entity/entity.h"
 #include "entity/gun.h"
+#include "entity/cursor.h"
 
-class Player : public Singleton<Player>, public Entity
+class Player : public Entity
 {
     public:
 		Player();
+		~Player() = default;
 
-        void render() const;
-		void renderUI() const;
+        void render();
+		void renderUI(Camera* m_camera);
 		void update(
 			float deltaTime,
 			Tile* tileTypes,
 			int dimW,
-			int dimH);
+			int dimH,
+			Vector2f cursorPosition,
+			Camera* m_camera);
         void handleEvents();
 
 		void setSpawnPosition(Vector2f pos) { m_position = pos; }
@@ -36,6 +42,7 @@ class Player : public Singleton<Player>, public Entity
 			int dimW,
 			int dimH);
 
+		void setHit();
         void setPlayerHealth(int health) { m_health = health; }
         int getPlayerHealth() { return m_health; }
 
@@ -50,6 +57,8 @@ class Player : public Singleton<Player>, public Entity
 
         bool m_isCollided;
 
+		Sfx m_hitSfx;
+
 		//Attributes
 		Texture m_healthBar;
 		int m_health;
@@ -57,13 +66,4 @@ class Player : public Singleton<Player>, public Entity
 		Gun* m_weapon;
 
 		Projectile m_collisionCircle;
-};
-
-class Cursor : public Singleton<Cursor>, public Entity
-{
-    public:
-        Cursor() { m_texture.loadFromFile("res/cursor.png") ;}
-
-        void render() const;
-        void update(float deltaTime);
 };

@@ -145,7 +145,10 @@ void Application::loop()
 
     //Render current game state
     g_gameState->render();
-	m_fpsTex.render(Camera::getInstance().m_collisionBox.position.x, Camera::getInstance().m_collisionBox.position.y);
+	//m_fpsTex.render(Camera::getInstance().m_collisionBox.position.x, Camera::getInstance().m_collisionBox.position.y);
+	glPopMatrix();
+	glPushMatrix();
+	m_fpsTex.render(0, 0);
 
 	SDL_GL_SwapWindow(g_window);
 

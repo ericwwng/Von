@@ -51,11 +51,11 @@ void SelectionItem::render() const
 	}
 }
 
-void SelectionItem::handleEvents()
+void SelectionItem::handleEvents(AABB cursorCollisionBox)
 {
 	static bool _up;
 
-	if (Collision(Cursor::getInstance().getCollisionBox(), m_collisionBox))
+	if (Collision(cursorCollisionBox, m_collisionBox))
 	{
 		m_hover = true;
 		if (g_event.type == SDL_MOUSEMOTION)

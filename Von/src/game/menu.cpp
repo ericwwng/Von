@@ -2,6 +2,7 @@
 
 Menu::Menu()
 {
+	m_cursor = new Cursor();
 	m_background.loadFromFile("res/GUI/menu-background.png", 1280, 720);
 
 	m_menuTheme.loadMusicFile("res/Music/bgm/Shiver.ogg");
@@ -16,8 +17,6 @@ Menu::Menu()
 	addButton(m_buttons, "Exit Game", Vector2f(offsetWidth, SCREEN_HEIGHT - (SCREEN_HEIGHT / 6)), SCREEN_WIDTH / 4, SCREEN_HEIGHT / 7);
 
 	g_isPlayerDead = false;
-
-	Camera::getInstance().setCoords(Vector2f(0, 0));
 }
 
 Menu::Menu(bool playBgm)
@@ -42,18 +41,20 @@ Menu::Menu(bool playBgm)
 
 Menu::~Menu()
 {
+	delete m_cursor;
+
 	for (unsigned int i = 0; i < m_buttons.size(); i++)
 		delete m_buttons[i];
 }
 
-void Menu::render() const
+void Menu::render()
 {
 	m_background.render(0, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
 
 	for (unsigned int i = 0; i < m_buttons.size(); i++)
 		m_buttons[i]->render();
 
-	Cursor::getInstance().render();
+	m_cursor->render();
 }
 
 void Menu::update(float deltaTime)
@@ -74,13 +75,13 @@ void Menu::update(float deltaTime)
 	if (m_buttons[4]->getClicked())
 		Application::getInstance().setAppState(APP_EXITING);
 
-	Cursor::getInstance().update(deltaTime);
+	m_cursor->update(deltaTime, Vector2f(0, 0));
 }
 
 void Menu::handleEvents()
 {
 	for (unsigned int i = 0; i < m_buttons.size(); i++)
-		m_buttons[i]->handleEvents();
+		m_buttons[i]->handleEvents(m_cursor->getCollisionBox());
 
 	while(SDL_PollEvent(&g_event))
 	{

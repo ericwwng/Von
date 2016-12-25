@@ -4,7 +4,8 @@ EditorState::EditorState(
 	std::string filename,
 	std::string worldName)
 {
-	Camera::getInstance().setCoords(Vector2f(0, 0));
+	m_camera = new Camera();
+	m_camera->setCoords(Vector2f(0, 0));
 	changeFontSize(16);
 
 	m_dungeon = new Map(filename, worldName);
@@ -19,17 +20,15 @@ EditorState::~EditorState()
 
 }
 
-void EditorState::render() const
+void EditorState::render()
 {
-	Camera::getInstance().update();
-
 	m_dungeon->render();
 	m_dungeon->renderSolidTiles();
 }
 
 void EditorState::update(float deltaTime)
 {
-
+	m_camera->update();
 }
 
 void EditorState::handleEvents()
@@ -105,7 +104,7 @@ void EditorState::handleEvents()
 		{
 			m_dungeon->saveMap();
 			printf("Creating New Map\n");
-			m_dungeon->newMap(80, 45, 3, "BigMoney.opo");
+			m_dungeon->newMap(80, 45, 1, "Introduction.opo");
 		}
 
 		if (g_event.key.keysym.sym == SDLK_ESCAPE)

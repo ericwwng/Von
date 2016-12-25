@@ -51,12 +51,12 @@ void Projectile::setCircleType(GLubyte circleType)
 void Projectile::update(float deltaTime)
 {
 	m_position = m_position + (m_velocity * deltaTime);
-	if (m_position.x - Camera::getInstance().m_collisionBox.position.x + m_collisionBox.width < 0 || m_position.x
+	/*if (m_position.x - Camera::getInstance().m_collisionBox.position.x + m_collisionBox.width < 0 || m_position.x
 	- Camera::getInstance().m_collisionBox.position.x > SCREEN_WIDTH)
 		setActive(false);
 	if (m_position.y - Camera::getInstance().m_collisionBox.position.y + m_collisionBox.height < 0 || m_position.y
 	- Camera::getInstance().m_collisionBox.position.y > SCREEN_HEIGHT)
-		setActive(false);
+		setActive(false);*/
 
 	if(m_centeredBox)
 	{

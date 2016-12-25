@@ -1,24 +1,5 @@
 #include "entity/player.h"
 
-void Cursor::render() const
-{
-	Vector2f rotationPoint = { m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
-	m_texture.render(m_position.x - m_texture.getWidth() / 2.f, m_position.y - m_texture.getHeight() / 2.f,
-	 NULL, NULL, NULL, m_angle, &rotationPoint);
-}
-
-void Cursor::update(
-	float deltaTime)
-{
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-
-	m_position.x = (GLfloat)x + Camera::getInstance().m_collisionBox.position.x;
-	m_position.y = (GLfloat)y + Camera::getInstance().m_collisionBox.position.y;
-	m_angle += 100 * deltaTime;
-	m_collisionBox = {Vector2f(m_position.x, m_position.y), 1, 1};
-}
-
 Player::Player()
 {
 	m_angle = 0.f;
@@ -27,10 +8,12 @@ Player::Player()
 	m_playerSpeed = 4; //Will become 4 * 100 = 400 afted deltatime inclusion
 	m_slipAmount = 15; //Defaul`t
 
-	m_texture.loadFromFile("res/player.png", 32, 32);
+	m_texture.loadFromFile("res/Entity/player.png", 32, 32);
 
 	m_healthBar.loadFromFile("res/GUI/staminaBar.png", 255, 32);
 	m_health = 3;
+
+	m_hitSfx.loadSoundFile("res/Music/sfx/hit.wav");
 
 	m_weapon = new Gun();
 
@@ -39,7 +22,13 @@ Player::Player()
 	m_collisionCircle.setActive(true);
 }
 
-void Player::render() const
+void Player::setHit()
+{
+	m_health--;
+	m_hitSfx.playSound();
+}
+
+void Player::render()
 {
 	Vector2f _rotationPoint = { m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
 	m_texture.render(m_position.x, m_position.y, NULL, NULL, NULL, m_angle, &_rotationPoint);
@@ -49,14 +38,14 @@ void Player::render() const
 	m_collisionCircle.render();
 }
 
-void Player::renderUI() const
+void Player::renderUI(Camera* m_camera)
 {
 	Rectf _healthBarClip = { 0.f, 0.f, (m_health / 3.f) * m_healthBar.getWidth(), 32.f };
-	m_healthBar.render(Camera::getInstance().m_collisionBox.position.x + 32,
-		Camera::getInstance().m_collisionBox.position.y + 64, &_healthBarClip);
+	m_healthBar.render(m_camera->m_collisionBox.position.x + 32,
+		m_camera->m_collisionBox.position.y + 64, &_healthBarClip);
 
-	Rectf _box = { Camera::getInstance().m_collisionBox.position.x + 32,
-		Camera::getInstance().m_collisionBox.position.y + 64, 256.f, 32.f };
+	Rectf _box = { m_camera->m_collisionBox.position.x + 32,
+		m_camera->m_collisionBox.position.y + 64, 256.f, 32.f };
 	renderEmptyBox(_box, color(0, 0, 0, 255));
 }
 
@@ -64,15 +53,18 @@ void Player::handleEvents()
 {
 	m_velocityGoal = { 0, 0 };
     const Uint8* _currentKeyStates = SDL_GetKeyboardState( NULL );
+	
+	if (!g_isPlayerDead)
+	{
+		if (_currentKeyStates[SDL_SCANCODE_W])        m_velocityGoal.y = (float)-m_playerSpeed;
+		if (_currentKeyStates[SDL_SCANCODE_A])        m_velocityGoal.x = (float)-m_playerSpeed;
+		if (_currentKeyStates[SDL_SCANCODE_S])        m_velocityGoal.y = (float)m_playerSpeed;
+		if (_currentKeyStates[SDL_SCANCODE_D])        m_velocityGoal.x = (float)m_playerSpeed;
+		if (_currentKeyStates[SDL_SCANCODE_SPACE])    m_weapon->action();
 
-    if (_currentKeyStates[SDL_SCANCODE_W])        m_velocityGoal.y = (float)-m_playerSpeed;
-    if (_currentKeyStates[SDL_SCANCODE_A])        m_velocityGoal.x = (float)-m_playerSpeed;
-    if (_currentKeyStates[SDL_SCANCODE_S])        m_velocityGoal.y = (float)m_playerSpeed;
-    if (_currentKeyStates[SDL_SCANCODE_D])        m_velocityGoal.x = (float)m_playerSpeed;
-	if (_currentKeyStates[SDL_SCANCODE_SPACE])    m_weapon->action();
-
-	if (g_event.type == SDL_MOUSEBUTTONDOWN)
-		m_weapon->action();
+		if (g_event.type == SDL_MOUSEBUTTONDOWN)
+			m_weapon->action();
+	}
 }
 
 //Collision for player to tile handling
@@ -124,11 +116,13 @@ void Player::update(
 	float deltaTime,
 	Tile* tileTypes,
 	int dimW,
-	int dimH)
+	int dimH,
+	Vector2f cursorPosition,
+	Camera* m_camera)
 {
 	static Vector2f _tempVelocity;
-	m_playerSpeed = 4;
-	m_slipAmount = 20;
+	m_playerSpeed = 3;
+	m_slipAmount = 40;
 
 	//Linear Interpolate the player's velocity
 	_tempVelocity.x = lerpApproach(m_velocityGoal.x, _tempVelocity.x, deltaTime * m_slipAmount);
@@ -156,22 +150,23 @@ void Player::update(
 	m_collisionCircle.update(deltaTime);
 
 	//Moves the camera and makes sure the camera doesen't scroll past the map.
-	Camera::getInstance().m_collisionBox.position.x = m_position.x - SCREEN_WIDTH / 2;
-	Camera::getInstance().m_collisionBox.position.y = m_position.y - SCREEN_HEIGHT / 2;
-	if (Camera::getInstance().m_collisionBox.position.x < 0) Camera::getInstance().m_collisionBox.position.x = 0;
-	if (Camera::getInstance().m_collisionBox.position.y < 0) Camera::getInstance().m_collisionBox.position.y = 0;
-	if (Camera::getInstance().m_collisionBox.position.x + Camera::getInstance().m_collisionBox.width > dimW * 16)
-		Camera::getInstance().m_collisionBox.position.x = dimW * 16.f - Camera::getInstance().m_collisionBox.width;
-	if (Camera::getInstance().m_collisionBox.position.y + Camera::getInstance().m_collisionBox.height > dimH * 16)
-		Camera::getInstance().m_collisionBox.position.y = dimH * 16.f - Camera::getInstance().m_collisionBox.height;
+	m_camera->m_collisionBox.position.x = m_position.x - SCREEN_WIDTH / 2;
+	m_camera->m_collisionBox.position.y = m_position.y - SCREEN_HEIGHT / 2;
+	if (m_camera->m_collisionBox.position.x < 0) m_camera->m_collisionBox.position.x = 0;
+	if (m_camera->m_collisionBox.position.y < 0) m_camera->m_collisionBox.position.y = 0;
+	if (m_camera->m_collisionBox.position.x + m_camera->m_collisionBox.width > dimW * 16)
+		m_camera->m_collisionBox.position.x = dimW * 16.f - m_camera->m_collisionBox.width;
+	if (m_camera->m_collisionBox.position.y + m_camera->m_collisionBox.height > dimH * 16)
+		m_camera->m_collisionBox.position.y = dimH * 16.f - m_camera->m_collisionBox.height;
 
 	//Update the weapon rotation and angle
 	m_weapon->update(m_position, m_angle, deltaTime);
-	m_direction = Cursor::getInstance().getPosition() -
-		Vector2f(m_position.x + m_collisionBox.width / 2, m_position.y + m_collisionBox.height / 2);
+	m_direction = cursorPosition - Vector2f(m_position.x + m_collisionBox.width / 2, m_position.y + m_collisionBox.height / 2);
 	m_direction = m_direction.normalized();
 	m_angle = (float)(atan2(m_direction.y, m_direction.x) * (180.f / PI));
-	m_direction = Cursor::getInstance().getPosition() - m_weapon->getPosition();
+	m_direction = cursorPosition - m_weapon->getPosition();
 	m_direction = m_direction.normalized();
     m_weapon->setDirection(m_direction);
+
+	if (m_health <= 0) g_isPlayerDead = true;
 }

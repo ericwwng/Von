@@ -3,6 +3,9 @@
 SelectionState::SelectionState(bool goToEditor) :
 	m_goToEditorState(goToEditor)
 {
+	m_cursor = new Cursor();
+	m_camera = new Camera();
+
 	changeFontSize(64);
 
 	m_previewBackground.loadFromFile("res/GUI/menu-background.png", 1280, 720);
@@ -32,36 +35,37 @@ SelectionState::SelectionState(bool goToEditor) :
 	else
 		printf("Error: Opening directory \n");
 
-	Camera::getInstance().setCoords(Vector2f(0, 0));
+	m_camera->setCoords(Vector2f(0, 0));
 
 	changeFontSize(16);
 }
 
 SelectionState::~SelectionState()
 {
+	delete m_camera;
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 		delete m_selectionItems[i];
 }
 
-void SelectionState::render() const
+void SelectionState::render()
 {
-	Camera::getInstance().update();
+	m_camera->update();
 
 	m_previewBackground.render(0, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
 
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
-		if (Collision(Camera::getInstance().m_collisionBox, m_selectionItems[i]->getCollisionBox()))
+		if (Collision(m_camera->m_collisionBox, m_selectionItems[i]->getCollisionBox()))
 			m_selectionItems[i]->render();
 
-	Cursor::getInstance().render();
+	m_cursor->render();
 }
 
 void SelectionState::update(float deltaTime)
 {
-	if (Camera::getInstance().m_collisionBox.position.y + Camera::getInstance().m_collisionBox.height >
-		(SCREEN_HEIGHT / 8 * m_selectionItems.size())) Camera::getInstance().m_collisionBox.position.y =
-		(SCREEN_HEIGHT / 8 * m_selectionItems.size()) - (float)Camera::getInstance().m_collisionBox.height;
-	if (Camera::getInstance().m_collisionBox.position.y < 0) Camera::getInstance().m_collisionBox.position.y = 0;
+	if (m_camera->m_collisionBox.position.y + m_camera->m_collisionBox.height >
+		(SCREEN_HEIGHT / 8 * m_selectionItems.size())) m_camera->m_collisionBox.position.y =
+		(SCREEN_HEIGHT / 8 * m_selectionItems.size()) - (float)m_camera->m_collisionBox.height;
+	if (m_camera->m_collisionBox.position.y < 0) m_camera->m_collisionBox.position.y = 0;
 
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 	{
@@ -76,13 +80,13 @@ void SelectionState::update(float deltaTime)
 		}
 	}
 
-	Cursor::getInstance().update(deltaTime);
+	m_cursor->update(deltaTime, m_camera->getPosition());
 }
 
 void SelectionState::handleEvents()
 {
 	if (g_event.type == SDL_MOUSEWHEEL)
-		Camera::getInstance().addCoords(Vector2f(0.f, -g_event.wheel.y * 10.f));
+		m_camera->addCoords(Vector2f(0.f, -g_event.wheel.y * 10.f));
 
 	if (g_event.type == SDL_KEYDOWN)
 		if (g_event.key.keysym.sym == SDLK_ESCAPE)
@@ -92,7 +96,7 @@ void SelectionState::handleEvents()
 			g_gameState = new Menu(false);
 		}
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
-		m_selectionItems[i]->handleEvents();
+		m_selectionItems[i]->handleEvents(m_cursor->getCollisionBox());
 
 	while(SDL_PollEvent(&g_event))
 	{

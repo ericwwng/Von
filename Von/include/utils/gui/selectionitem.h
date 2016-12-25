@@ -23,7 +23,7 @@ class SelectionItem
 		~SelectionItem();
 
 		void render() const;
-		void handleEvents();
+		void handleEvents(AABB cursorCollisionBox);
 
 		bool getClicked() { return m_click; }
 		

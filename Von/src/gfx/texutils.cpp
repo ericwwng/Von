@@ -52,8 +52,7 @@ void renderFillRect(
 	glEnd();
 }
 
-void changeFontSize(
-	int ptsize)
+void changeFontSize(int ptsize)
 {
 	g_font = TTF_OpenFont("res/arial.ttf", ptsize);
 }

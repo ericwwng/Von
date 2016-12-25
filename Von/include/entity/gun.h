@@ -1,6 +1,9 @@
 #pragma once
 
 #include "utils/timer.h"
+
+#include "sfx/music.h"
+
 #include "entity/entity.h"
 #include "entity/projectile.h"
 
@@ -29,4 +32,6 @@ class Gun : public Entity
 		Vector2f m_weaponDirection;
 
 		Timer m_rateOfFire;
+
+		Sfx m_shootSfx;
 };

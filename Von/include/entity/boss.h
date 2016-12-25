@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity/projectile.h"
+#include "entity/player.h"
 
 #include "utils/Vector2f.h"
 
@@ -13,7 +14,7 @@ class Boss
 {
 	public:
 		virtual void render() {};
-		virtual void update(float deltaTime) {};
+		virtual void update(float deltaTime, Player* player) {};
 		virtual void handleEvents() {};
 
 		//This is more of an outline

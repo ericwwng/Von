@@ -15,8 +15,7 @@ void renderFillRect(
 	Rectf box,
 	SDL_Color color);
 
-void changeFontSize(
-	int ptsize);
+void changeFontSize(int ptsize);
 
 struct VertexPos2f
 {

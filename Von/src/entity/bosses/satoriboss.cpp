@@ -55,7 +55,7 @@ void Satori::render()
 	renderEmptyBox(_box, color(0, 0, 0, 255));
 }
 
-void Satori::update(float deltaTime)
+void Satori::update(float deltaTime, Player* player)
 {
 	if (m_phaseNumber == 1)
 		phaseOne();
@@ -75,23 +75,23 @@ void Satori::update(float deltaTime)
 	{
 		if (m_Projectiles[i].isActive())
 		{
-			if (Collision(m_Projectiles[i].getCollisionBox(), Player::getInstance().getCollisionBox()) &&
+			if (Collision(m_Projectiles[i].getCollisionBox(), player->getCollisionBox()) &&
 				m_collisionTimer.getTicks() > 2000)
 			{
 				m_collisionTimer.start();
-				if (Player::getInstance().getPlayerHealth() > 0)
+				if (player->getPlayerHealth() > 0)
 				{
-					Player::getInstance().setPlayerHealth(Player::getInstance().getPlayerHealth() - 1);
-					if (Player::getInstance().getPlayerHealth() <= 0) g_isPlayerDead = true;
+					player->setHit();
+					if (player->getPlayerHealth() <= 0) g_isPlayerDead = true;
 				}
 			}
 
 
-			if(Player::getInstance().getWeapon()->getProjectile()->isActive())
-				if (Collision(m_Projectiles[i].getCollisionBox(), Player::getInstance().getWeapon()->getProjectile()->getCollisionBox()))
+			if(player->getWeapon()->getProjectile()->isActive())
+				if (Collision(m_Projectiles[i].getCollisionBox(), player->getWeapon()->getProjectile()->getCollisionBox()))
 				{
 					m_Projectiles[i].reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
-					Player::getInstance().getWeapon()->getProjectile()->reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
+					player->getWeapon()->getProjectile()->reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
 				}
 		}
 	}
@@ -126,7 +126,7 @@ void Satori::phaseTwo()
 		if (repeatedTimer.getTicks() >= 1000)
 		{
 			m_shootingSpeed = 500;
-			aimedShot();
+			//aimedShot();
 			repeatedTimer.start();
 		}
 	}
@@ -211,15 +211,14 @@ void Satori::explodeAttack(Vector2f position)
 	}
 }
 
-void Satori::aimedShot()
+void Satori::aimedShot(Vector2f position)
 {
 	static int _index = 500;
 
 	if (_index >= 600)
 		_index = 500;
 
-	Vector2f _aimedPosition = Player::getInstance().getPosition();
-	Vector2f _direction = _aimedPosition - m_bulletSpawnPosition;
+	Vector2f _direction = position - m_bulletSpawnPosition;
 	_direction = _direction.normalized();
 	m_Projectiles[_index].reload(m_bulletSpawnPosition, _direction, 0, (float)m_shootingSpeed);
 	m_Projectiles[_index].setActive(true);

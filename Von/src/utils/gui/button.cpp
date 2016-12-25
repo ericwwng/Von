@@ -8,7 +8,6 @@ Button::Button(Vector2f pos, GLuint w, GLuint h, char* msg)
 
 	m_menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
 	m_menuClick.loadSoundFile("res/Music/sfx/menuhit.wav");
-	Mix_VolumeChunk(m_menuClick.m_Chunk, 80);
 
 	m_click = false;
 }
@@ -42,11 +41,11 @@ void Button::render() const
 	}
 }
 
-void Button::handleEvents()
+void Button::handleEvents(AABB cursorCollisionBox)
 {
 	static bool _up;
 
-	if (Collision(Cursor::getInstance().getCollisionBox(), m_collisionBox))
+	if (Collision(cursorCollisionBox, m_collisionBox))
 	{
 		m_hover = true;
 		if (g_event.type == SDL_MOUSEMOTION)

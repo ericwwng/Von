@@ -17,17 +17,19 @@ class Satori : public Boss
 		~Satori();
 
 		void render();
-		void update(float deltaTime);
+		void update(float deltaTime, Player* player);
 
 		void phaseOne();
 		void phaseTwo();
 		void randomPhase();
 
 		void random360();
-		void aimedShot();
+		void aimedShot(Vector2f position);
 		void explodeAttack(Vector2f position);
 
 	private:
+		const int MAX_PROJECTILE_AMOUNT = 600;
+
 		Timer m_songTimer;
 		Timer m_healthDecreaseTimer;
 		Timer m_speedUpTimer;
