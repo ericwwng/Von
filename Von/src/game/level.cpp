@@ -18,11 +18,6 @@ Level::Level(
 
 	m_boss = NULL;
 
-	m_alpha = 255;
-
-	m_transitionTimer.start();
-	m_fadeTimer.start();
-
 	printf("%s \n", worldName.c_str());
 
 	if (worldName == "Introduction")
@@ -56,6 +51,11 @@ Level::Level(
 		m_levelBgm.loadMusicFile("res/Music/bgm/lolol.ogg");
 		m_levelBgm.playMusic();
 	}
+
+	m_alpha = 255;
+
+	m_transitionTimer.start();
+	m_fadeTimer.start();
 }
 
 Level::~Level()

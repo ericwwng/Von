@@ -13,21 +13,20 @@ Satori::Satori():
 	m_collisionTimer.start();
 
 	m_phaseNumber = 1;
-	//152,000 milliseconds in the song
 	m_health = 1280.f;
 
 	m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f), 0.f };
 
 	m_bulletSpawnPosition = { m_position.x + (m_texture.getWidth() / 2.f), m_texture.getHeight() / 4.f};
 	m_spawnCircle.setPosition(m_bulletSpawnPosition);
-	m_spawnCircle.setCircleType(2);
+	//m_spawnCircle.setCircleType(2);
 	m_spawnCircle.setColor(color(255, 105, 180, 255));
 	//m_spawnCircle.setActive(true);
 
 	//random360
 	for (int i = 0; i < MAX_PROJECTILE_AMOUNT; i++)
 	{
-		m_Projectiles[i].setCircleType(4);
+		//m_Projectiles[i].setCircleType(4);
 	}
 }
 

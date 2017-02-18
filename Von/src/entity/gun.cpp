@@ -23,9 +23,9 @@ Gun::~Gun()
 
 void Gun::action()
 {
-	if (m_rateOfFire.getTicks() >= 500)
+	if (m_rateOfFire.getTicks() >= 400)
 	{
-		m_bullet->reload(m_position, m_weaponDirection, m_angle, 2000);
+		m_bullet->reload(m_position, m_weaponDirection, m_angle, 2500);
 		m_bullet->setActive(true);
 		m_rateOfFire.start();
 		m_shootSfx.playSound();
@@ -46,14 +46,13 @@ void Gun::update(
 	float deltaTime)
 {
 	m_position = pos;
-	this->m_angle = angle;
+	m_angle = angle;
 
 	m_position = updateRotation();
 
 	m_collisionBox = { m_position, 32, 16 };
 
-	//if (m_bullet->isActive())
-		m_bullet->update(deltaTime);
+	m_bullet->update(deltaTime);
 }
 
 Vector2f Gun::updateRotation()
@@ -62,11 +61,11 @@ Vector2f Gun::updateRotation()
 	Vector2f _tempPosition;
 
 	//origin, center of player texture
-	auto _cx = m_position.x + 36.f;
-	auto _cy = m_position.y + 36.f;
+	auto _cx = m_position.x + 32.f;
+	auto _cy = m_position.y + 32.f;
 
 	//Position of left hand
-	m_position.x += 64;
+	m_position.x += 58;
 	m_position.y += 0;
 
 	m_position.x -= _cx;

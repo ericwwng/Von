@@ -11,41 +11,7 @@ Projectile::Projectile()
 	m_yScale = 1.f;
 	m_angle = 0.f;
 	m_active = false;
-	m_centeredBox = true;
-}
-
-void Projectile::loadTexture(char* filename)
-{
-	m_texture.loadFromFile(filename, 64, 64, false);
-}
-
-void Projectile::setCircleType(GLubyte circleType)
-{
-	/*
-	0 = circleNormal
-	1 = circleClean
-	2 = circleShiny
-	3 = circleGlow
-	4 = circleFat
-	*/
-	switch (circleType)
-	{
-		case 0:
-			m_texture.loadFromFile("res/Projectile/circleNormal.png", 64, 64, false);
-		break;
-		case 1:
-			m_texture.loadFromFile("res/Projectile/circleClean.png", 64, 64, false);
-		break;
-		case 2:
-			m_texture.loadFromFile("res/Projectile/circleShiny.png", 64, 64, false);
-		break;
-		case 3:
-			m_texture.loadFromFile("res/Projectile/circleGlow.png", 64, 64, false);
-		break;
-		case 4:
-			m_texture.loadFromFile("res/Projectile/circleFat.png", 64, 64, false);
-		break;
-	}
+	m_centeredBox = false;
 }
 
 void Projectile::update(float deltaTime)

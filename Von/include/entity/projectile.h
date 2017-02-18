@@ -19,17 +19,16 @@ class Projectile : public Entity
 		void render() const;
 		void update(float deltaTime);
 
-        void multiplyVelocity(float speed) { m_velocity = m_velocity * speed; }
+        inline void multiplyVelocity(float speed) { m_velocity = m_velocity * speed; }
 
-        void setActive(bool a) { m_active = a; }
-        bool isActive() const { return m_active; }
+		inline void setActive(bool a) { m_active = a; }
+		inline bool isActive() const { return m_active; }
 
-        void setCircleType(GLubyte circleType);
-		void loadTexture(char* filename);
+		void loadTexture(char* filename) { m_texture.loadFromFile(filename, 64, 64, false); }
 
 		void setScale(GLfloat xscale, GLfloat yscale);
         void setCollisionBox(GLuint width, GLuint height);
-		void setCenteredBox(bool centered) { m_centeredBox = centered;  }
+		inline void setCenteredBox(bool centered) { m_centeredBox = centered;  }
 
 		inline void setColor(SDL_Color color) { m_color = color; }
 
@@ -44,7 +43,6 @@ class Projectile : public Entity
 
         SDL_Color m_color;
 
-        AABB m_collisionBox;
         GLuint m_baseWidth;
         GLuint m_baseHeight;
         GLfloat m_xScale;

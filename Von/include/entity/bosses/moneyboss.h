@@ -29,7 +29,7 @@ class BigMoney : public Boss
 		void implodeAttack();
 
 	private:
-		const int MAX_PROJECTILE_AMOUNT = 1000;
+		const int MAX_PROJECTILE_AMOUNT = 800;
 
 		SDL_Color m_healthColor;
 
