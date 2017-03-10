@@ -25,7 +25,7 @@ class SelectionItem
 		void render() const;
 		void handleEvents(AABB cursorCollisionBox);
 
-		bool getClicked() { return m_click; }
+		bool isClicked() { return m_click; }
 		
 		void updatePosition();
 		std::string getWorldName() { return m_worldName; }

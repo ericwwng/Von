@@ -29,13 +29,11 @@ void Bgm::loadMusicFile(const char* filename)
 
 void Bgm::playMusic()
 {
-	Mix_VolumeMusic((int)(MIX_MAX_VOLUME * g_volume));
 	Mix_PlayMusic(m_Music, 1);
 }
 
 void Bgm::repeatMusic()
 {
-	Mix_VolumeMusic((int)(MIX_MAX_VOLUME * g_volume));
 	Mix_PlayMusic(m_Music, -1); //-1 is infinite loop
 }
 
@@ -50,24 +48,6 @@ void Bgm::resumeMusic()
 	{
 		Mix_ResumeMusic();
 	}
-}
-
-void Bgm::fadeStopMusic()
-{
-	static bool _started = false;
-	if (!_started)
-	{
-		_started = true;
-		m_fadeStop.start();
-	}
-	if (m_fadeStop.getTicks() > 100)
-	{
-		g_volume -= 10;
-		Mix_VolumeMusic((int)g_volume);
-		m_fadeStop.start();
-	}
-	if(g_volume <= 0)
-		Mix_HaltMusic();
 }
 
 void Bgm::stopMusic()
@@ -105,7 +85,7 @@ void Sfx::loadSoundFile(
 
 void Sfx::playSound()
 {
-	Mix_VolumeChunk(m_Chunk, (int)(MIX_MAX_VOLUME * g_volume) / 2);
+	Mix_VolumeChunk(m_Chunk, (int)(MIX_MAX_VOLUME * (g_sfxVolume / 100.f)));
 	Mix_HaltChannel(-1);
 	Mix_PlayChannel(-1, m_Chunk, 0); //-1 is nearest channel, repeat 0 times
 }

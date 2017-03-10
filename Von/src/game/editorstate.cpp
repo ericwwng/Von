@@ -104,15 +104,14 @@ void EditorState::handleEvents()
 		{
 			m_dungeon->saveMap();
 			printf("Creating New Map\n");
-			m_dungeon->newMap(80, 45, 1, "Introduction.opo");
+			m_dungeon->newMap(80, 45, 4, "Sun.opo");
 		}
 
 		if (g_event.key.keysym.sym == SDLK_ESCAPE)
 		{
 			m_dungeon->saveMap();
-			changeFontSize(64);
 			delete g_gameState;
-			g_gameState = new Menu();
+			g_gameState = new Menu(false);
 		}
 	}
 
@@ -127,8 +126,7 @@ void EditorState::handleEvents()
 	{
 		if (g_event.type == SDL_QUIT)
 		{
-			changeFontSize(64);
-			g_gameState = new Menu();
+			g_gameState = new Menu(false);
 		}
 	}
 }

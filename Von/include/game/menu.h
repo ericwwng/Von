@@ -2,6 +2,7 @@
 
 #include "game/application.h"
 #include "game/selectionstate.h"
+#include "game/optionsstate.h"
 
 #include "entity/cursor.h"
 
@@ -14,13 +15,11 @@
 class Menu : public GameState
 {
 	public:
-		Menu();
 		Menu(bool playBgm);
 		~Menu();
 
 		void render();
-		void update(
-			float deltaTime_f);
+		void update(float deltaTime_f);
 		void handleEvents();
 
 	private:

@@ -18,7 +18,6 @@ class Bgm
 		void repeatMusic();
 		void pauseMusic();
 		void resumeMusic();
-		void fadeStopMusic();
 		void stopMusic();
 
 		Mix_Music* m_Music;

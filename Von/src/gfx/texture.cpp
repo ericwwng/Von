@@ -230,7 +230,7 @@ void Texture::render(
 		glPushMatrix();
 
 		glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
-		if(g_isPlayerDead) glColor4f(0.f, 1.f, 1.f, 255.f);
+		if(g_isPlayerDead) glColor4f(1.f, 0.25f, 0.25f, 255.f);
 
 		glTranslatef(x, y, 0.f);
 

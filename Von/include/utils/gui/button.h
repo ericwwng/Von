@@ -15,18 +15,18 @@
 class Button
 {
 	public:
-		Button() {};
 		Button(
 			Vector2f pos,
 			GLuint w,
 			GLuint h,
-			char* msg);
+			std::string msg,
+			bool clickable);
 		~Button();
 
 		void render() const;
 		void handleEvents(AABB cursorCollisionBox);
 
-		bool getClicked() { return m_click; }
+		bool isClicked() { return m_click; }
 	private:
 		AABB m_collisionBox;
 
@@ -36,13 +36,8 @@ class Button
 		bool m_hover;
 		bool m_click;
 
+		bool m_clickable;
+
 		Sfx m_menuHover;
 		Sfx m_menuClick;
 };
-
-void addButton(
-	std::vector<Button*> &buttons,
-	char* message, 
-	Vector2f pos, 
-	GLuint w,
-	GLuint h);

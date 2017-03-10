@@ -1,8 +1,8 @@
 #include "game/level.h"
 
-Level::Level(
-	std::string filename,
-	std::string worldName)
+Level::Level(std::string filename, std::string worldName) :
+	m_filename(filename),
+	m_worldName(worldName)
 {
 	worldName.erase(worldName.end() - 4, worldName.end());
 
@@ -14,9 +14,11 @@ Level::Level(
 
 	m_player = new Player();
 	m_player->setSpawnPosition(m_dungeon->getPlayerSpawn());
-	m_player->setPlayerHealth(3);
+	m_player->setPlayerHealth(m_player->getMaxHealth());
 
 	m_boss = NULL;
+
+	m_gameOverBgm.loadMusicFile("res/Music/bgm/Las Estrellas.ogg");
 
 	printf("%s \n", worldName.c_str());
 
@@ -29,7 +31,7 @@ Level::Level(
 	}
 	else if (worldName == "Transition")
 	{
-		m_levelBgm.loadMusicFile("res/Music/bgm/lolol.ogg");
+		m_levelBgm.loadMusicFile("res/Music/bgm/Icarus Complex.ogg");
 		m_levelBgm.playMusic();
 		Warp::getInstance().setPosition(Vector2f(3900, 328));
 	}
@@ -45,6 +47,12 @@ Level::Level(
 		m_levelBgm.loadMusicFile("res/Music/bgm/3rdeyerag.ogg");
 		m_levelBgm.playMusic();
 	}
+	else if (worldName == "Sun")
+	{
+		m_boss = new Sun();
+		m_levelBgm.loadMusicFile("res/Music/bgm/Idea vs Reality.ogg");
+		m_levelBgm.playMusic();
+	}
 	else
 	{
 		m_boss = new BigMoney();
@@ -56,6 +64,14 @@ Level::Level(
 
 	m_transitionTimer.start();
 	m_fadeTimer.start();
+
+	m_isGameOver = false;
+
+	changeFontSize(128);
+	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.50, SCREEN_HEIGHT * 0.25), (GLuint)(SCREEN_WIDTH / 1.5), SCREEN_HEIGHT / 2, "GAME OVER", false));
+	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.25, SCREEN_HEIGHT  * 0.75), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 4, "Exit", true));
+	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.75, SCREEN_HEIGHT * 0.75), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 4, "Restart", true));
+	changeFontSize(16);
 }
 
 Level::~Level()
@@ -65,84 +81,131 @@ Level::~Level()
 	delete m_boss;
 	delete m_player;
 	delete m_cursor;
+	for (Button* button : m_gameOverButtons)
+	{
+		delete button;
+	}
 }
 
-void Level::screenTransition()
+void Level::screenTransition(float addBy)
 {
 	if (m_fadeTimer.getTicks() > 1)
 	{
-		m_alpha -= 2;
+		m_alpha += addBy;
 		m_fadeTimer.start();
 	}
 
 	glPopMatrix();
 	glPushMatrix();
 
-	//glTranslatef(0.f, 0.f, 0.f);
-
 	glColor4f(0.f, 0.f, 0.f, m_alpha / 255.f);
 
 	glBegin(GL_QUADS);
 		glVertex2f(0.f, 0.f);
-		glVertex2f((GLfloat)SCREEN_WIDTH, 0);
-		glVertex2f((GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
-		glVertex2f(0.f, (GLfloat)SCREEN_HEIGHT);
+		glVertex2f((GLfloat)SCREEN_WIDTH + 1000.f, 0);
+		glVertex2f((GLfloat)SCREEN_WIDTH + 1000.f, (GLfloat)SCREEN_HEIGHT + 1000.f);
+		glVertex2f(0.f, (GLfloat)SCREEN_HEIGHT + 1000.f);
 	glEnd();
 }
 
 void Level::render()
 {
-	m_camera->update();
 	m_dungeon->render();
 	m_dungeon->renderSolidTiles();
-	
+
 	Warp::getInstance().render();
+
+	if (m_boss) m_boss->render();
 
 	m_player->render();
 	m_player->renderUI(m_camera);
 
-	if (m_boss) m_boss->render();
+	if (m_transitionTimer.getTicks() < 3000) screenTransition(-0.5f);
+	else m_transitionTimer.stop();
 
-	m_cursor->render();
-
-	if (m_transitionTimer.getTicks() < 1000)
-		screenTransition();
-}
-
-void Level::update(
-	float deltaTime)
-{
-	if (m_boss) m_boss->update(deltaTime, m_player);
-	Warp::getInstance().update(deltaTime);
-
-	m_player->update(deltaTime, m_dungeon->getSolids(),
- 		m_dungeon->getDimW(), m_dungeon->getDimH(), m_cursor->getPosition(), m_camera);
-
-	m_cursor->update(deltaTime, m_camera->getPosition());
-
-	//Handle collision with warp block
-	if (Collision(m_player->getCollisionBox(), Warp::getInstance().getCollisionBox()))
-		Warp::getInstance().goToNextLevel();
-
-	//Game over screen
 	if (g_isPlayerDead)
 	{
-		m_player->setPlayerHealth(3);
-		g_isPlayerDead = false;
-		Warp::getInstance().goToCertainLevel(0);
+		screenTransition(0.25f);
 	}
+	if (m_isGameOver && m_alpha >= 255)
+	{
+		g_isPlayerDead = false;
+		glPopMatrix();
+		glPushMatrix();
+
+		glColor3f(0.25f, 0.1f, 0.1f);
+		glBegin(GL_QUADS);
+			glVertex2f(0.f, 0.f);
+			glVertex2f((GLfloat)SCREEN_WIDTH + 1000.f, 0);
+			glVertex2f((GLfloat)SCREEN_WIDTH + 1000.f, (GLfloat)SCREEN_HEIGHT + 1000.f);
+			glVertex2f(0.f, (GLfloat)SCREEN_HEIGHT + 1000.f);
+		glEnd();
+		for (Button* button : m_gameOverButtons)
+		{
+			button->render();
+		}
+	}
+
+	m_cursor->render();
+}
+
+void Level::update(float deltaTime)
+{
+	if (!m_isGameOver)
+	{
+		m_camera->update();
+
+		if (m_boss) m_boss->update(deltaTime, m_player);
+		Warp::getInstance().update(deltaTime);
+
+		m_player->update(deltaTime, m_dungeon->getSolids(),
+			m_dungeon->getDimW(), m_dungeon->getDimH(), m_cursor->getPosition(), m_camera);
+
+		//Handle collision with warp block
+		if (Collision(m_player->getCollisionBox(), Warp::getInstance().getCollisionBox()))
+			Warp::getInstance().goToNextLevel();
+	}
+
+	if (g_isPlayerDead && !m_isGameOver)
+	{
+		m_isGameOver = true;
+		m_alpha = 0.f;
+		m_gameOverBgm.repeatMusic();
+	}
+
+	m_cursor->update(deltaTime, m_camera->getPosition());
 }
 
 void Level::handleEvents()
 {
-	m_player->handleEvents();
+	if(!m_isGameOver)
+		m_player->handleEvents();
+
+	if (m_isGameOver && m_alpha >= 255)
+	{
+		for (Button* button : m_gameOverButtons)
+			button->handleEvents(m_cursor->getCollisionBox());
+
+		//Exit
+		if (m_gameOverButtons[1]->isClicked())
+		{
+			changeFontSize(64);
+			g_gameState = new Menu(true);
+		}
+
+		//Restart
+		if (m_gameOverButtons[2]->isClicked())
+		{
+			g_gameState = new Level(m_filename, m_worldName);
+		}
+	}
 
 	if (g_event.type == SDL_KEYDOWN)
 		if (g_event.key.keysym.sym == SDLK_ESCAPE)
 		{
 			changeFontSize(64);
 			delete g_gameState;
-			g_gameState = new Menu();
+			g_gameState = new Menu(true);
 		}
 
 	while(SDL_PollEvent(&g_event))
@@ -150,7 +213,9 @@ void Level::handleEvents()
 		if (g_event.type == SDL_QUIT)
 		{
 			changeFontSize(64);
-			g_gameState = new Menu();
+			delete g_gameState;
+			g_gameState = new Menu(true);
 		}
 	}
+
 }

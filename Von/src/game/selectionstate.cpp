@@ -69,7 +69,7 @@ void SelectionState::update(float deltaTime)
 
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 	{
-		if (m_selectionItems[i]->getClicked())
+		if (m_selectionItems[i]->isClicked())
 		{
 			std::string filepath = "Levels/" + m_selectionItems[i]->getWorldName();
 
@@ -91,10 +91,10 @@ void SelectionState::handleEvents()
 	if (g_event.type == SDL_KEYDOWN)
 		if (g_event.key.keysym.sym == SDLK_ESCAPE)
 		{
-			changeFontSize(64);
 			delete g_gameState;
 			g_gameState = new Menu(false);
 		}
+
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 		m_selectionItems[i]->handleEvents(m_cursor->getCollisionBox());
 
@@ -102,7 +102,6 @@ void SelectionState::handleEvents()
 	{
 		if (g_event.type == SDL_QUIT)
 		{
-			changeFontSize(64);
 			g_gameState = new Menu(false);
 		}
 	}

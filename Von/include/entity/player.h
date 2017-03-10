@@ -45,11 +45,9 @@ class Player : public Entity
 		void setHit();
         void setPlayerHealth(int health) { m_health = health; }
         int getPlayerHealth() { return m_health; }
+		int getMaxHealth() { return m_maxHealth; }
 
 		Gun* getWeapon() { return m_weapon; }
-
-        //Weapon action on activation of space key.
-        void action();
     private:
         Vector2f m_velocityGoal;
         int m_playerSpeed;
@@ -61,6 +59,7 @@ class Player : public Entity
 
 		//Attributes
 		Texture m_healthBar;
+		int m_maxHealth = 3; //3 default
 		int m_health;
 
 		Gun* m_weapon;

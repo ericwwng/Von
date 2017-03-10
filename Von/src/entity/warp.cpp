@@ -21,7 +21,7 @@ void Warp::update(float deltaTime)
 
 void Warp::goToNextLevel()
 {
-	//Intro(0) -> Transition(1) -> BigMoney -> Transition(3) -> Satori -> Transition(4) -> Final(5) 
+	//Intro(0) -> Transition(1) -> BigMoney -> Transition(3) -> Satori -> Transition(4) -> Sun
 	currentLevel++;
 
 	delete g_gameState;
@@ -57,6 +57,10 @@ void Warp::goToNextLevel()
 		{
 			g_gameState = new Level("Levels/Transition.opo", "Transition.opo");
 			break;
+		}
+		case 6:
+		{
+			g_gameState = new Level("Levels/Sun.opo", "Sun.opo");
 		}
 		default:
 		{

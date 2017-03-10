@@ -40,8 +40,8 @@ BigMoney::BigMoney() :
 	m_bossCollisionTimer.start();
 	m_blinkTimer.start();
 
-	m_phaseNumber = 1;
-	m_health = 100.f;
+	m_phaseNumber = 1; //1 default
+	m_health = 100.f; //100 default
 
 	m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 175.f, 175.f };
 
@@ -121,7 +121,7 @@ void BigMoney::update(float deltaTime, Player* player)
 	//Special case for implosion attack
 	for (int i = 500; i < 700; i++)
 	{
-		if (m_Projectiles[i].isActive())
+		if (m_Projectiles[i].isActive() && m_phaseNumber != 2)
 			if (Collision(m_Projectiles[i].getCollisionBox(), m_collisionBox))
 				m_Projectiles[i].setActive(false);
 	}
@@ -177,7 +177,8 @@ void BigMoney::phaseOne()
 
 void BigMoney::phaseTwo(float deltaTime, Player* player)
 {
-	static Timer miniPhaseTimer(true);
+	static Timer _miniPhaseTimer(true);
+	static int _attackNumber = 0;
 
 	//boss movement
 	m_position.x += m_velocity.x * deltaTime;
@@ -187,7 +188,13 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 		m_velocity.x = -m_velocity.x;
 	}
 
-	if (miniPhaseTimer.getTicks() > 20000)
+	if (_attackNumber == 0)
+	{
+		m_shootingRate = 300;
+		m_shootingSpeed = 400;
+		random360();
+	}
+	else if (_attackNumber == 1)
 	{
 		m_shootingRate = 600;
 		m_shootingSpeed = 400;
@@ -197,26 +204,60 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 		m_shootingSpeed = 600;
 		aimedShot(player->getPosition());
 	}
-	else if(miniPhaseTimer.getTicks() > 10000)
-	{
-		m_shootingRate = 300;
-		m_shootingSpeed = 400;
-		random360();
-	}
 	else
 	{
+		//Taken from aimedshot
+		static Timer __repeatedTimer(true);
+		if (__repeatedTimer.getTicks() >= m_shootingRate)
+		{
+			__repeatedTimer.start();
+			for (int i = 0; i < 12; i++)
+			{
+				static int _index = 300;
 
+				if (_index >= 660)
+					_index = 300;
+
+				int angle = (i * 30) + (_index - 300) / 4;
+				Vector2f _aimedPosition = { m_position.x + (GLfloat)cos(angle * PI / 180), m_position.y + (GLfloat)sin(angle * PI / 180) };
+				Vector2f _direction = _aimedPosition - m_position;
+				_direction = _direction.normalized();
+				m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
+				m_Projectiles[_index].setActive(true);
+
+				_index++;
+			}
+		}
 	}
 
-	if (miniPhaseTimer.getTicks() > 30000)
-		miniPhaseTimer.start();
+	if (_miniPhaseTimer.getTicks() > 10000)
+	{
+		_miniPhaseTimer.start();
+		_attackNumber++;
+		if (_attackNumber == 3)
+			_attackNumber = 0;
+
+		if (_attackNumber == 0)
+		{
+			m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 175.f, 175.f };
+			m_velocity.x = 1000.f;
+		}
+		else if (_attackNumber == 2)
+		{
+			m_velocity.x = 0.f;
+			m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 175.f, SCREEN_HEIGHT / 2 - (m_texture.getHeight() / 4.f) };
+
+			m_shootingRate = 100;
+			m_shootingSpeed = 600;
+		}
+	}
 	
 	if (m_health <= 0)
 	{
 		m_health = 100;
 		m_healthColor = color(255, 0, 0, 128);
 		m_phaseNumber = 3;
-		m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 225.f, 225.f };
+		m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 175.f, SCREEN_HEIGHT / 2 - (m_texture.getHeight() / 4.f) };
 		m_shootingRate = 300;
 		m_shootingSpeed = 200;
 	}
@@ -237,11 +278,11 @@ void BigMoney::phaseThree(float deltaTime)
 void BigMoney::random360()
 {
 	static int _index = 0;
-	static Timer repeatedTimer(true);
+	static Timer _repeatedTimer(true);
 
-	if (repeatedTimer.getTicks() >= m_shootingRate / 5)
+	if (_repeatedTimer.getTicks() >= m_shootingRate / 5)
 	{
-		repeatedTimer.start();
+		_repeatedTimer.start();
 		if (_index >= 300)
 			_index = 0;
 		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 2.f);
@@ -257,11 +298,11 @@ void BigMoney::random360()
 void BigMoney::explodeAttack(Vector2f position)
 {
 	static int _index = 300;
-	static Timer repeatedTimer(true);
+	static Timer _repeatedTimer(true);
 
-	if (repeatedTimer.getTicks() >= m_shootingRate)
+	if (_repeatedTimer.getTicks() >= m_shootingRate)
 	{
-		repeatedTimer.start();
+		_repeatedTimer.start();
 		int randomOffset = rand() % 360;
 		for (int i = 0; i < 12; i++)
 		{
@@ -280,10 +321,10 @@ void BigMoney::explodeAttack(Vector2f position)
 
 void BigMoney::aimedShot(Vector2f position)
 {
-	static Timer repeatedTimer(true);
-	if (repeatedTimer.getTicks() >= m_shootingRate)
+	static Timer _repeatedTimer(true);
+	if (_repeatedTimer.getTicks() >= m_shootingRate)
 	{
-		repeatedTimer.start();
+		_repeatedTimer.start();
 		static int _index = 700;
 
 		if (_index >= 800)
@@ -302,11 +343,11 @@ void BigMoney::aimedShot(Vector2f position)
 void BigMoney::implodeAttack()
 {
 	static int _index = 500;
-	static Timer repeatedTimer(true);
+	static Timer _repeatedTimer(true);
 
-	if (repeatedTimer.getTicks() >= m_shootingRate)
+	if (_repeatedTimer.getTicks() >= m_shootingRate)
 	{
-		repeatedTimer.start();
+		_repeatedTimer.start();
 		int randomOffset = rand() % 360;
 		for (int i = 0; i < 12; i++)
 		{

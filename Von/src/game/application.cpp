@@ -33,6 +33,9 @@ Application::Application() :
 			//Initialize SDL_mixer
 			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 				printf("SDL_mixer could not initialize! %s\n", Mix_GetError());
+
+			//TODO: load this volume from a sav file
+			Mix_VolumeMusic((int)(MIX_MAX_VOLUME * (g_bgmVolume / 100.f)));
 		}
 	}
     SDL_ShowCursor(SDL_DISABLE);
@@ -70,8 +73,7 @@ Application::Application() :
 
 	changeFontSize(64);
 
-	g_gameState = new Menu();
-	//g_gameState = new Level("Dungeons/World/World.dmm");
+	g_gameState = new Menu(true);
 
 	changeFontSize(16);
 }

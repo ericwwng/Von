@@ -28,7 +28,7 @@ class Satori : public Boss
 		void explodeAttack(Vector2f position);
 
 	private:
-		const int MAX_PROJECTILE_AMOUNT = 600;
+		const int MAX_PROJECTILE_AMOUNT = 800;
 
 		Timer m_songTimer;
 		Timer m_healthDecreaseTimer;
