@@ -8,7 +8,7 @@ SelectionState::SelectionState(bool goToEditor) :
 
 	changeFontSize(64);
 
-	m_previewBackground.loadFromFile("res/GUI/menu-background.png", 1280, 720);
+	m_previewBackground.loadFromFile("res/GUI/menu-backgroundscroll.png", 1280, 720);
 
 	int _index = 0;
 	int _skip = 0; //skip . and ..
@@ -25,8 +25,8 @@ SelectionState::SelectionState(bool goToEditor) :
 				_skip++;
 				continue;
 			}
-			addSelectionItem(m_selectionItems, m_ent->d_name,
-				Vector2f(SCREEN_WIDTH * 0.66f, (GLfloat)_index * SCREEN_HEIGHT / 8), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 8);
+			m_selectionItems.push_back(new SelectionItem(m_ent->d_name, 
+				Vector2f(SCREEN_WIDTH * 0.66f, (GLfloat)_index * SCREEN_HEIGHT / 8), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 8));
 
 			_index++;
 		}

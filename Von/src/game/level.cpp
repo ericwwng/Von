@@ -60,7 +60,7 @@ Level::Level(std::string filename, std::string worldName) :
 		m_levelBgm.playMusic();
 	}
 
-	m_alpha = 255;
+	m_alpha = 255.f;
 
 	m_transitionTimer.start();
 	m_fadeTimer.start();
@@ -69,7 +69,7 @@ Level::Level(std::string filename, std::string worldName) :
 
 	changeFontSize(128);
 	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.50, SCREEN_HEIGHT * 0.25), (GLuint)(SCREEN_WIDTH / 1.5), SCREEN_HEIGHT / 2, "GAME OVER", false));
-	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.25, SCREEN_HEIGHT  * 0.75), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 4, "Exit", true));
+	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.25, SCREEN_HEIGHT  * 0.75), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 4, "Quit", true));
 	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.75, SCREEN_HEIGHT * 0.75), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 4, "Restart", true));
 	changeFontSize(16);
 }
@@ -89,22 +89,18 @@ Level::~Level()
 
 void Level::screenTransition(float addBy)
 {
-	if (m_fadeTimer.getTicks() > 1)
-	{
-		m_alpha += addBy;
-		m_fadeTimer.start();
-	}
+	m_alpha += addBy * m_deltaTime;
 
-	glPopMatrix();
-	glPushMatrix();
+	glLoadIdentity();
 
+	glTranslatef(0.f, 0.f, 0.f);
 	glColor4f(0.f, 0.f, 0.f, m_alpha / 255.f);
 
 	glBegin(GL_QUADS);
 		glVertex2f(0.f, 0.f);
-		glVertex2f((GLfloat)SCREEN_WIDTH + 1000.f, 0);
-		glVertex2f((GLfloat)SCREEN_WIDTH + 1000.f, (GLfloat)SCREEN_HEIGHT + 1000.f);
-		glVertex2f(0.f, (GLfloat)SCREEN_HEIGHT + 1000.f);
+		glVertex2f((GLfloat)SCREEN_WIDTH, 0);
+		glVertex2f((GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
+		glVertex2f(0.f, (GLfloat)SCREEN_HEIGHT);
 	glEnd();
 }
 
@@ -120,25 +116,22 @@ void Level::render()
 	m_player->render();
 	m_player->renderUI(m_camera);
 
-	if (m_transitionTimer.getTicks() < 3000) screenTransition(-0.5f);
-	else m_transitionTimer.stop();
+	if (m_transitionTimer.getTicks() < 4000) screenTransition(-80.f);
 
-	if (g_isPlayerDead)
-	{
-		screenTransition(0.25f);
-	}
+	if (g_isPlayerDead) screenTransition(40.f);
 	if (m_isGameOver && m_alpha >= 255)
 	{
 		g_isPlayerDead = false;
-		glPopMatrix();
-		glPushMatrix();
+		glLoadIdentity();
 
-		glColor3f(0.25f, 0.1f, 0.1f);
+		glTranslatef(0.f, 0.f, 0.f);
+		glColor3f(0.1f, 0.05f, 0.05f);
+
 		glBegin(GL_QUADS);
 			glVertex2f(0.f, 0.f);
-			glVertex2f((GLfloat)SCREEN_WIDTH + 1000.f, 0);
-			glVertex2f((GLfloat)SCREEN_WIDTH + 1000.f, (GLfloat)SCREEN_HEIGHT + 1000.f);
-			glVertex2f(0.f, (GLfloat)SCREEN_HEIGHT + 1000.f);
+			glVertex2f((GLfloat)SCREEN_WIDTH, 0);
+			glVertex2f((GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
+			glVertex2f(0.f, (GLfloat)SCREEN_HEIGHT);
 		glEnd();
 		for (Button* button : m_gameOverButtons)
 		{
@@ -151,9 +144,13 @@ void Level::render()
 
 void Level::update(float deltaTime)
 {
+	m_deltaTime = deltaTime;
+
 	if (!m_isGameOver)
 	{
 		m_camera->update();
+
+		m_dungeon->updateScroll(deltaTime);
 
 		if (m_boss) m_boss->update(deltaTime, m_player);
 		Warp::getInstance().update(deltaTime);

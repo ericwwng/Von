@@ -9,29 +9,29 @@
 
 class Gun : public Entity
 {
-    public:
-        Gun();
-        ~Gun();
+public:
+    Gun();
+    ~Gun();
 
-        void action();
+    void action();
 
-        void render() const;
-        void update(
-			Vector2f& pos,
-			float angle,
-			float deltaTime);
+    void render() const;
+    void update(
+		Vector2f& pos,
+		float angle,
+		float deltaTime);
 
-		void setDirection(Vector2f& dir) { m_weaponDirection = dir; }
+	void setDirection(Vector2f& dir) { m_weaponDirection = dir; }
 
-		Projectile* getProjectile() { return m_bullet; };
+	Projectile* getProjectile() { return m_bullet; };
 
-		Vector2f updateRotation();
-    private:
-        Projectile* m_bullet;
+	Vector2f updateRotation();
+private:
+    Projectile* m_bullet;
 
-		Vector2f m_weaponDirection;
+	Vector2f m_weaponDirection;
 
-		Timer m_rateOfFire;
+	Timer m_rateOfFire;
 
-		Sfx m_shootSfx;
+	Sfx m_shootSfx;
 };

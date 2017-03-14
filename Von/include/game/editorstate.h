@@ -17,26 +17,26 @@
 
 class EditorState : public GameState
 {
-	public:
-		EditorState(
-			std::string filename,
-			std::string worldName);
-		~EditorState();
+public:
+	EditorState(
+		std::string filename,
+		std::string worldName);
+	~EditorState();
 
-		void render();
-		void update(
-			float deltaTime);
-		void handleEvents();
-	private:
-		DIR* m_dir;
-		struct dirent *m_ent;
+	void render();
+	void update(
+		float deltaTime);
+	void handleEvents();
+private:
+	DIR* m_dir;
+	struct dirent *m_ent;
 
-		bool m_goToEditorState;
+	bool m_goToEditorState;
 
-		Camera* m_camera;
-		Map* m_dungeon;
+	Camera* m_camera;
+	Map* m_dungeon;
 
-		Uint8 m_id;
-		std::stringstream m_selectorID;
-		Texture m_selectorText;
+	Uint8 m_id;
+	std::stringstream m_selectorID;
+	Texture m_selectorText;
 };

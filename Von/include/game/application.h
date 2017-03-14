@@ -16,31 +16,31 @@
 #include "game/level.h"
 
 enum appstate {
-    APP_INITIALZING,
-    APP_RUNNING,
-    APP_EXITING
+	APP_INITIALZING,
+	APP_RUNNING,
+	APP_EXITING
 };
 
 class Application : public Singleton<Application>
 {
-    public:
-        Application();
-        ~Application();
+public:
+    Application();
+    ~Application();
 
-        void run();
-        void loop();
+    void run();
+    void loop();
 
-        void setAppState(appstate appState);
+    void setAppState(appstate appState);
 
-    private:
-		SDL_GLContext m_context;
+private:
+	SDL_GLContext m_context;
 
-        appstate m_appState;
+    appstate m_appState;
 
-        Timer m_deltaTimer, m_fpsTimer;
-        float deltaTime_f;
+    Timer m_deltaTimer, m_fpsTimer;
+    float deltaTime_f;
 
-        Texture m_fpsTex;
-        std::stringstream m_fpsTime;
-        int m_countedFrames;
+    Texture m_fpsTex;
+    std::stringstream m_fpsTime;
+    int m_countedFrames;
 };

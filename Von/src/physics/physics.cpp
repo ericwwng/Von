@@ -23,3 +23,8 @@ GLdouble distanceSquared(
 	GLdouble deltaY = b.y - a.y;
 	return deltaX*deltaX + deltaY*deltaY;
 }
+
+float randFloat(float max, float low)
+{
+	return low + static_cast<float>(rand()) / static_cast <float> (RAND_MAX / (max - low));
+}

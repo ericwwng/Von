@@ -12,31 +12,33 @@
 
 class BigMoney : public Boss
 {
-	public:
-		BigMoney();
-		~BigMoney();
+public:
+	BigMoney();
+	~BigMoney();
 
-		void render();
-		void update(float deltaTime, Player* player);
+	void render();
+	void update(float deltaTime, Player* player);
 
-		void phaseOne();
-		void phaseTwo(float deltaTime, Player* player);
-		void phaseThree(float deltaTime);
+	void phaseOne();
+	void phaseTwo(float deltaTime, Player* player);
+	void phaseThree(float deltaTime);
 
-		void random360();
-		void aimedShot(Vector2f position);
-		void explodeAttack(Vector2f position);
-		void implodeAttack();
+	void random360();
+	void aimedShot(Vector2f position);
+	void explodeAttack(Vector2f position);
+	void implodeAttack();
 
-	private:
-		const int MAX_PROJECTILE_AMOUNT = 800;
+private:
+	const int MAX_PROJECTILE_AMOUNT = 800;
 
-		SDL_Color m_healthColor;
+	Vector2f m_velocityGoal;
 
-		Timer m_blinkTimer;
-		Timer m_collisionTimer;
-		Timer m_bossCollisionTimer;
+	SDL_Color m_healthColor;
 
-		float m_shootingRate;
-		float m_shootingSpeed;
+	Timer m_blinkTimer;
+	Timer m_collisionTimer;
+	Timer m_bossCollisionTimer;
+
+	float m_shootingRate;
+	float m_shootingSpeed;
 };

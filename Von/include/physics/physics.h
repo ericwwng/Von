@@ -7,7 +7,6 @@ float lerpApproach(
 	float Current, 
 	float deltaTime);
 
-GLdouble distanceSquared(
-	Vector2f a,
-	Vector2f b);
+GLdouble distanceSquared(Vector2f a, Vector2f b);
 
+float randFloat(float max, float low = 0.f);

@@ -1,8 +1,6 @@
 #include "game/map.h"
 
-Map::Map(
-	std::string filename,
-	std::string worldName)
+Map::Map(std::string filename, std::string worldName)
 {
 	m_solidTiles = NULL;
 	m_filename = filename;
@@ -19,7 +17,19 @@ Map::~Map()
 
 void Map::render()
 {
-	m_background.render(0, 0);
+	if (m_worldName == "Sun")
+	{
+		m_background.render(m_backgroundX, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
+		m_background.render(m_backgroundX - SCREEN_WIDTH, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
+	}
+	else m_background.render(0.f, 0.f);
+}
+
+void Map::updateScroll(float deltaTime)
+{
+	m_backgroundX += 300 * deltaTime;
+	if (m_backgroundX >= SCREEN_WIDTH)
+		m_backgroundX = 0;
 }
 
 void Map::renderSolidTiles()
@@ -27,49 +37,17 @@ void Map::renderSolidTiles()
     for(int i = 0; i < m_height; i++)
 		for (int ii = 0; ii < m_width; ii++)
 		{
-			//Rectf box = { ii * 16, i * 16, 16.f, 16.f};
-			//renderEmptyBox(box);
 			m_solidTiles[i * m_width + ii].render();
 		}
 }
 
-/*void Map::renderObjectTiles()
-{
-	for (int i = 0; i < SCREEN_HEIGHT / 32 + 2; i++)
-		for (int ii = 0; ii < SCREEN_WIDTH / 32 + 2; ii++)
-		{
-			int index = (i + (int)(floor(Camera::getInstance().collisionBox.position.y / 32))) * width + (ii + (int)(floor(Camera::getInstance().collisionBox.position.x / 32)));
-
-			if (m_tileTypes[index].id != 0)
-				m_tileTypes[index].Render();
-		}
-
-	for (unsigned int i = 0; i < m_enemyEntities.size(); i++)
-		m_enemyEntities[i]->Render();
-}
-*/
-
-inline static void writeInt(
-	std::ofstream& p_fileStream,
-	GLuint p_uint)
-{
-	p_fileStream << GLubyte((p_uint & 0xFF000000) >> 24);
-	p_fileStream << GLubyte((p_uint & 0xFF0000) >> 16);
-	p_fileStream << GLubyte((p_uint & 0xFF00) >> 8);
-	p_fileStream << GLubyte((p_uint & 0xFF));
-}
-
-inline static void writeShort(
-	std::ofstream& p_fileStream,
-	GLushort p_ushort)
+inline static void writeShort(std::ofstream& p_fileStream, GLushort p_ushort)
 {
 	p_fileStream << GLubyte((p_ushort & 0xFF00) >> 8);
 	p_fileStream << GLubyte((p_ushort & 0xFF));
 }
 
-inline static void writeChar(
-	std::ofstream& p_fileStream,
-	GLubyte p_uchar)
+inline static void writeChar(std::ofstream& p_fileStream, GLubyte p_uchar)
 {
 	p_fileStream << p_uchar;
 }
@@ -176,17 +154,13 @@ void Map::saveMap()
 	std::cout << "Map saved." << std::endl;
 }
 
-inline static GLubyte readChar(
-	char* p_file,
-	long& p_index)
+inline static GLubyte readChar(char* p_file, long& p_index)
 {
 	p_index = p_index + 1;
 	return GLubyte(p_file[p_index - 1]);
 }
 
-inline static GLushort readShort(
-	char* p_file,
-	long& p_index)
+inline static GLushort readShort(char* p_file, long& p_index)
 {
 	GLushort _value;
 	_value = readChar(p_file, p_index) << 8;
@@ -194,18 +168,7 @@ inline static GLushort readShort(
 	return _value;
 }
 
-inline static GLuint readInt(
-	char* p_file,
-	long& p_index)
-{
-	GLushort _value;
-	_value = readShort(p_file, p_index) << 16;
-	_value += readShort(p_file, p_index);
-	return _value;
-}
-
-int Map::loadMap(
-	std::string p_filename)
+int Map::loadMap(std::string p_filename)
 {
 	printf("Reading %s of file %s\n", m_worldName.c_str(), p_filename.c_str());
 
@@ -276,9 +239,7 @@ Tile::Tile() :
 {
 	m_collisionBox = { Vector2f(0, 0), 32, 32 };
 }
-Tile::Tile(
-	Vector2f pos,
-	GLubyte tileType) :
+Tile::Tile(Vector2f pos, GLubyte tileType) :
 	m_id(tileType)
 {
 	m_collisionBox = { pos, 32, 32 };
@@ -287,7 +248,6 @@ Tile::Tile(
 void Tile::render()
 {
 	Rectf box = { m_collisionBox.position.x, m_collisionBox.position.y, 16.f, 16.f };
-	//if (g_showCollisionBox) renderEmptyBox(box, color(64, 64, 64, 128));
 	if (g_showCollisionBox)
 	{
 		switch(m_id)

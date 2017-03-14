@@ -8,12 +8,10 @@ SDL_Color color(
 	Uint8 g,
 	Uint8 b,
 	Uint8 a);
-void renderEmptyBox(
-	Rectf box,
-	SDL_Color color);
-void renderFillRect(
-	Rectf box,
-	SDL_Color color);
+
+void renderEmptyBox(Rectf box, SDL_Color color);
+void renderFillRect(Rectf box, SDL_Color color);
+void renderFillCircle(Vector2f position, GLfloat radius, SDL_Color color, int numSegments = 32);
 
 void changeFontSize(int ptsize);
 

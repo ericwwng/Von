@@ -149,6 +149,7 @@ void Application::loop()
     g_gameState->render();
 	//m_fpsTex.render(Camera::getInstance().m_collisionBox.position.x, Camera::getInstance().m_collisionBox.position.y);
 	glPopMatrix();
+		glLoadIdentity();
 	glPushMatrix();
 	m_fpsTex.render(0, 0);
 

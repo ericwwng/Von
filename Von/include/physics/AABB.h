@@ -1,24 +1,22 @@
 #pragma once
 
-#include "physics/physics.h"
-
 #include "utils/general.h"
 #include "utils/vector2f.h"
 
 class AABB
 {
-    public:
-        AABB() {}
+public:
+    AABB() {}
 
-		AABB(Vector2f& pos, GLuint w, GLuint h)
-        {
-            position = pos;
-            width = w;
-            height = h;
-        }
+	AABB(Vector2f& pos, GLuint w, GLuint h)
+    {
+        position = pos;
+        width = w;
+        height = h;
+    }
 
-        Vector2f position;
-		GLuint width, height;
+    Vector2f position;
+	GLuint width, height;
 };
 
 inline bool Collision(AABB& a, AABB& b)

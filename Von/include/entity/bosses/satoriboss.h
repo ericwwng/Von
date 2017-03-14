@@ -12,32 +12,32 @@
 
 class Satori : public Boss
 {
-	public:
-		Satori();
-		~Satori();
+public:
+	Satori();
+	~Satori();
 
-		void render();
-		void update(float deltaTime, Player* player);
+	void render();
+	void update(float deltaTime, Player* player);
 
-		void phaseOne();
-		void phaseTwo();
-		void randomPhase();
+	void phaseOne();
+	void phaseTwo();
+	void randomPhase();
 
-		void random360();
-		void aimedShot(Vector2f position);
-		void explodeAttack(Vector2f position);
+	void random360();
+	void aimedShot(Vector2f position);
+	void explodeAttack(Vector2f position);
 
-	private:
-		const int MAX_PROJECTILE_AMOUNT = 800;
+private:
+	const int MAX_PROJECTILE_AMOUNT = 800;
 
-		Timer m_songTimer;
-		Timer m_healthDecreaseTimer;
-		Timer m_speedUpTimer;
-		Timer m_collisionTimer;
+	Timer m_songTimer;
+	Timer m_healthDecreaseTimer;
+	Timer m_speedUpTimer;
+	Timer m_collisionTimer;
 
-		unsigned int m_shootingRate;
-		unsigned int m_shootingSpeed;
+	unsigned int m_shootingRate;
+	unsigned int m_shootingSpeed;
 
-		Vector2f m_bulletSpawnPosition;
-		Projectile m_spawnCircle;
+	Vector2f m_bulletSpawnPosition;
+	Projectile m_spawnCircle;
 };

@@ -10,22 +10,22 @@
 
 class Camera
 {
-    public:
-		Camera() { m_collisionBox = { Vector2f(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT }; }
+public:
+	Camera() { m_collisionBox = { Vector2f(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT }; }
 
-		void update()
-		{
-			glMatrixMode(GL_MODELVIEW);
-			glPopMatrix();
-				glLoadIdentity();
-				glTranslatef(-m_collisionBox.position.x, -m_collisionBox.position.y, 0.f);
-			glPushMatrix();
-		}
+	void update()
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
+			glLoadIdentity();
+			glTranslatef(-m_collisionBox.position.x, -m_collisionBox.position.y, 0.f);
+		glPushMatrix();
+	}
 
-		void setCoords(Vector2f pos) { m_collisionBox.position = pos; }
-		void addCoords(Vector2f pos) { m_collisionBox.position = m_collisionBox.position + pos; }
+	void setCoords(Vector2f pos) { m_collisionBox.position = pos; }
+	void addCoords(Vector2f pos) { m_collisionBox.position = m_collisionBox.position + pos; }
 
-		Vector2f getPosition() { return m_collisionBox.position; }
+	Vector2f getPosition() { return m_collisionBox.position; }
 
-		AABB m_collisionBox;
+	AABB m_collisionBox;
 };

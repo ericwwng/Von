@@ -7,7 +7,7 @@ byte 4 - Background Number
 byte 5 - Width in Chunks
 byte 6 - Height in Chunks
 byte 7&8 - playerSpawnPosition.x position (uint16)
-byte 8&9 - playerSpawnPosition.y position (uint16)
+byte 9&a - playerSpawnPosition.y position (uint16)
 
 layer 1 - Solid layer
 --------------------------------

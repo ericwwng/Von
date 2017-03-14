@@ -17,20 +17,13 @@ Projectile::Projectile()
 void Projectile::update(float deltaTime)
 {
 	m_position = m_position + (m_velocity * deltaTime);
-	/*if (m_position.x - Camera::getInstance().m_collisionBox.position.x + m_collisionBox.width < 0 || m_position.x
-	- Camera::getInstance().m_collisionBox.position.x > SCREEN_WIDTH)
-		setActive(false);
-	if (m_position.y - Camera::getInstance().m_collisionBox.position.y + m_collisionBox.height < 0 || m_position.y
-	- Camera::getInstance().m_collisionBox.position.y > SCREEN_HEIGHT)
-		setActive(false);*/
 
 	if(m_centeredBox)
 	{
 		Vector2f _center = { m_position.x + ((m_baseWidth * m_xScale) / 2), m_position.y + ((m_baseHeight * m_yScale) / 2)};
 		m_collisionBox = { _center, m_baseWidth * (GLuint)m_xScale, m_baseHeight * (GLuint)m_yScale };
 	}
-	else
-		m_collisionBox = { m_position, m_baseWidth * (GLuint)m_xScale, m_baseHeight * (GLuint)m_yScale };
+	else m_collisionBox = { m_position, m_baseWidth * (GLuint)m_xScale, m_baseHeight * (GLuint)m_yScale };
 }
 
 void Projectile::render() const
@@ -39,8 +32,11 @@ void Projectile::render() const
 
 	m_texture.render(m_position.x, m_position.y, NULL, m_texture.getWidth() * m_xScale, m_texture.getHeight() * m_yScale, m_angle, &_rotationPoint, m_color);
 
-	Rectf box = { m_collisionBox.position.x, m_collisionBox.position.y, m_baseWidth * m_xScale, m_baseHeight * m_yScale };
-	if (g_showCollisionBox) renderEmptyBox(box, m_color);
+	if (g_showCollisionBox)
+	{
+		Rectf box = { m_collisionBox.position.x, m_collisionBox.position.y, m_baseWidth * m_xScale, m_baseHeight * m_yScale };
+		renderEmptyBox(box, m_color);
+	}
 }
 
 void Projectile::reload(

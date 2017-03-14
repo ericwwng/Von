@@ -15,35 +15,36 @@
 
 class Level : public GameState
 {
-    public:
-		Level(std::string filename, std::string worldName);
-        ~Level();
+public:
+	Level(std::string filename, std::string worldName);
+    ~Level();
 
-		void screenTransition(float addBy);
+	void screenTransition(float addBy);
 
-        void render();
-        void update(float deltaTime);
-        void handleEvents();
+    void render();
+    void update(float deltaTime);
+    void handleEvents();
 
-    private:
-		Camera* m_camera;
-		Map* m_dungeon;
-		Boss* m_boss;
-		Player* m_player;
-		Cursor* m_cursor;
+private:
+	Camera* m_camera;
+	Map* m_dungeon;
+	Boss* m_boss;
+	Player* m_player;
+	Cursor* m_cursor;
 
-		std::string m_filename;
-		std::string m_worldName;
+	std::string m_filename;
+	std::string m_worldName;
 
-		Bgm m_levelBgm;
-		Bgm m_gameOverBgm;
+	Bgm m_levelBgm;
+	Bgm m_gameOverBgm;
 
-		Timer m_transitionTimer;
+	Timer m_transitionTimer;
 
-		std::vector<Button*> m_gameOverButtons;
-		bool m_isGameOver;
+	std::vector<Button*> m_gameOverButtons;
+	bool m_isGameOver;
 
-		//For Screen Transition
-		float m_alpha;
-		Timer m_fadeTimer;
+	//For Screen Transition
+	float m_alpha;
+	float m_deltaTime;
+	Timer m_fadeTimer;
 };

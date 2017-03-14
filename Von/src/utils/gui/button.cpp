@@ -1,9 +1,10 @@
 #include "utils/gui/button.h"
 
-Button::Button(Vector2f pos, GLuint w, GLuint h, std::string msg, bool clickable)
+Button::Button(Vector2f pos, GLuint w, GLuint h, std::string msg, bool clickable) :
+	m_message(msg)
 {
 	m_buttonTex.loadFromFile("res/GUI/button.png", w, h, false);
-	m_messageTex.loadFromText(msg.c_str(), color(0, 0, 0, 255));
+	m_messageTex.loadFromText(m_message.c_str(), color(32, 16, 0, 255));
 	m_collisionBox = { Vector2f(pos.x - (w / 2), pos.y - (h / 2)), w, h }; //To center the button
 
 	m_menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
@@ -30,8 +31,8 @@ void Button::render() const
 		if (m_hover)
 		{
 			glPopMatrix();
-				glLoadIdentity();
 			glPushMatrix();
+
 			glColor4f(1.f, 1.f, 1.f, 0.5f);
 			glTranslatef(m_collisionBox.position.x, m_collisionBox.position.y, 0.f);
 			glBegin(GL_QUADS);

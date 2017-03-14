@@ -15,25 +15,25 @@
 
 class SelectionState : public GameState
 {
-	public:
-		SelectionState(bool goToEditor);
-		~SelectionState();
+public:
+	SelectionState(bool goToEditor);
+	~SelectionState();
 
-		void render();
-		void update(float deltaTime);
-		void handleEvents();
-	private:
-		Camera* m_camera;
-		Cursor* m_cursor;
+	void render();
+	void update(float deltaTime);
+	void handleEvents();
+private:
+	Camera* m_camera;
+	Cursor* m_cursor;
 
-		Texture m_previewBackground;
+	Texture m_previewBackground;
 
-		std::vector<SelectionItem*> m_selectionItems;
+	std::vector<SelectionItem*> m_selectionItems;
 
-		DIR* m_dir;
-		struct dirent *m_ent;
+	DIR* m_dir;
+	struct dirent *m_ent;
 
-		bool m_goToEditorState;
+	bool m_goToEditorState;
 
-		Bgm m_menuTheme;
+	Bgm m_menuTheme;
 };

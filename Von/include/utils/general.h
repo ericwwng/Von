@@ -19,7 +19,7 @@ constexpr unsigned SCREEN_HEIGHT =			720;
 constexpr unsigned SCREEN_FPS =				60;
 constexpr unsigned SCREEN_TICKS_PER_FRAME =	1000 / SCREEN_FPS;
 
-constexpr double PI = 3.14159265;
+constexpr float PI = 3.14159265f;
 
 extern SDL_Window* g_window;
 extern SDL_Event g_event;

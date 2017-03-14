@@ -7,27 +7,36 @@
 #include "entity/cursor.h"
 
 #include "gfx/texture.h"
+#include "gfx/particle.h"
 
 #include "sfx/music.h"
 
 #include "utils/gui/button.h"
 
+//TODO COMBINE MENU AND OPTIONS STATE
+
 class Menu : public GameState
 {
-	public:
-		Menu(bool playBgm);
-		~Menu();
+public:
+	Menu(bool playBgm, GLfloat intialScroll = 0);
+	~Menu();
 
-		void render();
-		void update(float deltaTime_f);
-		void handleEvents();
+	void render();
+	void update(float deltaTime_f);
+	void handleEvents();
 
-	private:
-		Cursor* m_cursor;
+	void setInitialScroll(GLfloat x) { m_backgroundX = x; }
 
-		std::vector<Button*> m_buttons;
+private:
+	Cursor* m_cursor;
 
-		Texture m_background;
+	std::vector<Button*> m_buttons;
 
-		Bgm m_menuTheme;
+	GLfloat m_backgroundX;
+	Texture m_background;
+	Texture m_backgroundLogo;
+	GLfloat m_backgroundAlpha;
+	GLfloat m_alphaChange;
+
+	Bgm m_menuTheme;
 };

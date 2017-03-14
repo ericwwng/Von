@@ -41,7 +41,7 @@ BigMoney::BigMoney() :
 	m_blinkTimer.start();
 
 	m_phaseNumber = 1; //1 default
-	m_health = 100.f; //100 default
+	m_health = 100; //100 default
 
 	m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 175.f, 175.f };
 
@@ -171,21 +171,27 @@ void BigMoney::phaseOne()
 		m_health = 100;
 		m_healthColor = color(0, 0, 255, 128);
 		m_phaseNumber = 2;
-		m_velocity.x = 1000.f;
+		m_velocityGoal.x = 1000.f;
 	}
 }
 
 void BigMoney::phaseTwo(float deltaTime, Player* player)
 {
 	static Timer _miniPhaseTimer(true);
+	static Vector2f _tempVelocity;
 	static int _attackNumber = 0;
 
 	//boss movement
+	_tempVelocity.x = lerpApproach(m_velocityGoal.x, _tempVelocity.x, deltaTime * 1000);
+	m_velocity = _tempVelocity * deltaTime * 100;
+	m_velocity.normalized();
+
 	m_position.x += m_velocity.x * deltaTime;
-	if (m_position.x + m_texture.getWidth() - 225 > SCREEN_WIDTH || m_position.x - 225 < 0)
+	if (m_position.x + m_texture.getWidth() - 225 > SCREEN_WIDTH || m_position.x - 50 < 0)
 	{
 		m_position.x -= m_velocity.x * deltaTime;
-		m_velocity.x = -m_velocity.x;
+		_tempVelocity.x = 0;
+		m_velocityGoal.x = -m_velocityGoal.x;
 	}
 
 	if (_attackNumber == 0)
@@ -240,7 +246,7 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 		if (_attackNumber == 0)
 		{
 			m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 175.f, 175.f };
-			m_velocity.x = 1000.f;
+			m_velocityGoal.x = 1000.f;
 		}
 		else if (_attackNumber == 2)
 		{

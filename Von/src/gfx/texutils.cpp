@@ -10,9 +10,7 @@ SDL_Color color(
 	return _c;
 }
 
-void renderEmptyBox(
-	Rectf box, 
-	SDL_Color color)
+void renderEmptyBox(Rectf box, SDL_Color color)
 {
 	glPopMatrix();
 	glPushMatrix();
@@ -33,9 +31,7 @@ void renderEmptyBox(
 	glEnd();
 }
 
-void renderFillRect(
-	Rectf box, 
-	SDL_Color color)
+void renderFillRect(Rectf box, SDL_Color color)
 {
 	glPopMatrix();
 	glPushMatrix();
@@ -49,6 +45,23 @@ void renderFillRect(
 		glVertex2f(box.w, 0);
 		glVertex2f(box.w, box.h);
 		glVertex2f(0.f, box.h);
+	glEnd();
+}
+
+void renderFillCircle(Vector2f position, GLfloat radius, SDL_Color color, int numSegments)
+{
+	glPopMatrix();
+	glPushMatrix();
+
+	glTranslatef(position.x, position.y, 0.f);
+	glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+
+	glBegin(GL_TRIANGLE_FAN);
+		glVertex2f(0.0f, 0.0f);       // Center of circle
+		for (int i = 0; i <= numSegments; i++) { // Last vertex same as first vertex
+			GLfloat angle = i * 2.0f * PI / numSegments;  // 360 deg for all segments
+			glVertex2f(cos(angle) * radius, sin(angle) * radius);
+		}
 	glEnd();
 }
 

@@ -7,34 +7,34 @@
 
 class Bgm
 {
-	public:
-		Bgm();
-		Bgm(const char* filename);
-		~Bgm();
+public:
+	Bgm();
+	Bgm(const char* filename);
+	~Bgm();
 
-		void loadMusicFile(const char* filename);
+	void loadMusicFile(const char* filename);
 
-		void playMusic();
-		void repeatMusic();
-		void pauseMusic();
-		void resumeMusic();
-		void stopMusic();
+	void playMusic();
+	void repeatMusic();
+	void pauseMusic();
+	void resumeMusic();
+	void stopMusic();
 
-		Mix_Music* m_Music;
+	Mix_Music* m_Music;
 
-		Timer m_fadeStop;
+	Timer m_fadeStop;
 };
 
 class Sfx
 {
-	public:
-		Sfx();
-		Sfx(const char* filename);
-		~Sfx();
+public:
+	Sfx();
+	Sfx(const char* filename);
+	~Sfx();
 
-		void loadSoundFile(const char* filename);
+	void loadSoundFile(const char* filename);
 
-		void playSound();
+	void playSound();
 
-		Mix_Chunk* m_Chunk;
+	Mix_Chunk* m_Chunk;
 };

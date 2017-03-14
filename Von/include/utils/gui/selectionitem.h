@@ -13,42 +13,35 @@
 
 class SelectionItem
 {
-	public:
-		SelectionItem() {};
-		SelectionItem(
-			std::string path, 
-			Vector2f pos, 
-			GLuint w, 
-			GLuint h);
-		~SelectionItem();
+public:
+	SelectionItem() {};
+	SelectionItem(
+		std::string path, 
+		Vector2f pos, 
+		GLuint w, 
+		GLuint h);
+	~SelectionItem();
 
-		void render() const;
-		void handleEvents(AABB cursorCollisionBox);
+	void render() const;
+	void handleEvents(AABB cursorCollisionBox);
 
-		bool isClicked() { return m_click; }
+	bool isClicked() { return m_click; }
 		
-		void updatePosition();
-		std::string getWorldName() { return m_worldName; }
+	void updatePosition();
+	std::string getWorldName() { return m_worldName; }
 
-		AABB getCollisionBox() { return m_collisionBox; }
-	private:
-		AABB m_collisionBox;
+	AABB getCollisionBox() { return m_collisionBox; }
+private:
+	AABB m_collisionBox;
 
-		Texture m_buttonTex;
-		Texture m_messageTex;
+	Texture m_buttonTex;
+	Texture m_messageTex;
 
-		std::string m_worldName;
+	std::string m_worldName;
 
-		bool m_hover;
-		bool m_click;
+	bool m_hover;
+	bool m_click;
 
-		Sfx m_menuHover;
-		Sfx m_menuClick;
+	Sfx m_menuHover;
+	Sfx m_menuClick;
 };
-
-void addSelectionItem(
-	std::vector<SelectionItem*> &selectionItems, 
-	char* path, 
-	Vector2f pos, 
-	int w,
-	int h);

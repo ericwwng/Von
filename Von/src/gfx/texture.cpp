@@ -29,7 +29,7 @@ void Texture::loadFromFile(
 	if (_surface == NULL)
 		printf("Unable to load image %s!\n", path);
 
-	if (_surface)
+	if (_surface != NULL)
 	{
 		m_width = _surface->w;
 		m_height = _surface->h;
@@ -50,10 +50,8 @@ void Texture::loadFromFile(
 
 	if (_surface != NULL)
 	{
-		if (_surface->format->BytesPerPixel == 4)
-			m_textureFormat = GL_RGBA;
-		else if (_surface->format->BytesPerPixel == 3)
-			m_textureFormat = GL_RGB;
+		if (_surface->format->BytesPerPixel == 4) m_textureFormat = GL_RGBA;
+		else m_textureFormat = GL_RGB;
 	}
 
 	glGenTextures(1, &m_texture);
@@ -70,7 +68,7 @@ void Texture::loadFromFile(
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
 	if (glGetError() != GL_NO_ERROR)
-		printf("Error loading texture! %s Path:%s \n", gluErrorString(glGetError()), path);
+		printf("Error loading texture! %s Path: %s \n", gluErrorString(glGetError()), path);
 
 	///Initialize VBO
 	if (m_texture != 0 && m_VBOid == 0)
@@ -110,6 +108,11 @@ void Texture::loadFromText(
 {
 	free();
 
+	//SWAP R and B
+	Uint8 temp = color.r;
+	color.r = color.b;
+	color.b = temp;
+
 	SDL_Surface* _surface = TTF_RenderText_Blended(g_font, text, color);
 	if (_surface == NULL)
 		printf("Unable to load image %s!\n", text);
@@ -117,10 +120,7 @@ void Texture::loadFromText(
 	m_width = _surface->w;
 	m_height = _surface->h;
 
-	if (_surface->format->BytesPerPixel == 4)
-		m_textureFormat = GL_RGBA;
-	else if (_surface->format->BytesPerPixel == 3)
-		m_textureFormat = GL_RGB;
+	m_textureFormat = GL_RGBA;
 
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -199,7 +199,8 @@ void Texture::render(
 	GLfloat stretchHeight,
 	float angle,
 	Vector2f* center,
-	SDL_Color color) const
+	SDL_Color color,
+	GLfloat alpha) const
 {
 	if (m_texture != 0)
 	{
@@ -229,7 +230,8 @@ void Texture::render(
 		glPopMatrix();
 		glPushMatrix();
 
-		glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
+		if (alpha != 255) glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, alpha / 255.f);
+		else glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
 		if(g_isPlayerDead) glColor4f(1.f, 0.25f, 0.25f, 255.f);
 
 		glTranslatef(x, y, 0.f);

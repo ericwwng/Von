@@ -2,10 +2,10 @@
 
 class GameState
 {
-    public:
-        virtual ~GameState(){};
+public:
+    virtual ~GameState(){};
 
-		virtual void render() {};
-		virtual void update(float deltaTime) {};
-		virtual void handleEvents() {};
+	virtual void render() {};
+	virtual void update(float deltaTime) {};
+	virtual void handleEvents() {};
 };

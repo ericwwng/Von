@@ -19,62 +19,60 @@
 
 class Tile
 {
-	public:
-		Tile();
-		Tile(
-			Vector2f pos,
-			GLubyte tileType);
+public:
+	Tile();
+	Tile(Vector2f pos,GLubyte tileType);
 
-		void render();
+	void render();
 
-		AABB m_collisionBox;
-		GLubyte m_id; //on the tilesheet
+	AABB m_collisionBox;
+	GLubyte m_id; //on the tilesheet
 };
 
 class Map
 {
-    public:
-		Map(std::string filename,
-			std::string worldName);
-        ~Map();
+public:
+	Map(std::string filename,
+		std::string worldName);
+    ~Map();
 
-		void render();
-        void renderSolidTiles();
+	void render();
+    void renderSolidTiles();
+	void updateScroll(float deltaTime);
 
-		void saveMap();
-		int loadMap(
-			std::string p_filename);
-		std::string getFilename() { return m_filename; }
+	void saveMap();
+	int loadMap(std::string p_filename);
+	std::string getFilename() { return m_filename; }
 
-		void newMap(
-			GLubyte width,
-			GLubyte height,
-			GLubyte backgroundNumber,
-			std::string filename
-		);
+	void newMap(
+		GLubyte width,
+		GLubyte height,
+		GLubyte backgroundNumber,
+		std::string filename
+	);
 
-		Tile* getSolids() { return m_solidTiles; }
+	Tile* getSolids() { return m_solidTiles; }
 
-		GLubyte getDimW() const { return m_width; }
-		GLubyte getDimH() const { return m_height; }
+	GLubyte getDimW() const { return m_width; }
+	GLubyte getDimH() const { return m_height; }
 
-		Vector2f getPlayerSpawn() { return m_playerSpawnPosition; }
-		void setPlayerSpawn(
-			Vector2f spawnPos) { m_playerSpawnPosition = spawnPos; }
+	Vector2f getPlayerSpawn() { return m_playerSpawnPosition; }
+	void setPlayerSpawn(Vector2f spawnPos) { m_playerSpawnPosition = spawnPos; }
 
-		void setSolid(
-			GLuint tileIndex
-			, Uint8 id) { m_solidTiles[tileIndex].m_id = id; }
-	private:
-		std::string m_filename;
-		std::string m_worldName;
+	void setSolid(GLuint tileIndex, Uint8 id) { m_solidTiles[tileIndex].m_id = id; }
 
-		Tile* m_solidTiles;
+	Texture getBackground() { return m_background; }
+private:
+	std::string m_filename;
+	std::string m_worldName;
 
-		Vector2f m_playerSpawnPosition;
+	Tile* m_solidTiles;
 
-		GLubyte m_backgroundNumber;
-		Texture m_background;
+	Vector2f m_playerSpawnPosition;
 
-        GLubyte m_width, m_height; //should be image res / 8
+	GLubyte m_backgroundNumber;
+	Texture m_background;
+	GLfloat m_backgroundX;
+
+    GLubyte m_width, m_height; //should be image res / 8
 };

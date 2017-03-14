@@ -13,20 +13,23 @@
 
 class OptionsState : public GameState
 {
-	public:
-		OptionsState();
-		~OptionsState();
+public:
+	OptionsState(GLfloat initialScroll);
+	~OptionsState();
 
-		void render();
-		void update(float deltaTime_f);
-		void handleEvents();
+	void render();
+	void update(float deltaTime_f);
+	void handleEvents();
 
-	private:
-		Cursor* m_cursor;
 
-		std::vector<Button*> m_buttons;
+private:
+	Cursor* m_cursor;
 
-		Texture m_background;
+	std::vector<Button*> m_buttons;
 
-		Bgm m_menuTheme;
+	GLfloat m_backgroundX;
+	Texture m_background;
+	Texture m_backgroundLogo;
+
+	Bgm m_menuTheme;
 };

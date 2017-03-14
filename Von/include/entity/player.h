@@ -20,49 +20,49 @@
 
 class Player : public Entity
 {
-    public:
-		Player();
-		~Player() = default;
+public:
+	Player();
+	~Player() = default;
 
-        void render();
-		void renderUI(Camera* m_camera);
-		void update(
-			float deltaTime,
-			Tile* tileTypes,
-			int dimW,
-			int dimH,
-			Vector2f cursorPosition,
-			Camera* m_camera);
-        void handleEvents();
+    void render();
+	void renderUI(Camera* m_camera);
+	void update(
+		float deltaTime,
+		Tile* tileTypes,
+		int dimW,
+		int dimH,
+		Vector2f cursorPosition,
+		Camera* m_camera);
+    void handleEvents();
 
-		void setSpawnPosition(Vector2f pos) { m_position = pos; }
+	void setSpawnPosition(Vector2f pos) { m_position = pos; }
 
-		void checkCollisionTypes(
-			Tile* tileTypes,
-			int dimW,
-			int dimH);
+	void checkCollisionTypes(
+		Tile* tileTypes,
+		int dimW,
+		int dimH);
 
-		void setHit();
-        void setPlayerHealth(int health) { m_health = health; }
-        int getPlayerHealth() { return m_health; }
-		int getMaxHealth() { return m_maxHealth; }
+	void setHit();
+    void setPlayerHealth(int health) { m_health = health; }
+    int getPlayerHealth() { return m_health; }
+	int getMaxHealth() { return m_maxHealth; }
 
-		Gun* getWeapon() { return m_weapon; }
-    private:
-        Vector2f m_velocityGoal;
-        int m_playerSpeed;
-		int m_slipAmount;
+	Gun* getWeapon() { return m_weapon; }
+private:
+    Vector2f m_velocityGoal;
+    int m_playerSpeed;
+	int m_slipAmount;
 
-        bool m_isCollided;
+    bool m_isCollided;
 
-		Sfx m_hitSfx;
+	Sfx m_hitSfx;
 
-		//Attributes
-		Texture m_healthBar;
-		int m_maxHealth = 3; //3 default
-		int m_health;
+	//Attributes
+	Texture m_healthBar;
+	int m_maxHealth = 3; //3 default
+	int m_health;
 
-		Gun* m_weapon;
+	Gun* m_weapon;
 
-		Projectile m_collisionCircle;
+	Projectile m_collisionCircle;
 };

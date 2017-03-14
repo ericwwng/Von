@@ -14,30 +14,34 @@
 
 class Button
 {
-	public:
-		Button(
-			Vector2f pos,
-			GLuint w,
-			GLuint h,
-			std::string msg,
-			bool clickable);
-		~Button();
+public:
+	Button(
+		Vector2f pos,
+		GLuint w,
+		GLuint h,
+		std::string msg,
+		bool clickable);
+	~Button();
 
-		void render() const;
-		void handleEvents(AABB cursorCollisionBox);
+	void render() const;
+	void handleEvents(AABB cursorCollisionBox);
 
-		bool isClicked() { return m_click; }
-	private:
-		AABB m_collisionBox;
+	bool isClicked() { return m_click; }
+	
+	void setColor(SDL_Color color) { m_messageTex.loadFromText(m_message.c_str(), color); }
+private:
+	AABB m_collisionBox;
 
-		Texture m_buttonTex;
-		Texture m_messageTex;
+	std::string m_message;
 
-		bool m_hover;
-		bool m_click;
+	Texture m_buttonTex;
+	Texture m_messageTex;
 
-		bool m_clickable;
+	bool m_hover;
+	bool m_click;
 
-		Sfx m_menuHover;
-		Sfx m_menuClick;
+	bool m_clickable;
+
+	Sfx m_menuHover;
+	Sfx m_menuClick;
 };
