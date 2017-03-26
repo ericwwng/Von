@@ -1,7 +1,6 @@
 #pragma once
 
 #include "utils/general.h"
-#include "utils/singleton.h"
 #include "utils/timer.h"
 
 #include "game/camera.h"
@@ -33,7 +32,7 @@ public:
 		int dimH,
 		Vector2f cursorPosition,
 		Camera* m_camera);
-    void handleEvents();
+    void handleEvents(SDL_Event* event);
 
 	void setSpawnPosition(Vector2f pos) { m_position = pos; }
 
@@ -49,16 +48,14 @@ public:
 
 	Gun* getWeapon() { return m_weapon; }
 private:
-    Vector2f m_velocityGoal;
     int m_playerSpeed;
 	int m_slipAmount;
 
     bool m_isCollided;
+	bool m_isClickPressed;
 
 	Sfx m_hitSfx;
 
-	//Attributes
-	Texture m_healthBar;
 	int m_maxHealth = 3; //3 default
 	int m_health;
 

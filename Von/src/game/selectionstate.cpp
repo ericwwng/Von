@@ -83,24 +83,21 @@ void SelectionState::update(float deltaTime)
 	m_cursor->update(deltaTime, m_camera->getPosition());
 }
 
-void SelectionState::handleEvents()
+void SelectionState::handleEvents(SDL_Event* event)
 {
-	if (g_event.type == SDL_MOUSEWHEEL)
-		m_camera->addCoords(Vector2f(0.f, -g_event.wheel.y * 10.f));
-
-	if (g_event.type == SDL_KEYDOWN)
-		if (g_event.key.keysym.sym == SDLK_ESCAPE)
+	if (event->type == SDL_KEYDOWN)
+		if (event->key.keysym.sym == SDLK_ESCAPE)
 		{
 			delete g_gameState;
 			g_gameState = new Menu(false);
 		}
 
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
-		m_selectionItems[i]->handleEvents(m_cursor->getCollisionBox());
+		m_selectionItems[i]->handleEvents(event, m_cursor->getCollisionBox());
 
-	while(SDL_PollEvent(&g_event))
+	while(SDL_PollEvent(event))
 	{
-		if (g_event.type == SDL_QUIT)
+		if (event->type == SDL_QUIT)
 		{
 			g_gameState = new Menu(false);
 		}

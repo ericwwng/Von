@@ -9,7 +9,7 @@ Particle::Particle(Vector2f position, Vector2f velocity, SDL_Color color, float 
 {
 	m_alive = true;
 	m_alpha = 255;
-	m_reduceAlpha = (1 / m_lifeDuration) * 250;
+	m_alphaChange = (1 / m_lifeDuration) * 250;
 }
 
 bool Particle::update(float deltaTime)
@@ -18,7 +18,7 @@ bool Particle::update(float deltaTime)
 
 	m_lifeDuration -= deltaTime;
 
-	if(m_alpha > 0) m_alpha -= m_reduceAlpha * deltaTime;
+	if(m_alpha > 0) m_alpha -= m_alphaChange * deltaTime;
 
 	if (m_lifeDuration <= 0 || m_alpha <= 0 || m_position.x + (m_radius * 2) < 0 || m_position.x > SCREEN_WIDTH)
 	{
@@ -37,7 +37,8 @@ void Particle::render() const
 
 	glBegin(GL_TRIANGLE_FAN);
 		glVertex2f(0.0f, 0.0f);       // Center of circle
-		for (int i = 0; i <= 16; i++) { // Last vertex same as first vertex
+		for (int i = 0; i <= 16; i++) 
+		{
 			GLfloat angle = i * 2.0f * PI / 16;  // 360 deg for all segments
 			glVertex2f(cos(angle) * m_radius, sin(angle) * m_radius);
 		}
@@ -46,13 +47,14 @@ void Particle::render() const
 
 ParticleEmitter::ParticleEmitter(int totalParticles, Vector2f position, SDL_Color color, float lifeDuration, float lifeVariance, GLfloat radius) :
 	m_totalParticles(totalParticles),
-	m_position(position),
 	m_color(color),
 	m_lifeDuration(lifeDuration),
 	m_lifeVariance(lifeVariance),
 	m_radius(radius)
 {
 	m_particles = new Particle[m_totalParticles];
+
+	m_position = position;
 	
 	m_emissionRate = m_totalParticles / lifeDuration;
 	m_emissionTimer.start();
@@ -98,4 +100,9 @@ void ParticleEmitter::render() const
 		if (m_particles[i].isAlive()) m_particles[i].render();
 	}
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void ParticleEmitter::setPosition(Vector2f position)
+{
+	m_position = position;
 }

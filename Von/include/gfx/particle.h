@@ -38,7 +38,7 @@ private:
 
 	SDL_Color m_color;
 	GLfloat m_alpha;
-	GLfloat m_reduceAlpha;
+	GLfloat m_alphaChange;
 
 	GLfloat m_radius;
 };
@@ -58,6 +58,8 @@ public:
 	void render() const;
 
 	void setEmissionRate(float emissionRate) { m_emissionRate = emissionRate; }
+
+	void setPosition(Vector2f position);
 private:
 	Vector2f m_position;
 

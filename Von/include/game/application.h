@@ -15,7 +15,7 @@
 #include "game/menu.h"
 #include "game/level.h"
 
-enum appstate {
+enum AppState {
 	APP_INITIALZING,
 	APP_RUNNING,
 	APP_EXITING
@@ -30,12 +30,13 @@ public:
     void run();
     void loop();
 
-    void setAppState(appstate appState);
+    void setAppState(AppState appState);
 
 private:
 	SDL_GLContext m_context;
+	SDL_Event m_event;
 
-    appstate m_appState;
+	AppState m_appState;
 
     Timer m_deltaTimer, m_fpsTimer;
     float deltaTime_f;

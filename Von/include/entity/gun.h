@@ -16,10 +16,7 @@ public:
     void action();
 
     void render() const;
-    void update(
-		Vector2f& pos,
-		float angle,
-		float deltaTime);
+    void update(Vector2f& position, float angle, float deltaTime);
 
 	void setDirection(Vector2f& dir) { m_weaponDirection = dir; }
 
@@ -30,6 +27,8 @@ private:
     Projectile* m_bullet;
 
 	Vector2f m_weaponDirection;
+	Vector2f m_playerCenter;
+	Vector2f m_initialPosition;
 
 	Timer m_rateOfFire;
 

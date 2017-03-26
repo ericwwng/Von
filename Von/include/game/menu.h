@@ -2,7 +2,6 @@
 
 #include "game/application.h"
 #include "game/selectionstate.h"
-#include "game/optionsstate.h"
 
 #include "entity/cursor.h"
 
@@ -13,24 +12,31 @@
 
 #include "utils/gui/button.h"
 
-//TODO COMBINE MENU AND OPTIONS STATE
+enum MenuState 
+{
+	MAIN_MENU,
+	OPTIONS_MENU
+};
 
 class Menu : public GameState
 {
 public:
-	Menu(bool playBgm, GLfloat intialScroll = 0);
+	Menu(bool playBgm);
 	~Menu();
 
 	void render();
 	void update(float deltaTime_f);
-	void handleEvents();
+	void handleEvents(SDL_Event* event);
 
 	void setInitialScroll(GLfloat x) { m_backgroundX = x; }
 
 private:
 	Cursor* m_cursor;
 
+	MenuState m_menuState;
+
 	std::vector<Button*> m_buttons;
+	std::vector<Button*> m_optionsButtons;
 
 	GLfloat m_backgroundX;
 	Texture m_background;

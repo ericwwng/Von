@@ -12,7 +12,6 @@ SelectionItem::SelectionItem(
 	
 	m_messageTex.loadFromText(path.c_str(), color(0, 0, 0, 255));
 	
-	m_buttonTex.loadFromFile("res/GUI/button.png", w, h, false);
 	m_collisionBox = { Vector2f(pos.x, pos.y), w, h };
 
 	m_menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
@@ -29,7 +28,9 @@ SelectionItem::~SelectionItem()
 
 void SelectionItem::render() const
 {
-	m_buttonTex.render(m_collisionBox.position.x, m_collisionBox.position.y, NULL, (GLfloat)m_collisionBox.width, (GLfloat)m_collisionBox.height);
+	Rectf _renderRect = { m_collisionBox.position.x, m_collisionBox.position.y, (GLfloat)m_collisionBox.width,(GLfloat)m_collisionBox.height };
+	renderFillRect(_renderRect, color(255, 255, 255, 128));
+	renderEmptyBox(_renderRect, color(0, 0, 0, 255));
 
 	m_messageTex.render(m_collisionBox.position.x + (m_collisionBox.width / 6),
 		m_collisionBox.position.y + (m_collisionBox.height / 6), NULL, (GLfloat)m_collisionBox.width / 1.5f, (GLfloat)m_collisionBox.height / 1.5f);
@@ -51,22 +52,22 @@ void SelectionItem::render() const
 	}
 }
 
-void SelectionItem::handleEvents(AABB cursorCollisionBox)
+void SelectionItem::handleEvents(SDL_Event* event, AABB cursorCollisionBox)
 {
 	static bool _up;
 
 	if (Collision(cursorCollisionBox, m_collisionBox))
 	{
 		m_hover = true;
-		if (g_event.type == SDL_MOUSEMOTION)
+		if (event->type == SDL_MOUSEMOTION)
 			m_menuHover.playSound();
 
-		if (g_event.type == SDL_MOUSEBUTTONUP)
+		if (event->type == SDL_MOUSEBUTTONUP)
 		{
 			_up = true;
 			m_click = false;
 		}
-		if (g_event.type == SDL_MOUSEBUTTONDOWN)
+		if (event->type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (_up)
 			{

@@ -5,12 +5,10 @@ Bgm::Bgm()
 	m_Music = NULL;
 }
 
-Bgm::Bgm(
-	const char* filename)
+Bgm::Bgm(const char* filename)
 {
 	m_Music = Mix_LoadMUS(filename);
-	if (m_Music == NULL)
-		printf("Failed to load music! Mix_GetError: %s\n", Mix_GetError());
+	if (m_Music == NULL) printf("Failed to load music! Mix_GetError: %s\n", Mix_GetError());
 }
 
 Bgm::~Bgm()
@@ -19,12 +17,17 @@ Bgm::~Bgm()
 	m_Music = NULL;
 }
 
-void Bgm::loadMusicFile(const char* filename)
+void Bgm::loadMusicFile(const char* filename, bool startPlaying)
 {
 	Mix_FreeMusic(m_Music);
 	m_Music = Mix_LoadMUS(filename);
 	if (m_Music == NULL)
+	{
 		printf("Failed to load music! Mix_GetError: %s\n", Mix_GetError());
+		return;
+	}
+
+	if (startPlaying) playMusic();
 }
 
 void Bgm::playMusic()

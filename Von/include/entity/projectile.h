@@ -4,11 +4,13 @@
 
 #include "entity/entity.h"
 
+#include "gfx/particle.h"
+
 class Projectile : public Entity
 {
 public:
     Projectile();
-    ~Projectile() = default;
+    ~Projectile();
 
 	void reload(
 		Vector2f pos,
@@ -27,14 +29,19 @@ public:
 	void loadTexture(char* filename) { m_texture.loadFromFile(filename, 64, 64, false); }
 
 	void setScale(GLfloat xscale, GLfloat yscale);
+	GLfloat getXScale() { return m_xScale; }
+	GLfloat getYScale() { return m_yScale; }
+
     void setCollisionBox(GLuint width, GLuint height);
 	inline void setCenteredBox(bool centered) { m_centeredBox = centered;  }
 
 	inline void setColor(SDL_Color color) { m_color = color; }
 
-	AABB getCollisionBox() { return m_collisionBox; }
+	void setParticleEmitter(ParticleEmitter* particleEmitter);
 private:
     int m_projectileSpeed;
+
+	ParticleEmitter* m_particleEmitter;
 
     //whether projectile is on screen or not
     bool m_active;

@@ -23,7 +23,7 @@ public:
 
     void render();
     void update(float deltaTime);
-    void handleEvents();
+    void handleEvents(SDL_Event* event);
 
 private:
 	Camera* m_camera;

@@ -91,7 +91,7 @@ Application::~Application()
 	Mix_Quit();
 }
 
-void Application::setAppState(appstate appState)
+void Application::setAppState(AppState appState)
 {
     m_appState = appState;
 }
@@ -129,13 +129,14 @@ void Application::loop()
     ///----------------
     /// Game Update
     ///----------------
-	while (SDL_PollEvent(&g_event))
+	while (SDL_PollEvent(&m_event))
 	{
-		if (g_event.type == SDL_KEYUP)
-			if (g_event.key.keysym.sym == SDLK_LSHIFT)
-				g_showCollisionBox = !g_showCollisionBox;
+		if (m_event.type == SDL_KEYUP)
+		{
+			if (m_event.key.keysym.sym == SDLK_LSHIFT) g_showCollisionBox = !g_showCollisionBox;
+		}
 
-		g_gameState->handleEvents();
+		g_gameState->handleEvents(&m_event);
 	}
     //Update current game state
     g_gameState->update(deltaTime_f);
@@ -147,7 +148,6 @@ void Application::loop()
 
     //Render current game state
     g_gameState->render();
-	//m_fpsTex.render(Camera::getInstance().m_collisionBox.position.x, Camera::getInstance().m_collisionBox.position.y);
 	glPopMatrix();
 		glLoadIdentity();
 	glPushMatrix();
@@ -156,7 +156,4 @@ void Application::loop()
 	SDL_GL_SwapWindow(g_window);
 
 	m_countedFrames++;
-	//Cap fps to SCREEN_FPS
-	int frameTicks = m_fpsTimer.getTicks();
-	//if (frameTicks < SCREEN_TICKS_PER_FRAME) { SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks); }
 }

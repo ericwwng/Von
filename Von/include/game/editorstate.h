@@ -26,7 +26,7 @@ public:
 	void render();
 	void update(
 		float deltaTime);
-	void handleEvents();
+	void handleEvents(SDL_Event* event);
 private:
 	DIR* m_dir;
 	struct dirent *m_ent;

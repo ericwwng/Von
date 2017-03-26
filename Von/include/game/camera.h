@@ -23,7 +23,6 @@ public:
 	}
 
 	void setCoords(Vector2f pos) { m_collisionBox.position = pos; }
-	void addCoords(Vector2f pos) { m_collisionBox.position = m_collisionBox.position + pos; }
 
 	Vector2f getPosition() { return m_collisionBox.position; }
 

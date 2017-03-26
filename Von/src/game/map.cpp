@@ -28,8 +28,7 @@ void Map::render()
 void Map::updateScroll(float deltaTime)
 {
 	m_backgroundX += 300 * deltaTime;
-	if (m_backgroundX >= SCREEN_WIDTH)
-		m_backgroundX = 0;
+	if (m_backgroundX >= SCREEN_WIDTH) m_backgroundX = 0;
 }
 
 void Map::renderSolidTiles()

@@ -1,15 +1,12 @@
 #include "entity\bosses\satoriboss.h"
 
-Satori::Satori():
-	m_shootingRate(200),
-	m_shootingSpeed(100)
+Satori::Satori()
 {
 	m_texture.loadFromFile("res/Enemy/Boss/Satori/SatoriImage.png", 444, 456);
 	m_Projectiles = new Projectile[MAX_PROJECTILE_AMOUNT];
 
 	m_songTimer.start();
 	m_healthDecreaseTimer.start();
-	m_speedUpTimer.start();
 	m_collisionTimer.start();
 
 	m_phaseNumber = 1;
@@ -26,8 +23,11 @@ Satori::Satori():
 	//random360
 	for (int i = 0; i < MAX_PROJECTILE_AMOUNT; i++)
 	{
-		//m_Projectiles[i].setCircleType(4);
+		m_Projectiles[i].setCenteredBox(true);
 	}
+
+	m_shootingRate = 200;
+	m_shootingSpeed = 100;
 }
 
 Satori::~Satori()
@@ -98,8 +98,7 @@ void Satori::update(float deltaTime, Player* player)
 
 void Satori::phaseOne()
 {
-	if(m_songTimer.getTicks() > 3000 && m_songTimer.getTicks() < 25800)
-		random360();
+	if(m_songTimer.getTicks() > 3000 && m_songTimer.getTicks() < 25800) random360();
 	else if(m_songTimer.getTicks() > 25800)
 	{
 		m_phaseNumber = 2;
@@ -134,32 +133,6 @@ void Satori::phaseTwo()
 	{
 		m_health -= (1280.f / 155.f / 2.f);
 		m_healthDecreaseTimer.start();
-	}
-}
-
-void Satori::randomPhase()
-{
-	Vector2f _randomPosition = { (GLfloat)(rand() % 1280), (GLfloat)(rand() % 720) };
-	if (m_songTimer.getTicks() > 3000 && m_songTimer.getTicks() < 155500)
-	{
-		explodeAttack(m_bulletSpawnPosition);
-		random360();
-	}
-
-	if(m_healthDecreaseTimer.getTicks() >= 500)
-	{
-		m_health -= (1280.f / 155.f / 2.f);
-		m_healthDecreaseTimer.start();
-	}
-
-	if(m_speedUpTimer.getTicks() >= 3000)
-	{
-		if(m_shootingRate >= 16)
-			m_shootingRate -= 2;
-		if(m_shootingSpeed < 300)
-			m_shootingSpeed += 5;
-		printf("rate: %d\n speed: %d\n\n", m_shootingRate, m_shootingSpeed);
-		m_speedUpTimer.start();
 	}
 }
 

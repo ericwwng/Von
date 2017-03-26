@@ -5,14 +5,13 @@
 #include "physics/AABB.h"
 
 #include "gfx/texture.h"
-#include "gfx/spritesheet.h"
 
 class Entity
 {
 public:
     virtual void render() {};
     virtual void update() {};
-    virtual void handleEvents() {};
+    virtual void handleEvents(SDL_Event* event) {};
 
     Vector2f& getPosition() { return m_position; }
 	inline void setPosition(Vector2f pos) { m_position = pos; }
@@ -21,6 +20,7 @@ public:
 protected:
     Vector2f m_position;
     Vector2f m_velocity;
+	Vector2f m_velocityGoal;
     Vector2f m_direction;
 
     float m_angle;
@@ -28,5 +28,4 @@ protected:
     AABB m_collisionBox;
 
     Texture m_texture;
-	SpriteSheet m_spriteSheet;
 };

@@ -29,7 +29,7 @@ public:
 
     void setAlpha(
 		Uint8 a);
-
+	
 	void render(
 		GLfloat x,
 		GLfloat y,

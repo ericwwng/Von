@@ -12,7 +12,7 @@ public:
 	Bgm(const char* filename);
 	~Bgm();
 
-	void loadMusicFile(const char* filename);
+	void loadMusicFile(const char* filename, bool startPlaying);
 
 	void playMusic();
 	void repeatMusic();

@@ -2,6 +2,8 @@
 
 #include "entity/entity.h"
 
+#include "gfx/particle.h"
+
 class Cursor : public Entity
 {
 public:
@@ -10,4 +12,6 @@ public:
 
 	void render() const;
 	void update(float deltaTime, Vector2f cameraPosition);
+private:
+	ParticleEmitter* m_particleEmitter;
 };

@@ -7,19 +7,30 @@ Nick Mead - Support
 
 
 Content taken from
-ZUN - Touhou
-Mushi-shi - Shiver (Main Menu)
-Zankyou No Terror - Von (Credits)
-Undertale
-The Quick Brown Fox - Big Money
-osu! - various stuff
 
+Big Money
+The Quick Brown Fox
+Music - Big Money
+
+Satori
+ZUN
+Music - 3rdeyeragg
+
+Zankyou No Terror - Von (Credits)
+The Quick Brown Fox - Big Money
+
+osu!
+Cursor
+Menu sounds
+
+Music
 [mattesar.com]
 Mattesar - Las Astrellas [Cadenza]
 Mattesar - Idea vs Reality [Cynic]
 Mattesar - Icarus Complex [Cynic]
+Mattesar - Lifeline [Bane]
 
-Test Players
 
+Special Thanks
 
-Thank you very much for playing my first game!
+Thank YOU very much for playing my first game!

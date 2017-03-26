@@ -2,10 +2,8 @@
 
 Warp::Warp()
 {
-	currentLevel = 0;
-
 	m_texture.loadFromFile("res/Entity/warp.png", 64, 64, true);
-	m_position = { 0, 0 };
+	m_position = { -64, -64 };
 	m_collisionBox = { m_position, 64, 64};
 }
 
@@ -24,49 +22,43 @@ void Warp::goToNextLevel()
 	//Intro(0) -> Transition(1) -> BigMoney -> Transition(3) -> Satori -> Transition(4) -> Sun
 	currentLevel++;
 
-	delete g_gameState;
-
 	switch (currentLevel)
 	{
 		case 0:
 		{
 			g_gameState = new Level("Levels/Introduction.opo", "Introduction.opo");
-			break;
-		}
+		} break;
 		case 1:
 		{
+			delete g_gameState;
 			g_gameState = new Level("Levels/Transition.opo", "Transition.opo");
-			break;
-		}
+		} break;
 		case 2:
 		{
 			g_gameState = new Level("Levels/BigMoney.opo", "BigMoney.opo");
-			break;
-		}
+		} break;
 		case 3:
 		{
+			delete g_gameState;
 			g_gameState = new Level("Levels/Transition.opo", "Transition.opo");
-			break;
-		}
+		} break;
 		case 4:
 		{
 			g_gameState = new Level("Levels/Satori.opo", "Satori.opo");
-			break;
-		}
+		} break;
 		case 5:
 		{
+			delete g_gameState;
 			g_gameState = new Level("Levels/Transition.opo", "Transition.opo");
-			break;
-		}
+		} break;
 		case 6:
 		{
 			g_gameState = new Level("Levels/Sun.opo", "Sun.opo");
-		}
+		} break;
 		default:
 		{
 			g_gameState = new Level("Levels/Transition.opo", "Transition.opo");
-			break;
-		}
+		} break;
 	}
 }
 

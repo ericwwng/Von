@@ -9,7 +9,7 @@
 
 #include "game/camera.h"
 
-#include "gfx/spritesheet.h"
+#include "gfx/texture.h"
 #include "gfx/texutils.h"
 
 #include "sfx/music.h"

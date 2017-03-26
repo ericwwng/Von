@@ -30,15 +30,4 @@ public:
 
 private:
 	const int MAX_PROJECTILE_AMOUNT = 800;
-
-	Vector2f m_velocityGoal;
-
-	SDL_Color m_healthColor;
-
-	Timer m_blinkTimer;
-	Timer m_collisionTimer;
-	Timer m_bossCollisionTimer;
-
-	float m_shootingRate;
-	float m_shootingSpeed;
 };

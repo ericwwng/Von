@@ -3,8 +3,7 @@
 Button::Button(Vector2f pos, GLuint w, GLuint h, std::string msg, bool clickable) :
 	m_message(msg)
 {
-	m_buttonTex.loadFromFile("res/GUI/button.png", w, h, false);
-	m_messageTex.loadFromText(m_message.c_str(), color(32, 16, 0, 255));
+	m_messageTex.loadFromText(m_message.c_str(), color(0, 0, 0, 255));
 	m_collisionBox = { Vector2f(pos.x - (w / 2), pos.y - (h / 2)), w, h }; //To center the button
 
 	m_menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
@@ -22,7 +21,9 @@ Button::~Button()
 
 void Button::render() const
 {
-	m_buttonTex.render(m_collisionBox.position.x, m_collisionBox.position.y, NULL, (GLfloat)m_collisionBox.width, (GLfloat)m_collisionBox.height);
+	Rectf _renderRect = { m_collisionBox.position.x, m_collisionBox.position.y,(GLfloat)m_collisionBox.width,(GLfloat)m_collisionBox.height };
+	renderFillRect(_renderRect, color(255, 255, 255, 128));
+	renderEmptyBox(_renderRect, color(0, 0, 0, 255));
 
 	m_messageTex.render(m_collisionBox.position.x + (m_collisionBox.width / 6),
 		m_collisionBox.position.y + (m_collisionBox.height / 6), NULL, (GLfloat)m_collisionBox.width / 1.5f, (GLfloat)m_collisionBox.height / 1.5f);
@@ -45,24 +46,24 @@ void Button::render() const
 		}
 }
 
-void Button::handleEvents(AABB cursorCollisionBox)
+void Button::handleEvents(SDL_Event* event, AABB cursorCollisionBox)
 {
-	static bool _up;
+	static bool _up = true;
 
 	if (m_clickable)
 	{
 		if (Collision(cursorCollisionBox, m_collisionBox))
 		{
 			m_hover = true;
-			if (g_event.type == SDL_MOUSEMOTION)
+			if (event->type == SDL_MOUSEMOTION)
 				m_menuHover.playSound();
 
-			if (g_event.type == SDL_MOUSEBUTTONUP)
+			if (event->type == SDL_MOUSEBUTTONUP)
 			{
 				_up = true;
 				m_click = false;
 			}
-			if (g_event.type == SDL_MOUSEBUTTONDOWN)
+			if (event->type == SDL_MOUSEBUTTONDOWN)
 			{
 				if (_up)
 				{
@@ -74,6 +75,19 @@ void Button::handleEvents(AABB cursorCollisionBox)
 			}
 		}
 		else
+		{
 			m_hover = false;
+		}
 	}
+}
+
+bool Button::isClicked()
+{
+	if (m_click)
+	{
+		m_click = false;
+		return true;
+	}
+
+	return false;
 }

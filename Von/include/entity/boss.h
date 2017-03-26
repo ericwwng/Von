@@ -8,14 +8,13 @@
 #include "physics/AABB.h"
 
 #include "gfx/texture.h"
-#include "gfx/spritesheet.h"
 
-class Boss
+class Boss : public Entity
 {
 public:
 	virtual void render() {};
 	virtual void update(float deltaTime, Player* player) {};
-	virtual void handleEvents() {};
+	virtual void handleEvents(SDL_Event* event) {};
 
 	//This is more of an outline
 	void phaseOne() {};
@@ -28,20 +27,19 @@ public:
 
 	Projectile* getProjectiles() { return m_Projectiles; }
 protected:
-	Vector2f m_position;
-	Vector2f m_velocity;
-	Vector2f m_direction;
-
-	float m_angle;
-
 	float m_health;
-
-	AABB m_collisionBox;
-
-	Texture m_texture;
-	SpriteSheet m_spriteSheet;
 
 	uint8_t m_phaseNumber;
 
 	Projectile* m_Projectiles;
+
+	SDL_Color m_healthColor;
+	ParticleEmitter* m_healthBarParticleEmitter;
+
+	Timer m_blinkTimer;
+	Timer m_collisionTimer;
+	Timer m_bossCollisionTimer;
+
+	float m_shootingRate;
+	float m_shootingSpeed;
 };

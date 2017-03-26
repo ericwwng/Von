@@ -23,7 +23,7 @@ public:
 	~SelectionItem();
 
 	void render() const;
-	void handleEvents(AABB cursorCollisionBox);
+	void handleEvents(SDL_Event* event, AABB cursorCollisionBox);
 
 	bool isClicked() { return m_click; }
 		
@@ -34,7 +34,6 @@ public:
 private:
 	AABB m_collisionBox;
 
-	Texture m_buttonTex;
 	Texture m_messageTex;
 
 	std::string m_worldName;

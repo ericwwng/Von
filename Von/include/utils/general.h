@@ -14,21 +14,18 @@
 
 #include "game/gamestate.h"
 
-constexpr unsigned SCREEN_WIDTH =			1280;
-constexpr unsigned SCREEN_HEIGHT =			720;
-constexpr unsigned SCREEN_FPS =				60;
-constexpr unsigned SCREEN_TICKS_PER_FRAME =	1000 / SCREEN_FPS;
+constexpr unsigned SCREEN_WIDTH  = 1280;
+constexpr unsigned SCREEN_HEIGHT = 720;
 
 constexpr float PI = 3.14159265f;
 
 extern SDL_Window* g_window;
-extern SDL_Event g_event;
 extern TTF_Font* g_font;
 
 extern bool g_showCollisionBox;
 extern bool g_isPlayerDead;
 
-extern float g_bgmVolume;
-extern float g_sfxVolume;
+extern int g_bgmVolume;
+extern int g_sfxVolume;
 
 extern GameState* g_gameState;

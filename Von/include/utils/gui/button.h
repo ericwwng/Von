@@ -24,17 +24,18 @@ public:
 	~Button();
 
 	void render() const;
-	void handleEvents(AABB cursorCollisionBox);
+	void handleEvents(SDL_Event* event, AABB cursorCollisionBox);
 
-	bool isClicked() { return m_click; }
+	bool isClicked();
 	
 	void setColor(SDL_Color color) { m_messageTex.loadFromText(m_message.c_str(), color); }
+
+	void setClick(bool click) { m_click = click; }
 private:
 	AABB m_collisionBox;
 
 	std::string m_message;
 
-	Texture m_buttonTex;
 	Texture m_messageTex;
 
 	bool m_hover;

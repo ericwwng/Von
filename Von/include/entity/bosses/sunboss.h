@@ -20,7 +20,7 @@ public:
 	void render();
 	void update(float deltaTime, Player* player);
 
-	void phaseOne();
+	void phaseOne(float deltaTime);
 	void phaseTwo(float deltaTime, Player* player);
 	void phaseThree(float deltaTime);
 
@@ -31,13 +31,4 @@ public:
 
 private:
 	const int MAX_PROJECTILE_AMOUNT = 800;
-
-	SDL_Color m_healthColor;
-
-	Timer m_blinkTimer;
-	Timer m_collisionTimer;
-	Timer m_bossCollisionTimer;
-
-	float m_shootingRate;
-	float m_shootingSpeed;
 };
