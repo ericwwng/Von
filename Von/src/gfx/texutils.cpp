@@ -57,9 +57,9 @@ void renderFillCircle(Vector2f position, GLfloat radius, SDL_Color color, int nu
 	glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
 
 	glBegin(GL_TRIANGLE_FAN);
-		glVertex2f(0.0f, 0.0f);       // Center of circle
-		for (int i = 0; i <= numSegments; i++) { // Last vertex same as first vertex
-			GLfloat angle = i * 2.0f * PI / numSegments;  // 360 deg for all segments
+		glVertex2f(0.0f, 0.0f);   
+		for (int i = 0; i <= numSegments; i++) {
+			GLfloat angle = i * 2.0f * PI / numSegments; 
 			glVertex2f(cos(angle) * radius, sin(angle) * radius);
 		}
 	glEnd();

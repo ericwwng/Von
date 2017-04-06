@@ -1,6 +1,6 @@
 #include "gfx/particle.h"
 
-Particle::Particle(Vector2f position, Vector2f velocity, SDL_Color color, float lifeDuration, GLfloat radius) :
+Particle::Particle(Vector2f& position, Vector2f& velocity, SDL_Color color, float lifeDuration, GLfloat radius) :
 	m_position(position),
 	m_velocity(velocity),
 	m_color(color),
@@ -35,17 +35,15 @@ void Particle::render() const
 	glTranslatef(m_position.x, m_position.y, 0.f);
 	glColor4f(m_color.r / 255.f, m_color.g / 255.f, m_color.b / 255.f, m_alpha / 255.f);
 
-	glBegin(GL_TRIANGLE_FAN);
-		glVertex2f(0.0f, 0.0f);       // Center of circle
-		for (int i = 0; i <= 16; i++) 
-		{
-			GLfloat angle = i * 2.0f * PI / 16;  // 360 deg for all segments
-			glVertex2f(cos(angle) * m_radius, sin(angle) * m_radius);
-		}
+	glBegin(GL_QUADS);
+		glVertex2f(0.f, 0.f);
+		glVertex2f(m_radius * 2, 0);
+		glVertex2f(m_radius * 2, m_radius * 2);
+		glVertex2f(0.f, m_radius * 2);
 	glEnd();
 }
 
-ParticleEmitter::ParticleEmitter(int totalParticles, Vector2f position, SDL_Color color, float lifeDuration, float lifeVariance, GLfloat radius) :
+ParticleEmitter::ParticleEmitter(int totalParticles, Vector2f& position, SDL_Color color, float lifeDuration, float lifeVariance, GLfloat radius) :
 	m_totalParticles(totalParticles),
 	m_color(color),
 	m_lifeDuration(lifeDuration),
@@ -67,7 +65,7 @@ ParticleEmitter::~ParticleEmitter()
 	delete[] m_particles;
 }
 
-void ParticleEmitter::update(float deltaTime, Vector2f velocity)
+void ParticleEmitter::update(float deltaTime, Vector2f& velocity)
 {
 	for (int i = 0; i < m_particleCount; i++)
 	{
@@ -102,7 +100,7 @@ void ParticleEmitter::render() const
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void ParticleEmitter::setPosition(Vector2f position)
+void ParticleEmitter::setPosition(Vector2f& position)
 {
 	m_position = position;
 }

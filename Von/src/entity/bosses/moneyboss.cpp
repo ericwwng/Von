@@ -5,7 +5,7 @@ BigMoney::BigMoney()
 	m_texture.loadFromFile("res/Enemy/Boss/BigMoney/BigMoneyImage350.png", 350, 350);
 	m_Projectiles = new Projectile[MAX_PROJECTILE_AMOUNT];
 
-	//set a third of the random360 textures to use coin sprite
+	//Set a third of the random360 textures to use coin sprite
 	for (int i = 0; i < 300; i++)
 	{
 		if (i % 3 != 0)
@@ -20,14 +20,14 @@ BigMoney::BigMoney()
 		}
 	}
 
-	//set the coin sprite for the implode and explode projectiles
+	//Set the coin sprite for the implode and explode projectiles
 	for (int i = 300; i < 700; i++)
 	{
 		m_Projectiles[i].loadTexture("res/Projectile/coin.png");
 		m_Projectiles[i].setCollisionBox(32, 32);
 	}
 
-	//set the rest to bill
+	//Set the rest to bill
 	for (int i = 700; i < MAX_PROJECTILE_AMOUNT; i++)
 	{
 		m_Projectiles[i].loadTexture("res/Projectile/bill.png");
@@ -38,19 +38,14 @@ BigMoney::BigMoney()
 	m_bossCollisionTimer.start();
 	m_blinkTimer.start();
 
+	///Set up for the first phase
 	m_phaseNumber = 1; //1 default
 	m_health = 100; //100 default
-
 	m_shootingRate = 1500;
 	m_shootingSpeed = 250;
-
 	m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
-
 	m_healthColor = color(0, 255, 0, 128);
 	m_healthBarParticleEmitter = new ParticleEmitter(100, Vector2f((GLfloat)SCREEN_WIDTH, 32), color(255, 255, 255, 255), 5.f, 2.f, 4.f);
-
-	Warp::getInstance().setPosition(Vector2f(-64, -64));
-
 }
 
 BigMoney::~BigMoney()
@@ -61,6 +56,7 @@ BigMoney::~BigMoney()
 
 void BigMoney::render()
 {
+	//If phase is 0 (dead) then perform actions pertaining to the rendering of the boss
 	if (m_phaseNumber != 0)
 	{
 		if (m_bossCollisionTimer.getTicks() > 1500) m_texture.render(m_position.x - m_texture.getWidth() / 2, m_position.y - m_texture.getHeight() / 2);
@@ -81,7 +77,8 @@ void BigMoney::render()
 	renderFillRect(_box, m_healthColor);
 	renderEmptyBox(_box, color(0, 0, 0, 255));
 
-	if (m_phaseNumber == 3 && m_health == 0) Warp::getInstance().render();
+	//Render the warp if boss is dead
+	if (m_phaseNumber == 0) Warp::getInstance().render();
 }
 
 void BigMoney::update(float deltaTime, Player* player)
@@ -109,17 +106,17 @@ void BigMoney::update(float deltaTime, Player* player)
 		if (m_Projectiles[i].isActive()) m_Projectiles[i].update(deltaTime);
 	}
 
-	//Check for collision with the projectiles for bosses
+	//Check for collision with the projectiles for bosses and the player
 	for (int i = 0; i < MAX_PROJECTILE_AMOUNT; i++)
 		if (m_Projectiles[i].isActive())
 			if (Collision(m_Projectiles[i].getCollisionBox(), player->getCollisionBox()) &&
 				m_collisionTimer.getTicks() > 2000)
 			{
 				m_collisionTimer.start();
-				if (player->getPlayerHealth() > 0) player->setHit();
+				if (player->getPlayerHealth() > 0) player->hit();
 			}
 	
-	//Special case for implosion attack
+	//Special collision case for implosion attack
 	for (int i = 500; i < 700; i++)
 	{
 		if (m_Projectiles[i].isActive() && m_phaseNumber != 2)
@@ -192,7 +189,7 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 	static Vector2f _tempVelocity;
 	static int _attackNumber = 0;
 
-	//boss movement
+	//Boss movement
 	_tempVelocity.x = lerpApproach(m_velocityGoal.x, _tempVelocity.x, deltaTime * 1000);
 	m_velocity = _tempVelocity * deltaTime * 100;
 	m_velocity.normalized();
@@ -205,12 +202,14 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 		m_velocityGoal.x = -m_velocityGoal.x;
 	}
 
+	//Attack 1: move and shoot randomly
 	if (_attackNumber == 0)
 	{
 		m_shootingRate = 300;
 		m_shootingSpeed = 400;
 		random360();
 	}
+	//Attack 2: move while shoot circles of projectils and an aimed shot every so often
 	else if (_attackNumber == 1)
 	{
 		m_shootingRate = 600;
@@ -221,6 +220,7 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 		m_shootingSpeed = 600;
 		aimedShot(player->getPosition());
 	}
+	//Attack 3: windmill of projectiles
 	else
 	{
 		//Taken from aimedshot
@@ -246,7 +246,7 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 		}
 	}
 
-	if (_miniPhaseTimer.getTicks() > 10000)
+	if (_miniPhaseTimer.getTicks() > 12000)
 	{
 		_miniPhaseTimer.start();
 		_attackNumber++;
@@ -285,6 +285,7 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 
 void BigMoney::phaseThree(float deltaTime)
 {
+	//Shoot increasingly faster projecties randomly
 	m_shootingRate -= 8 * deltaTime;
 	m_shootingSpeed += 8 * deltaTime;
 	random360();
@@ -300,11 +301,8 @@ void BigMoney::random360()
 	if (_repeatedTimer.getTicks() >= m_shootingRate / 5)
 	{
 		_repeatedTimer.start();
-		if (_index >= 300)
-			_index = 0;
-		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 2.f);
-		float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 2.f);
-		Vector2f _direction = { r1 - 1.f, r2 - 1.f };
+		if (_index >= 300) _index = 0;
+		Vector2f _direction = { randFloat(-1.f, 1.f), randFloat(-1.f, 1.f) };
 		_direction = _direction.normalized();
 		m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
 		m_Projectiles[_index].setActive(true);
@@ -342,9 +340,7 @@ void BigMoney::aimedShot(Vector2f position)
 	{
 		_repeatedTimer.start();
 		static int _index = 700;
-
 		if (_index >= 800) _index = 700;
-
 		Vector2f _direction = position - m_position;
 		_direction = _direction.normalized();
 		m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
@@ -367,7 +363,6 @@ void BigMoney::implodeAttack()
 		for (int i = 0; i < 12; i++)
 		{
 			if (_index >= 700) _index = 500;
-
 			int angle = (i * 30) + randomOffset;
 			Vector2f _startingPosition = { m_position.x + ((GLfloat)cos(angle * PI / 180) * 800), m_position.y + ((GLfloat)sin(angle * PI / 180) * 800) };
 			Vector2f _direction = m_position - _startingPosition;

@@ -3,10 +3,8 @@
 Player::Player()
 {
 	m_angle = 0.f;
-	m_position = {0, 0};
-
+	m_position = { 0, 0 };
 	m_playerSpeed = 4; //4 default
-	m_slipAmount = 40;
 
 	m_isClickPressed = false;
 
@@ -24,7 +22,7 @@ Player::Player()
 	m_collisionCircle.setCenteredBox(true);
 }
 
-void Player::setHit()
+void Player::hit()
 {
 	m_health--;
 	m_hitSfx.playSound();
@@ -68,22 +66,20 @@ void Player::handleEvents(SDL_Event* event)
 	
 	if (!g_isPlayerDead)
 	{
-		if (_currentKeyStates[SDL_SCANCODE_W])        m_velocityGoal.y = (float)-m_playerSpeed;
-		if (_currentKeyStates[SDL_SCANCODE_A])        m_velocityGoal.x = (float)-m_playerSpeed;
-		if (_currentKeyStates[SDL_SCANCODE_S])        m_velocityGoal.y = (float)m_playerSpeed;
-		if (_currentKeyStates[SDL_SCANCODE_D])        m_velocityGoal.x = (float)m_playerSpeed;
+		if (_currentKeyStates[SDL_SCANCODE_W]) m_velocityGoal.y = (GLfloat)-m_playerSpeed;
+		if (_currentKeyStates[SDL_SCANCODE_A]) m_velocityGoal.x = (GLfloat)-m_playerSpeed;
+		if (_currentKeyStates[SDL_SCANCODE_S]) m_velocityGoal.y = (GLfloat)m_playerSpeed;
+		if (_currentKeyStates[SDL_SCANCODE_D]) m_velocityGoal.x = (GLfloat)m_playerSpeed;
 
-		if (event->type == SDL_MOUSEBUTTONDOWN) m_isClickPressed = true;
-		else if (event->type == SDL_MOUSEBUTTONUP) m_isClickPressed = false;
+		if(event->button.button == SDL_BUTTON_LEFT) m_isClickPressed = true;
+		else if(event->type == SDL_MOUSEBUTTONUP) m_isClickPressed = false;
 	}
 }
 
 //Collision for player to tile handling
-void Player::checkCollisionTypes(
-	Tile* tileTypes,
-	int dimW,
-	int dimH)
+void Player::checkCollisionTypes(Tile* tileTypes, int dimW, int dimH)
 {
+	//Checks the 4x4 grid around the player
 	for (int i = 0; i < 5; i++)
 		for (int ii = 0; ii < 5; ii++)
 			if ((i + (int)floor(m_collisionBox.position.y / 16)) * dimW + (ii + (int)floor(m_collisionBox.position.x / 16)) > 0 && 
@@ -103,11 +99,13 @@ void Player::checkCollisionTypes(
 						{
 							m_playerSpeed = 2;
 						} break;
-
-						case 3: //Slippery
+						
+						//Allows for other tiles
+						
+						default:
 						{
-							m_slipAmount = 10;
-							m_playerSpeed = 6;
+							m_playerSpeed = 4;
+							m_isCollided = false;
 						} break;
 					}
 				}
@@ -118,32 +116,34 @@ void Player::update(
 	Tile* tileTypes,
 	int dimW,
 	int dimH,
-	Vector2f cursorPosition,
+	Vector2f& cursorPosition,
 	Camera* camera)
 {
 	static Vector2f _tempVelocity;
 
 	//Linear Interpolate the player's velocity
-	_tempVelocity.x = lerpApproach(m_velocityGoal.x, _tempVelocity.x, deltaTime * m_slipAmount);
-	_tempVelocity.y = lerpApproach(m_velocityGoal.y, _tempVelocity.y, deltaTime * m_slipAmount);
+	_tempVelocity.x = lerpApproach(m_velocityGoal.x, _tempVelocity.x, deltaTime * 40);
+	_tempVelocity.y = lerpApproach(m_velocityGoal.y, _tempVelocity.y, deltaTime * 40);
 	m_velocity = _tempVelocity * deltaTime * 100;
 	m_velocity.normalized();
 
 	//Update x values
-	m_isCollided = false;
 	m_position.x = m_position.x + m_velocity.x;
 	m_collisionBox = { Vector2f(m_position.x + 24, m_position.y + 24), 16, 16 };
 	checkCollisionTypes(tileTypes, dimW, dimH);
 	if (m_isCollided || m_collisionBox.position.x < 0 || m_collisionBox.position.x + m_collisionBox.width > dimW * 16)
+	{
 		m_position.x = m_position.x - m_velocity.x;
+	}
 
 	//Update y values
-	m_isCollided = false;
 	m_position.y = m_position.y + m_velocity.y;
 	m_collisionBox = { Vector2f(m_position.x + 24, m_position.y + 24), 16, 16 };
 	checkCollisionTypes(tileTypes, dimW, dimH);
 	if (m_isCollided || m_collisionBox.position.y < 0 || m_collisionBox.position.y + m_collisionBox.height > dimH * 16)
+	{
 		m_position.y = m_position.y - m_velocity.y;
+	}
 
 	m_collisionCircle.setPosition(Vector2f(m_position.x + 16, m_position.y + 16));
 	m_collisionCircle.update(deltaTime);
@@ -156,11 +156,16 @@ void Player::update(
 		if (camera->m_collisionBox.position.x < 0) camera->m_collisionBox.position.x = 0;
 		if (camera->m_collisionBox.position.y < 0) camera->m_collisionBox.position.y = 0;
 		if (camera->m_collisionBox.position.x + camera->m_collisionBox.width > dimW * 16)
+		{
 			camera->m_collisionBox.position.x = dimW * 16.f - camera->m_collisionBox.width;
+		}
 		if (camera->m_collisionBox.position.y + camera->m_collisionBox.height > dimH * 16)
+		{
 			camera->m_collisionBox.position.y = dimH * 16.f - camera->m_collisionBox.height;
+		}
 	}
 
+	//Sets the direction of the player to face the cursor, not necessarily the weapon
 	m_direction = cursorPosition - Vector2f(m_position.x + m_collisionBox.width / 2, m_position.y + m_collisionBox.height / 2);
 	m_direction = m_direction.normalized();
 	m_angle = (float)(atan2(m_direction.y, m_direction.x) * (180.f / PI));

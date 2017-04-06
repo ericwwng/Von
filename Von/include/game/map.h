@@ -1,55 +1,45 @@
+/*
+For map file information
+*/
+
 #pragma once
 
-#include <iostream>
 #include <vector>
 #include <fstream>
-#include <cmath>
 #include <string>
 #include <direct.h>
 
-#include "game/camera.h"
-
 #include "gfx/texture.h"
-#include "gfx/texutils.h"
 
-#include "sfx/music.h"
-
-#include "utils/Vector2f.h"
 #include "physics/AABB.h"
 
 class Tile
 {
 public:
 	Tile();
-	Tile(Vector2f pos,GLubyte tileType);
+	Tile(Vector2f pos, GLubyte tileType);
 
 	void render();
 
 	AABB m_collisionBox;
-	GLubyte m_id; //on the tilesheet
+	GLubyte m_id; //For tile specific properties
 };
 
 class Map
 {
 public:
-	Map(std::string filename,
-		std::string worldName);
+	Map(std::string filename, std::string worldName);
     ~Map();
 
 	void render();
     void renderSolidTiles();
-	void updateScroll(float deltaTime);
+	void updateScroll(float deltaTime); //For background scrolling
 
 	void saveMap();
 	int loadMap(std::string p_filename);
-	std::string getFilename() { return m_filename; }
+	void newMap(GLubyte width, GLubyte height, GLubyte backgroundNumber, std::string filename);
 
-	void newMap(
-		GLubyte width,
-		GLubyte height,
-		GLubyte backgroundNumber,
-		std::string filename
-	);
+	std::string getFilename() { return m_filename; }
 
 	Tile* getSolids() { return m_solidTiles; }
 
@@ -57,14 +47,14 @@ public:
 	GLubyte getDimH() const { return m_height; }
 
 	Vector2f getPlayerSpawn() { return m_playerSpawnPosition; }
-	void setPlayerSpawn(Vector2f spawnPos) { m_playerSpawnPosition = spawnPos; }
+	inline void setPlayerSpawn(Vector2f spawnPos) { m_playerSpawnPosition = spawnPos; }
 
-	void setSolid(GLuint tileIndex, Uint8 id) { m_solidTiles[tileIndex].m_id = id; }
+	inline void setSolid(GLuint tileIndex, Uint8 id) { m_solidTiles[tileIndex].m_id = id; }
 
 	Texture getBackground() { return m_background; }
 private:
 	std::string m_filename;
-	std::string m_worldName;
+	std::string m_worldname;
 
 	Tile* m_solidTiles;
 
@@ -72,7 +62,7 @@ private:
 
 	GLubyte m_backgroundNumber;
 	Texture m_background;
-	GLfloat m_backgroundX;
+	GLfloat m_backgroundXScroll;
 
     GLubyte m_width, m_height; //should be image res / 8
 };

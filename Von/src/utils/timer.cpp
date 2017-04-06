@@ -6,11 +6,12 @@ Timer::Timer()
 	m_ticksSet = false;
 }
 
-Timer::Timer(bool initialStart)
+Timer::Timer(bool isStarted)
 {
 	m_startTicks = 0;
 	m_ticksSet = false;
-	if(initialStart) start();
+
+	m_started = isStarted;
 }
 
 void Timer::start()

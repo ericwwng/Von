@@ -22,6 +22,8 @@ void Warp::goToNextLevel()
 	//Intro(0) -> Transition(1) -> BigMoney -> Transition(3) -> Satori -> Transition(4) -> Sun
 	currentLevel++;
 
+	delete g_gameState;
+
 	switch (currentLevel)
 	{
 		case 0:
@@ -30,7 +32,6 @@ void Warp::goToNextLevel()
 		} break;
 		case 1:
 		{
-			delete g_gameState;
 			g_gameState = new Level("Levels/Transition.opo", "Transition.opo");
 		} break;
 		case 2:
@@ -39,7 +40,6 @@ void Warp::goToNextLevel()
 		} break;
 		case 3:
 		{
-			delete g_gameState;
 			g_gameState = new Level("Levels/Transition.opo", "Transition.opo");
 		} break;
 		case 4:
@@ -48,7 +48,6 @@ void Warp::goToNextLevel()
 		} break;
 		case 5:
 		{
-			delete g_gameState;
 			g_gameState = new Level("Levels/Transition.opo", "Transition.opo");
 		} break;
 		case 6:
@@ -65,6 +64,5 @@ void Warp::goToNextLevel()
 void Warp::goToCertainLevel(int level)
 {
 	currentLevel = level - 1;
-	printf("%d", level);
 	goToNextLevel(); 
 }

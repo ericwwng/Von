@@ -1,3 +1,7 @@
+/*
+Holds global variables, expressions, includes sdl library, and statically links GLEW
+*/
+
 #pragma once
 
 #define GLEW_STATIC // This must be defined when statically linking to GLEW

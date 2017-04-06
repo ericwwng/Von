@@ -1,14 +1,14 @@
+/*
+Warp entity for moving between different levels
+Singleton for now unless a better solution is proposed and tested
+*/
 #pragma once
-
-#include "utils/general.h"
-#include "utils/singleton.h"
-
-#include "game/level.h"
-
-#include "sfx/music.h"
 
 #include "entity/entity.h"
 
+#include "game/level.h"
+
+#include "utils/singleton.h"
 
 class Warp : public Singleton<Warp>, public Entity
 {
@@ -22,11 +22,6 @@ public:
 	void goToCertainLevel(int level);
 
 	void goToNextLevel();
-
-	void setPosition(Vector2f pos) { m_position = pos; }
-	AABB getCollisionBox() { return m_collisionBox; }
 private:
 	int currentLevel;
-
-	AABB m_collisionBox;
 };

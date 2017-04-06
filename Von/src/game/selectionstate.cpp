@@ -49,8 +49,6 @@ SelectionState::~SelectionState()
 
 void SelectionState::render()
 {
-	m_camera->update();
-
 	m_previewBackground.render(0, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
 
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
@@ -62,21 +60,14 @@ void SelectionState::render()
 
 void SelectionState::update(float deltaTime)
 {
-	if (m_camera->m_collisionBox.position.y + m_camera->m_collisionBox.height >
-		(SCREEN_HEIGHT / 8 * m_selectionItems.size())) m_camera->m_collisionBox.position.y =
-		(SCREEN_HEIGHT / 8 * m_selectionItems.size()) - (float)m_camera->m_collisionBox.height;
-	if (m_camera->m_collisionBox.position.y < 0) m_camera->m_collisionBox.position.y = 0;
-
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 	{
 		if (m_selectionItems[i]->isClicked())
 		{
 			std::string filepath = "Levels/" + m_selectionItems[i]->getWorldName();
 
-			if (m_goToEditorState)
-				g_gameState = new EditorState(filepath, m_selectionItems[i]->getWorldName());
-			else
-				g_gameState = new Level(filepath, m_selectionItems[i]->getWorldName());
+			if (m_goToEditorState) g_gameState = new EditorState(filepath, m_selectionItems[i]->getWorldName());
+			else g_gameState = new Level(filepath, m_selectionItems[i]->getWorldName());
 		}
 	}
 

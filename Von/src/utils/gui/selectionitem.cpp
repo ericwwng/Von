@@ -16,7 +16,6 @@ SelectionItem::SelectionItem(
 
 	m_menuHover.loadSoundFile("res/Music/sfx/menuhover.wav");
 	m_menuClick.loadSoundFile("res/Music/sfx/menuhit.wav");
-	Mix_VolumeChunk(m_menuClick.m_Chunk, 80);
 
 	m_click = false;
 }

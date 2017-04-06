@@ -1,13 +1,15 @@
+/*
+Abstraction to hold all texture information
+render is a beast that should be somehow optimized however I am very unsure of how to do
+*/
+
 #pragma once
 
-#include "utils/general.h"
-#include <stdio.h>
+#include <iostream>
 
 #include "game/camera.h"
 
 #include "gfx/texutils.h"
-
-#include "utils/general.h"
 
 class Texture
 {
@@ -15,20 +17,14 @@ public:
     Texture();
     virtual ~Texture();
 
-	void loadFromFile(
-		const char* path,
-		GLuint w = 32,
-		GLuint h = 32,
-		bool printLoaded = true);
-	void loadFromText(
-		const char* text,
-		SDL_Color color);
+	void loadFromFile(const char* path, GLuint w = 32, GLuint h = 32, bool printLoaded = true);
+	void loadFromText(const char* text, SDL_Color color);
 
+	//Deallocate the textures from the GPU
     void free();
 	void freeVBO();
 
-    void setAlpha(
-		Uint8 a);
+	inline void setAlpha(GLubyte alpha) { m_alpha = alpha; }
 	
 	void render(
 		GLfloat x,
@@ -41,16 +37,15 @@ public:
 		SDL_Color color = color(255, 255, 255, 255),
 		GLfloat alpha = 255.f) const;
 
-	GLuint getTextureID() const;
-	GLuint getWidth() const;
-	GLuint getHeight() const;
-
+	GLuint getWidth() const { return m_width; }
+	GLuint getHeight() const { return m_height; }
+	
+	GLuint getTextureID() const { return m_texture; }
 private:
-    //texture id
 	GLuint m_texture;
 	GLenum m_textureFormat;
 	GLuint m_width, m_height;
 	GLuint m_VBOid, m_IBOid; //Vertex Buffer Object id, Index Buffer Object id
 
-	Uint8 m_alpha;
+	GLubyte m_alpha;
 };

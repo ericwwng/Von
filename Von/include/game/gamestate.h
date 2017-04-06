@@ -1,3 +1,7 @@
+/*
+Base class for all game states to inherit from
+*/
+
 #pragma once
 
 #include <SDL.h>

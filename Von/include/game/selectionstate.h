@@ -1,3 +1,7 @@
+/*
+Removed in final release
+*/
+
 #pragma once
 
 #include <cstring>

@@ -102,11 +102,9 @@ void Application::run()
     printf("Application State: Running \n");
 	while (m_appState != APP_EXITING)
     {
-		m_fpsTimer.start();
-		deltaTime_f = m_deltaTimer.getTicks() / 1000.f;
-        //Delta may get too large due to a game freeze
-        if(deltaTime_f >= 0.15)
-            deltaTime_f = 0.15f;
+		deltaTime = m_deltaTimer.getTicks() / 1000.f;
+        //Cap deltaTime as it may get too large from a freeze/lag spike
+        if(deltaTime >= 0.20f) deltaTime = 0.20f;
 		m_deltaTimer.start();
 
         loop();
@@ -138,16 +136,16 @@ void Application::loop()
 
 		g_gameState->handleEvents(&m_event);
 	}
-    //Update current game state
-    g_gameState->update(deltaTime_f);
+
+    g_gameState->update(deltaTime);
 
     ///----------------
     /// Game Rendering
     ///----------------
 	glClear(GL_COLOR_BUFFER_BIT);
 
-    //Render current game state
     g_gameState->render();
+
 	glPopMatrix();
 		glLoadIdentity();
 	glPushMatrix();

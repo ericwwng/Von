@@ -4,7 +4,7 @@ Cursor::Cursor()
 {
 	m_texture.loadFromFile("res/Entity/cursor.png");
 
-	m_particleEmitter = new ParticleEmitter(40, m_position, color(192, 128, 192, 255), 0.5, 0.25, 4);
+	m_particleEmitter = new ParticleEmitter(40, m_position, color(192, 128, 192, 255), 0.5, 0.25, 2);
 }
 
 void Cursor::render() const
@@ -14,7 +14,6 @@ void Cursor::render() const
 	Vector2f rotationPoint = { m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
 	m_texture.render(m_position.x - m_texture.getWidth() / 2.f, m_position.y - m_texture.getHeight() / 2.f,
 		NULL, NULL, NULL, m_angle, &rotationPoint);
-
 }
 
 void Cursor::update(float deltaTime, Vector2f cameraPosition)

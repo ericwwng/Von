@@ -26,21 +26,20 @@ void Gun::action()
 	if (m_rateOfFire.getTicks() >= 500)
 	{
 		//Calculate position to shoot bullet from the edge of the gun
-		//To store the new x and y values
+		//Look at updateRotation()
+
 		Vector2f _tempPosition;
 
-		//Position of gun edge
 		m_initialPosition.x += 96;
-
 		m_initialPosition = m_initialPosition - m_playerCenter;
 
-		//Calcluate coordinates after rotation
 		_tempPosition.x = (GLfloat)(m_initialPosition.x * cos(m_angle * PI / 180) - m_initialPosition.y * sin(m_angle * PI / 180));
 		_tempPosition.y = (GLfloat)(m_initialPosition.x * sin(m_angle * PI / 180) + m_initialPosition.y * cos(m_angle * PI / 180));
 
 		m_initialPosition = _tempPosition + m_playerCenter;
-		m_bullet->reload(m_initialPosition, m_weaponDirection, m_angle, 2500);
 
+		//Shoot the bullet
+		m_bullet->reload(m_initialPosition, m_weaponDirection, m_angle, 2500);
 		m_bullet->setActive(true);
 		m_rateOfFire.start();
 		m_shootSfx.playSound();
@@ -74,7 +73,6 @@ Vector2f Gun::updateRotation()
 
 	//Position of left hand
 	m_position.x += 58;
-
 	m_position = m_position - m_playerCenter;
 
 	//Calcluate coordinates after rotation

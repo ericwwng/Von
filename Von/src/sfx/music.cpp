@@ -47,10 +47,7 @@ void Bgm::pauseMusic()
 
 void Bgm::resumeMusic()
 {
-	if (Mix_PausedMusic())
-	{
-		Mix_ResumeMusic();
-	}
+	if (Mix_PausedMusic()) Mix_ResumeMusic();
 }
 
 void Bgm::stopMusic()

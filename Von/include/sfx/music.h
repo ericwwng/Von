@@ -1,9 +1,13 @@
+/*
+Generic abstraction for background music and sound effects
+Potentially split up into two files
+*/
 #pragma once
+
+#include <iostream>
 
 #include "utils/general.h"
 #include "utils/timer.h"
-
-#include <iostream>
 
 class Bgm
 {
@@ -19,10 +23,8 @@ public:
 	void pauseMusic();
 	void resumeMusic();
 	void stopMusic();
-
+private:
 	Mix_Music* m_Music;
-
-	Timer m_fadeStop;
 };
 
 class Sfx
@@ -35,6 +37,6 @@ public:
 	void loadSoundFile(const char* filename);
 
 	void playSound();
-
+private:
 	Mix_Chunk* m_Chunk;
 };

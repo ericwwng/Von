@@ -1,7 +1,12 @@
+/*
+2-dimensional vector for floats
+*/
+
 #pragma once
 
-#include "utils/general.h"
 #include <cmath>
+
+#include "utils/general.h"
 
 class Vector2f
 {
@@ -23,6 +28,7 @@ public:
     GLfloat x, y;
 };
 
+//Additional struct for various purposes
 struct Rectf
 {
 	GLfloat x;

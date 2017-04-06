@@ -1,20 +1,24 @@
+/*
+Base class for all entity objects to inherit from
+*/
+
 #pragma once
 
-#include "utils/Vector2f.h"
+#include "gfx/texture.h"
 
 #include "physics/AABB.h"
-
-#include "gfx/texture.h"
 
 class Entity
 {
 public:
-    virtual void render() {};
-    virtual void update() {};
-    virtual void handleEvents(SDL_Event* event) {};
+    virtual void render() const {};
+    virtual void update(float deltaTime) {};
 
     Vector2f& getPosition() { return m_position; }
-	inline void setPosition(Vector2f pos) { m_position = pos; }
+	inline void setPosition(Vector2f& position) { m_position = position; }
+
+	Vector2f& getVelocity() { return m_velocity; }
+	inline void setVelocity(Vector2f& velocity) { m_velocity = velocity; }
 
     AABB& getCollisionBox() { return m_collisionBox; }
 protected:

@@ -1,16 +1,19 @@
+/*
+Self-explanatory: button to click on which sets m_active to true, otherwise false
+*/
+
 #pragma once
 
 #include <string>
 #include <vector>
 
-#include "physics/AABB.h"
-
 #include "gfx/texture.h"
+
+#include "physics/AABB.h"
 
 #include "sfx/music.h"
 
 #include "utils/general.h"
-#include "utils/vector2f.h"
 
 class Button
 {
@@ -20,7 +23,7 @@ public:
 		GLuint w,
 		GLuint h,
 		std::string msg,
-		bool clickable);
+		bool clickable); //Whether one can actually click it or not
 	~Button();
 
 	void render() const;

@@ -1,3 +1,7 @@
+/*
+removed in final release
+*/
+
 #pragma once
 
 #include <cstring>
@@ -24,8 +28,7 @@ public:
 	~EditorState();
 
 	void render();
-	void update(
-		float deltaTime);
+	void update(float deltaTime);
 	void handleEvents(SDL_Event* event);
 private:
 	DIR* m_dir;

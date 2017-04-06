@@ -1,14 +1,14 @@
+/*
+Main menu when game is started
+Options State to change volume and/or resetting save file
+*/
+
 #pragma once
 
 #include "game/application.h"
 #include "game/selectionstate.h"
 
 #include "entity/cursor.h"
-
-#include "gfx/texture.h"
-#include "gfx/particle.h"
-
-#include "sfx/music.h"
 
 #include "utils/gui/button.h"
 
@@ -27,9 +27,6 @@ public:
 	void render();
 	void update(float deltaTime_f);
 	void handleEvents(SDL_Event* event);
-
-	void setInitialScroll(GLfloat x) { m_backgroundX = x; }
-
 private:
 	Cursor* m_cursor;
 
@@ -41,6 +38,8 @@ private:
 	GLfloat m_backgroundX;
 	Texture m_background;
 	Texture m_backgroundLogo;
+
+	//For day and night cycle
 	GLfloat m_backgroundAlpha;
 	GLfloat m_alphaChange;
 

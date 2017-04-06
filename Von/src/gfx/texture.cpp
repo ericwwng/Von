@@ -16,11 +16,7 @@ Texture::~Texture()
 	freeVBO();
 }
 
-void Texture::loadFromFile(
-	const char* path,
-	GLuint w,
-	GLuint h,
-	bool printLoaded)
+void Texture::loadFromFile(const char* path, GLuint w, GLuint h, bool printLoaded)
 {
 	free();
 
@@ -34,7 +30,7 @@ void Texture::loadFromFile(
 		m_width = _surface->w;
 		m_height = _surface->h;
 	}
-	else
+	else //Generate white texture if image can't load
 	{
 		m_width = w;
 		m_height = h;
@@ -56,10 +52,8 @@ void Texture::loadFromFile(
 
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	if (_surface != NULL)
-		glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _surface->pixels);
-	else
-		glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _pixels);
+	if (_surface != NULL) glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _surface->pixels);
+	else glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _pixels);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -102,9 +96,7 @@ void Texture::loadFromFile(
 	SDL_FreeSurface(_surface);
 }
 
-void Texture::loadFromText(
-	const char* text,
-	SDL_Color color)
+void Texture::loadFromText(const char* text, SDL_Color color)
 {
 	free();
 
@@ -185,12 +177,6 @@ void Texture::freeVBO()
 	}
 }
 
-void Texture::setAlpha(
-	Uint8 a)
-{
-	m_alpha = a;
-}
-
 void Texture::render(
 	GLfloat x,
 	GLfloat y,
@@ -221,7 +207,6 @@ void Texture::render(
 
 		if (stretchWidth || stretchHeight)
 		{
-			//(TODO) Possibly add an if statement for clipping
 			quadWidth = stretchWidth;
 			quadHeight = stretchHeight;
 		}
@@ -275,19 +260,4 @@ void Texture::render(
 
 		glBindTexture(GL_TEXTURE_2D, NULL);
 	}
-}
-
-GLuint Texture::getTextureID() const
-{
-	return m_texture;
-}
-
-GLuint Texture::getWidth() const
-{
-	return m_width;
-}
-
-GLuint Texture::getHeight() const
-{
-	return m_height;
 }

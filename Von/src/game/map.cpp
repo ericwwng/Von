@@ -1,13 +1,37 @@
 #include "game/map.h"
 
-Map::Map(std::string filename, std::string worldName)
+inline void writeShort(std::ofstream& fileStream, GLushort ushort)
+{
+	fileStream << GLubyte((ushort & 0xFF00) >> 8);
+	fileStream << GLubyte((ushort & 0xFF));
+}
+
+inline void writeByte(std::ofstream& fileStream, GLubyte ubyte)
+{
+	fileStream << ubyte;
+}
+
+inline GLubyte readByte(char* file, long& index)
+{
+	index = index + 1;
+	return GLubyte(file[index - 1]);
+}
+
+inline GLushort readShort(char* file, long& index)
+{
+	GLushort _value;
+	_value = readByte(file, index) << 8;
+	_value += readByte(file, index);
+	return _value;
+}
+
+Map::Map(std::string filename, std::string worldname) :
+	m_filename(filename),
+	m_worldname(worldname)
 {
 	m_solidTiles = NULL;
-	m_filename = filename;
-	m_worldName = worldName;
 
 	loadMap(filename);
-
 }
 
 Map::~Map()
@@ -17,45 +41,29 @@ Map::~Map()
 
 void Map::render()
 {
-	if (m_worldName == "Sun")
+	if (m_worldname == "Sun")
 	{
-		m_background.render(m_backgroundX, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
-		m_background.render(m_backgroundX - SCREEN_WIDTH, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
+		m_background.render(m_backgroundXScroll, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
+		m_background.render(m_backgroundXScroll - SCREEN_WIDTH, 0, NULL, (GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
 	}
 	else m_background.render(0.f, 0.f);
 }
 
 void Map::updateScroll(float deltaTime)
 {
-	m_backgroundX += 300 * deltaTime;
-	if (m_backgroundX >= SCREEN_WIDTH) m_backgroundX = 0;
+	m_backgroundXScroll += 300 * deltaTime;
+	if (m_backgroundXScroll >= SCREEN_WIDTH) m_backgroundXScroll = 0;
 }
 
 void Map::renderSolidTiles()
 {
-    for(int i = 0; i < m_height; i++)
-		for (int ii = 0; ii < m_width; ii++)
-		{
-			m_solidTiles[i * m_width + ii].render();
-		}
+	for (int i = 0; i < m_height; i++)
+	{
+		for (int ii = 0; ii < m_width; ii++) m_solidTiles[i * m_width + ii].render();
+	}
 }
 
-inline static void writeShort(std::ofstream& p_fileStream, GLushort p_ushort)
-{
-	p_fileStream << GLubyte((p_ushort & 0xFF00) >> 8);
-	p_fileStream << GLubyte((p_ushort & 0xFF));
-}
-
-inline static void writeChar(std::ofstream& p_fileStream, GLubyte p_uchar)
-{
-	p_fileStream << p_uchar;
-}
-
-void Map::newMap(
-	GLubyte width,
-	GLubyte height,
-	GLubyte backgroundNumber,
-	std::string filename)
+void Map::newMap(GLubyte width, GLubyte height, GLubyte backgroundNumber, std::string filename)
 {
 	m_width = width;
 	m_height = height;
@@ -70,17 +78,14 @@ void Map::newMap(
 	std::ofstream _file("Levels\\" + m_filename, std::ios::binary);
 
 	_file << ".OPO";
-	writeChar(_file, m_backgroundNumber);
-	writeChar(_file, m_width);
-	writeChar(_file, m_height);
+	writeByte(_file, m_backgroundNumber);
+	writeByte(_file, m_width);
+	writeByte(_file, m_height);
 
 	writeShort(_file, 0);
 	writeShort(_file, 0);
 
-	for (int i = 0; i < m_width * m_height; i++)
-	{
-		m_solidTiles[i].m_id = 0;
-	}
+	for (int i = 0; i < m_width * m_height; i++) m_solidTiles[i].m_id = 0;
 
 	GLubyte _lastId = 0;
 	GLubyte _count = 0;
@@ -90,8 +95,8 @@ void Map::newMap(
 		{
 			if (_count > 0)
 			{
-				writeChar(_file, _count);
-				writeChar(_file, _lastId);
+				writeByte(_file, _count);
+				writeByte(_file, _lastId);
 				_count = 0;
 			}
 			_lastId = m_solidTiles[i].m_id;
@@ -100,8 +105,8 @@ void Map::newMap(
 	}
 	if (_count > 0)
 	{
-		writeChar(_file, _count);
-		writeChar(_file, _lastId);
+		writeByte(_file, _count);
+		writeByte(_file, _lastId);
 		_count = 0;
 	}
 
@@ -118,9 +123,9 @@ void Map::saveMap()
 	std::ofstream _file(m_filename, std::ios::binary);
 
 	_file << ".OPO";
-	writeChar(_file, m_backgroundNumber);
-	writeChar(_file, m_width);
-	writeChar(_file, m_height);
+	writeByte(_file, m_backgroundNumber);
+	writeByte(_file, m_width);
+	writeByte(_file, m_height);
 
 	writeShort(_file, (GLushort)m_playerSpawnPosition.x);
 	writeShort(_file, (GLushort)m_playerSpawnPosition.y);
@@ -133,8 +138,8 @@ void Map::saveMap()
 		{
 			if (_count > 0)
 			{
-				writeChar(_file, _count);
-				writeChar(_file, _lastId);
+				writeByte(_file, _count);
+				writeByte(_file, _lastId);
 				_count = 0;
 			}
 			_lastId = m_solidTiles[i].m_id;
@@ -143,8 +148,8 @@ void Map::saveMap()
 	}
 	if (_count > 0)
 	{
-		writeChar(_file, _count);
-		writeChar(_file, _lastId);
+		writeByte(_file, _count);
+		writeByte(_file, _lastId);
 		_count = 0;
 	}
 
@@ -153,23 +158,9 @@ void Map::saveMap()
 	std::cout << "Map saved." << std::endl;
 }
 
-inline static GLubyte readChar(char* p_file, long& p_index)
-{
-	p_index = p_index + 1;
-	return GLubyte(p_file[p_index - 1]);
-}
-
-inline static GLushort readShort(char* p_file, long& p_index)
-{
-	GLushort _value;
-	_value = readChar(p_file, p_index) << 8;
-	_value += readChar(p_file, p_index);
-	return _value;
-}
-
 int Map::loadMap(std::string p_filename)
 {
-	printf("Reading %s of file %s\n", m_worldName.c_str(), p_filename.c_str());
+	printf("Reading %s of file %s\n", m_worldname.c_str(), p_filename.c_str());
 
 	std::ifstream _file;
 	_file.open(p_filename.c_str(), std::ios::binary);
@@ -191,19 +182,18 @@ int Map::loadMap(std::string p_filename)
 	if(_data[0] != '.' || _data[1] != 'O' || _data[2] != 'P' || _data[3] != 'O')
 	{
 		std::cout << "First 4 characters are not .OPO, file not trusted." << std::endl;
-		//newMap(1280.f, 720.f, 0.f, "temporary.opo");
 		return 2;
 	}
 	_index = 4;
 
-	m_backgroundNumber = readChar(_data, _index);
+	m_backgroundNumber = readByte(_data, _index);
 	std::string backgroundFile = "res\\Backgrounds\\" + std::to_string(m_backgroundNumber);
 	backgroundFile.append(".png");
 	m_background.loadFromFile(backgroundFile.c_str(), 1280, 1080);
 	printf("Background number: %d  // Background: %s\n", m_backgroundNumber, backgroundFile.c_str());
 
-	m_width = readChar(_data, _index);
-	m_height = readChar(_data, _index);
+	m_width = readByte(_data, _index);
+	m_height = readByte(_data, _index);
 	GLushort _x = readShort(_data, _index);
 	GLushort _y = readShort(_data, _index);
 	m_playerSpawnPosition = Vector2f(_x, _y);
@@ -213,13 +203,12 @@ int Map::loadMap(std::string p_filename)
 	int i = 0;
 	GLubyte _amt = 0;
 	GLubyte _id = 0;
-	if(m_solidTiles != NULL)
-		delete[] m_solidTiles;
+	if(m_solidTiles != NULL) delete[] m_solidTiles;
 	m_solidTiles = new Tile[m_width * m_height];
 	while (_index < _len)
 	{
-		_amt = readChar(_data, _index);
-		_id = readChar(_data, _index);
+		_amt = readByte(_data, _index);
+		_id = readByte(_data, _index);
 		for (int j = 0; j < _amt; j++)
 		{
 			m_solidTiles[i] = Tile(Vector2f((GLfloat)(i % m_width), floor((GLfloat)i / m_width)) * 16, _id);
@@ -275,7 +264,7 @@ void Tile::render()
 	}
 }
 
-///Tile Colors///
+///Tile Colors for editor///
 /*
 Solid Layer Types:
 0 - No Collision - Transparent

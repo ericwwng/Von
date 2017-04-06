@@ -4,6 +4,7 @@ Level::Level(std::string filename, std::string worldName) :
 	m_filename(filename),
 	m_worldName(worldName)
 {
+	//Not necessary but makes the following if statements easier to read
 	worldName.erase(worldName.end() - 4, worldName.end());
 
 	m_dungeon = new Map(filename, worldName);
@@ -11,12 +12,12 @@ Level::Level(std::string filename, std::string worldName) :
 	m_cursor = new Cursor();
 
 	m_player = new Player();
-	m_player->setSpawnPosition(m_dungeon->getPlayerSpawn());
+	m_player->setPosition(m_dungeon->getPlayerSpawn());
 	m_player->setPlayerHealth(m_player->getMaxHealth());
 
+	//Load bosses and music
 	m_boss = NULL;
 	m_gameOverBgm.loadMusicFile("res/Music/bgm/Las Estrellas.ogg", false);
-
 	if (worldName == "Introduction")
 	{
 		m_levelBgm.loadMusicFile("res/Music/bgm/Introduction.ogg", false);
@@ -52,6 +53,7 @@ Level::Level(std::string filename, std::string worldName) :
 
 	m_isGameOver = false;
 
+	//For the game over screen
 	changeFontSize(128);
 	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.50, SCREEN_HEIGHT * 0.25), (GLuint)(SCREEN_WIDTH / 1.5), SCREEN_HEIGHT / 2, "GAME OVER", false));
 	m_gameOverButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.25, SCREEN_HEIGHT  * 0.75), SCREEN_WIDTH / 3, SCREEN_HEIGHT / 4, "Quit Level", true));
@@ -115,10 +117,8 @@ void Level::render()
 			glVertex2f((GLfloat)SCREEN_WIDTH, (GLfloat)SCREEN_HEIGHT);
 			glVertex2f(0.f, (GLfloat)SCREEN_HEIGHT);
 		glEnd();
-		for (Button* button : m_gameOverButtons)
-		{
-			button->render();
-		}
+
+		for (Button* button : m_gameOverButtons) button->render();
 	}
 
 	m_cursor->render();

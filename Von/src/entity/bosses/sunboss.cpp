@@ -9,18 +9,7 @@ Sun::Sun()
 	m_bossCollisionTimer.start();
 	m_blinkTimer.start();
 
-	m_phaseNumber = 1;
-	m_health = 100.f;
-
-	m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 200.f, 200 };
-
-	m_healthColor = color(255, 165, 0, 128);
-	m_healthBarParticleEmitter = new ParticleEmitter(100, Vector2f((GLfloat)SCREEN_WIDTH, 32), color(255, 255, 255, 255), 5.f, 2.f, 4.f);
-
-	m_velocityGoal.x = 5000.f;
-	m_shootingRate = 1000;
-	m_shootingSpeed = 300;
-
+	//Random selected textures for variation
 	for (int i = 0; i < MAX_PROJECTILE_AMOUNT; i++)
 	{
 		int random = rand() % 5 + 1;
@@ -33,6 +22,16 @@ Sun::Sun()
 		m_Projectiles[i].setCenteredBox(true);
 		m_Projectiles[i].setCollisionBox(40, 40);
 	}
+
+	///Set up phase 1
+	m_phaseNumber = 1;
+	m_health = 100.f;
+	m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 200.f, 200 };
+	m_velocityGoal.x = 5000.f;
+	m_shootingRate = 1000;
+	m_shootingSpeed = 300;
+	m_healthColor = color(255, 165, 0, 128);
+	m_healthBarParticleEmitter = new ParticleEmitter(100, Vector2f((GLfloat)SCREEN_WIDTH, 32), color(255, 255, 255, 255), 5.f, 2.f, 4.f);
 }
 
 Sun::~Sun()
@@ -43,6 +42,7 @@ Sun::~Sun()
 
 void Sun::render()
 {
+	//See moneyboss.cpp
 	if (m_phaseNumber != 0)
 	{
 		if (m_bossCollisionTimer.getTicks() > 1500) m_texture.render(m_position.x - 150.f, m_position.y - 150.f);
@@ -93,14 +93,14 @@ void Sun::update(float deltaTime, Player* player)
 		}
 	}
 
-	//Check for collision with the projectiles for bosses
+	//Check for collision with the projectiles for bosses and player
 	for (int i = 0; i < MAX_PROJECTILE_AMOUNT; i++)
 		if (m_Projectiles[i].isActive())
 			if (Collision(m_Projectiles[i].getCollisionBox(), player->getCollisionBox()) &&
 				m_collisionTimer.getTicks() > 2000)
 			{
 				m_collisionTimer.start();
-				if (player->getPlayerHealth() > 0) player->setHit();
+				if (player->getPlayerHealth() > 0) player->hit();
 			}
 
 	//Special case for implosion attack
@@ -141,7 +141,7 @@ void Sun::update(float deltaTime, Player* player)
 	m_healthBarParticleEmitter->setPosition(Vector2f(m_health * 12.8f - 5, 32));
 	m_healthBarParticleEmitter->update(deltaTime, Vector2f(randFloat(-2.f, -4.f), randFloat(0.05f, -0.05f)));
 
-	if (m_phaseNumber == 3 && m_health == 0)
+	if (m_phaseNumber == 0)
 	{
 		//Death
 	}
@@ -153,7 +153,7 @@ void Sun::phaseOne(float deltaTime)
 	static Vector2f _tempVelocity;
 	static int _attackNumber = 0;
 
-	//boss movement
+	//Boss movement
 	_tempVelocity.x = lerpApproach(m_velocityGoal.x, _tempVelocity.x, deltaTime * 500);
 	_tempVelocity.y = lerpApproach(m_velocityGoal.y, _tempVelocity.y, deltaTime * 500);
 	m_velocity = _tempVelocity * deltaTime * 100;
@@ -226,76 +226,24 @@ void Sun::phaseOne(float deltaTime)
 
 void Sun::phaseTwo(float deltaTime, Player* player)
 {
-	static Timer miniPhaseTimer(true);
-
-	//boss movement
-	m_position.x += m_velocity.x * deltaTime;
-	if (m_position.x + m_texture.getWidth() - 150 > SCREEN_WIDTH || m_position.x - 150 < 0)
-	{
-		m_position.x -= m_velocity.x * deltaTime;
-		m_velocity.x = -m_velocity.x;
-	}
-
-	if (miniPhaseTimer.getTicks() > 20000)
-	{
-		m_shootingRate = 600;
-		m_shootingSpeed = 400;
-		explodeAttack(m_position);
-
-		m_shootingRate = 1000;
-		m_shootingSpeed = 600;
-		aimedShot(player->getPosition());
-	}
-	else if (miniPhaseTimer.getTicks() > 10000)
-	{
-		m_shootingRate = 300;
-		m_shootingSpeed = 400;
-		random360();
-	}
-	else
-	{
-
-	}
-
-	if (miniPhaseTimer.getTicks() > 30000)
-		miniPhaseTimer.start();
-
-	if (m_health <= 0)
-	{
-		m_health = 100;
-		m_healthColor = color(255, 0, 0, 128);
-		m_phaseNumber = 3;
-		m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + 150.f, 150.f };
-		m_shootingRate = 300;
-		m_shootingSpeed = 200;
-	}
+	
 }
 
 void Sun::phaseThree(float deltaTime)
 {
-	m_shootingRate -= 8 * deltaTime;
-	m_shootingSpeed += 8 * deltaTime;
-	random360();
-
-	if (m_health <= 0)
-	{
-		m_phaseNumber = 0;
-	}
+	
 }
 
 void Sun::random360()
 {
 	static int _index = 0;
-	static Timer repeatedTimer(true);
+	static Timer _repeatedTimer(true);
 
-	if (repeatedTimer.getTicks() >= m_shootingRate / 5)
+	if (_repeatedTimer.getTicks() >= m_shootingRate / 5)
 	{
-		repeatedTimer.start();
-		if (_index >= 300)
-			_index = 0;
-		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 2.f);
-		float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 2.f);
-		Vector2f _direction = { r1 - 1.f, r2 - 1.f };
+		_repeatedTimer.start();
+		if (_index >= 300) _index = 0;
+		Vector2f _direction = { randFloat(-1.f, 1.f), randFloat(-1.f, 1.f) };
 		_direction = _direction.normalized();
 		m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
 		m_Projectiles[_index].setActive(true);
@@ -306,16 +254,15 @@ void Sun::random360()
 void Sun::explodeAttack(Vector2f position)
 {
 	static int _index = 300;
-	static Timer repeatedTimer(true);
+	static Timer _repeatedTimer(true);
 
-	if (repeatedTimer.getTicks() >= m_shootingRate)
+	if (_repeatedTimer.getTicks() >= m_shootingRate)
 	{
-		repeatedTimer.start();
+		_repeatedTimer.start();
 		int randomOffset = rand() % 360;
 		for (int i = 0; i < 12; i++)
 		{
-			if (_index >= 500)
-				_index = 300;
+			if (_index >= 500) _index = 300;
 			int angle = (i * 30) + randomOffset;
 			Vector2f _aimedPosition = { position.x + (GLfloat)cos(angle * PI / 180), position.y + (GLfloat)sin(angle * PI / 180) };
 			Vector2f _direction = _aimedPosition - position;
@@ -329,20 +276,16 @@ void Sun::explodeAttack(Vector2f position)
 
 void Sun::aimedShot(Vector2f position)
 {
-	static Timer repeatedTimer(true);
-	if (repeatedTimer.getTicks() >= m_shootingRate)
+	static Timer _repeatedTimer(true);
+	if (_repeatedTimer.getTicks() >= m_shootingRate)
 	{
-		repeatedTimer.start();
+		_repeatedTimer.start();
 		static int _index = 700;
-
-		if (_index >= 800)
-			_index = 700;
-
+		if (_index >= 800) _index = 700;
 		Vector2f _direction = position - m_position;
 		_direction = _direction.normalized();
 		m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
 		m_Projectiles[_index].setActive(true);
-		m_Projectiles[_index].setParticleEmitter(new ParticleEmitter(20, Vector2f(0, 0), color(255, 180, 0, 255), 0.5f, 0.1f, 6.f));
 
 		_index++;
 	}
@@ -352,16 +295,15 @@ void Sun::aimedShot(Vector2f position)
 void Sun::implodeAttack()
 {
 	static int _index = 500;
-	static Timer repeatedTimer(true);
+	static Timer _repeatedTimer(true);
 
-	if (repeatedTimer.getTicks() >= m_shootingRate)
+	if (_repeatedTimer.getTicks() >= m_shootingRate)
 	{
-		repeatedTimer.start();
+		_repeatedTimer.start();
 		int randomOffset = rand() % 360;
 		for (int i = 0; i < 12; i++)
 		{
-			if (_index >= 700)
-				_index = 500;
+			if (_index >= 700) _index = 500;
 			int angle = (i * 30) + randomOffset;
 			Vector2f _startingPosition = { m_position.x + ((GLfloat)cos(angle * PI / 180) * 800), m_position.y + ((GLfloat)sin(angle * PI / 180) * 800) };
 			Vector2f _direction = m_position - _startingPosition;

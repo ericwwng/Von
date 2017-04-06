@@ -1,3 +1,7 @@
+/*
+Handles the cursor sprite, particle effect, and collision for buttons
+*/
+
 #pragma once
 
 #include "entity/entity.h"

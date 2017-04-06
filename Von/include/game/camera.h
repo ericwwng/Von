@@ -1,10 +1,10 @@
+/*
+Camera for level scrolling
+*/
+
 #pragma once
 
 #include "utils/general.h"
-#include <iostream>
-
-#include "utils/general.h"
-#include "utils/Vector2f.h"
 
 #include "physics/AABB.h"
 

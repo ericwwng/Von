@@ -1,12 +1,12 @@
+/*
+The gameplay levels
+*/
+
 #pragma once
 
-#include "game/gamestate.h"
 #include "game/map.h"
 #include "game/menu.h"
-#include "game/camera.h"
 
-#include "entity/player.h"
-#include "entity/warp.h"
 #include "entity/bosses/satoriboss.h"
 #include "entity/bosses/moneyboss.h"
 #include "entity/bosses/sunboss.h"
@@ -19,12 +19,12 @@ public:
 	Level(std::string filename, std::string worldName);
     ~Level();
 
+	//Fade in from black
 	void screenTransition(float addBy);
 
     void render();
     void update(float deltaTime);
     void handleEvents(SDL_Event* event);
-
 private:
 	Camera* m_camera;
 	Map* m_dungeon;

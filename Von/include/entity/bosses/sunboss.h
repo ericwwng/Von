@@ -1,15 +1,18 @@
+/*
+Final boss of the game.
+One long, difficult phase followed by a save point into 2 shorter phases
+*/
 #pragma once
 
 #include "entity/boss.h"
-#include "entity/player.h"
 #include "entity/warp.h"
-
-#include "utils/timer.h"
-
-#include "physics/AABB.h"
 
 #include "gfx/texture.h"
 #include "gfx/texutils.h"
+
+#include "physics/AABB.h"
+
+#include "utils/timer.h"
 
 class Sun : public Boss
 {

@@ -1,13 +1,12 @@
+/*
+Helper functions for drawing primitves and Vertex buffer objects
+*/
 #pragma once
 
 #include "utils/general.h"
 #include "utils/vector2f.h"
 
-SDL_Color color(
-	Uint8 r,
-	Uint8 g,
-	Uint8 b,
-	Uint8 a);
+SDL_Color color(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
 void renderEmptyBox(Rectf box, SDL_Color color);
 void renderFillRect(Rectf box, SDL_Color color);

@@ -28,6 +28,7 @@ void Button::render() const
 	m_messageTex.render(m_collisionBox.position.x + (m_collisionBox.width / 6),
 		m_collisionBox.position.y + (m_collisionBox.height / 6), NULL, (GLfloat)m_collisionBox.width / 1.5f, (GLfloat)m_collisionBox.height / 1.5f);
 
+	//To render the white overlay when mouse is over the button
 	if(m_clickable)
 		if (m_hover)
 		{
@@ -50,6 +51,7 @@ void Button::handleEvents(SDL_Event* event, AABB cursorCollisionBox)
 {
 	static bool _up = true;
 
+	//Potentially needs fixing up
 	if (m_clickable)
 	{
 		if (Collision(cursorCollisionBox, m_collisionBox))

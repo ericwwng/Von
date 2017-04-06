@@ -1,23 +1,19 @@
 #include "physics/physics.h"
 
 float lerpApproach(
-	float Goal, 
-	float Current,
+	float goal,
+	float current,
 	float deltaTime)
 {
-    float Difference = Goal - Current;
+    float difference = goal - current;
 
-    if(Difference > deltaTime)
-        return Current + deltaTime;
-    if(Difference < -deltaTime)
-        return Current - deltaTime;
+    if(difference > deltaTime) return current + deltaTime;
+    if(difference < -deltaTime) return current - deltaTime;
 
-    return Goal;
+    return goal;
 }
 
-GLdouble distanceSquared(
-	Vector2f a, 
-	Vector2f b)
+GLdouble distanceSquared(Vector2f a, Vector2f b)
 {
 	GLdouble deltaX = b.x - a.x;
 	GLdouble deltaY = b.y - a.y;

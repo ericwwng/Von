@@ -16,9 +16,7 @@ Satori::Satori()
 
 	m_bulletSpawnPosition = { m_position.x + (m_texture.getWidth() / 2.f), m_texture.getHeight() / 4.f};
 	m_spawnCircle.setPosition(m_bulletSpawnPosition);
-	//m_spawnCircle.setCircleType(2);
 	m_spawnCircle.setColor(color(255, 105, 180, 255));
-	//m_spawnCircle.setActive(true);
 
 	//random360
 	for (int i = 0; i < MAX_PROJECTILE_AMOUNT; i++)
@@ -80,7 +78,7 @@ void Satori::update(float deltaTime, Player* player)
 				m_collisionTimer.start();
 				if (player->getPlayerHealth() > 0)
 				{
-					player->setHit();
+					player->hit();
 					if (player->getPlayerHealth() <= 0) g_isPlayerDead = true;
 				}
 			}
@@ -104,8 +102,8 @@ void Satori::phaseOne()
 		m_phaseNumber = 2;
 
 		//transition
-		for (int i = 0; i <= 300; i++)
-			m_Projectiles[i].multiplyVelocity(8.f);
+		//for (int i = 0; i <= 300; i++)
+		//	m_Projectiles[i].multiplyVelocity(8.f);
 	}
 
 	if(m_healthDecreaseTimer.getTicks() >= 500)

@@ -12,6 +12,7 @@ Projectile::Projectile()
 	m_angle = 0.f;
 	m_active = false;
 	m_centeredBox = false;
+	m_particleEmitter = NULL;
 }
 
 Projectile::~Projectile()
@@ -23,22 +24,24 @@ void Projectile::update(float deltaTime)
 {
 	m_position = m_position + (m_velocity * deltaTime);
 
-	if (m_particleEmitter)
+	//Update the particle emitter only if it has been set
+	if (m_particleEmitter != NULL)
 	{
 		if (m_centeredBox)
 		{
-			m_particleEmitter->setPosition(Vector2f(m_position.x + ((m_texture.getWidth() * m_xScale) / 2),
-				m_position.y + ((m_texture.getHeight() * m_yScale) / 2)));
+			m_particleEmitter->setPosition(Vector2f(m_position.x + (m_texture.getWidth() * m_xScale / 2),
+				m_position.y + (m_texture.getHeight() * m_yScale) / 2));
 		}
 		else m_particleEmitter->setPosition(m_position);
 		m_particleEmitter->update(deltaTime, Vector2f(randFloat(-1.f, 1.f), randFloat(-1.f, 1.f)));
-		if (!m_active) delete m_particleEmitter;
+		if (!m_active) delete m_particleEmitter; //Delete the emitter if projectile isnt active to reduce memory consumption
 	}
 
 	if(m_centeredBox)
 	{
-		Vector2f _center = { m_position.x + (m_texture.getWidth() / 2) - ((m_baseWidth * m_xScale) / 2), 
-			m_position.y + (m_texture.getHeight() / 2) - ((m_baseHeight * m_yScale) / 2)};
+		//Calculate the top left of the projectile from the center
+		Vector2f _center = { m_position.x + (m_texture.getWidth() * m_xScale / 2) - (m_baseWidth * m_xScale / 2), 
+			m_position.y + (m_texture.getHeight() * m_yScale / 2) - (m_baseHeight * m_yScale / 2)};
 		m_collisionBox = { _center, m_baseWidth * (GLuint)m_xScale, m_baseHeight * (GLuint)m_yScale };
 	}
 	else m_collisionBox = { m_position, m_baseWidth * (GLuint)m_xScale, m_baseHeight * (GLuint)m_yScale };
@@ -50,19 +53,9 @@ void Projectile::render() const
 
 	Vector2f _rotationPoint = { m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
 	m_texture.render(m_position.x, m_position.y, NULL, m_texture.getWidth() * m_xScale, m_texture.getHeight() * m_yScale, m_angle, &_rotationPoint, m_color);
-
-	if (g_showCollisionBox)
-	{
-		Rectf box = { m_collisionBox.position.x, m_collisionBox.position.y, m_baseWidth * m_xScale, m_baseHeight * m_yScale };
-		renderEmptyBox(box, m_color);
-	}
 }
 
-void Projectile::reload(
-	Vector2f position,
-	Vector2f velocity,
-	float angle,
-	float speed)
+void Projectile::reload(Vector2f position, Vector2f velocity, float angle, float speed)
 {
 	m_position = position;
 	m_velocity = velocity * speed;

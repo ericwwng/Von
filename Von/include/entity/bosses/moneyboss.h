@@ -1,3 +1,7 @@
+/*
+Big Money from a background in osu! from a song(Renard - Big Money)
+*/
+
 #pragma once
 
 #include "entity/boss.h"
@@ -27,7 +31,6 @@ public:
 	void aimedShot(Vector2f position);
 	void explodeAttack(Vector2f position);
 	void implodeAttack();
-
 private:
 	const int MAX_PROJECTILE_AMOUNT = 800;
 };
