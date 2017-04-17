@@ -60,6 +60,7 @@ public:
 	~ParticleEmitter();
 
 	void update(float deltaTime, Vector2f& velocity);
+	void updateParticlesOnly(float deltaTime); //For cursor particles
 	void render() const;
 
 	void setEmissionRate(float emissionRate) { m_emissionRate = emissionRate; }

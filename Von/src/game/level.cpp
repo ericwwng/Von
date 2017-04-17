@@ -154,6 +154,16 @@ void Level::update(float deltaTime)
 
 void Level::handleEvents(SDL_Event* event)
 {
+	while (SDL_PollEvent(event))
+	{
+		if (event->type == SDL_QUIT)
+		{
+			changeFontSize(64);
+			delete g_gameState;
+			g_gameState = new Menu(true);
+		}
+	}
+
 	if(!m_isGameOver) m_player->handleEvents(event);
 
 	if (m_isGameOver && m_alpha >= 255)
@@ -184,14 +194,5 @@ void Level::handleEvents(SDL_Event* event)
 		}
 	}
 
-	while(SDL_PollEvent(event))
-	{
-		if (event->type == SDL_QUIT)
-		{
-			changeFontSize(64);
-			delete g_gameState;
-			g_gameState = new Menu(true);
-		}
-	}
-
+	m_cursor->handleEvents(event);
 }

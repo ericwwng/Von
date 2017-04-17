@@ -7,6 +7,7 @@ Options State to change volume and/or resetting save file
 
 #include "game/application.h"
 #include "game/selectionstate.h"
+#include "game/credits.h"
 
 #include "entity/cursor.h"
 

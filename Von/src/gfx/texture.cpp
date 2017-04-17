@@ -22,32 +22,27 @@ void Texture::loadFromFile(const char* path, GLuint w, GLuint h, bool printLoade
 
 	SDL_Surface* _surface = IMG_Load(path);
 	GLuint* _pixels = NULL;
-	if (_surface == NULL)
-		printf("Unable to load image %s!\n", path);
 
 	if (_surface != NULL)
 	{
 		m_width = _surface->w;
 		m_height = _surface->h;
+		if (_surface->format->BytesPerPixel == 4) m_textureFormat = GL_RGBA;
+		else m_textureFormat = GL_RGB;
 	}
 	else //Generate white texture if image can't load
 	{
+		printf("Unable to load image %s!\n", path);
 		m_width = w;
 		m_height = h;
 		printf("Creating texture %d, %d \n", w, h);
-		m_textureFormat = GL_RGBA;
+		m_textureFormat = GL_RGB;
 		_pixels = new GLuint[w * h];
 		for (GLuint i = 0; i < (w * h); i++)
 		{
 			GLubyte* _colors = (GLubyte*)&_pixels[i];
-			_colors[0] = 0xFF; _colors[1] = 0xFF; _colors[2] = 0xFF; _colors[3] = 0xFF;
+			_colors[0] = 0xFF; _colors[1] = 0xFF; _colors[2] = 0xFF;
 		}
-	}
-
-	if (_surface != NULL)
-	{
-		if (_surface->format->BytesPerPixel == 4) m_textureFormat = GL_RGBA;
-		else m_textureFormat = GL_RGB;
 	}
 
 	glGenTextures(1, &m_texture);
@@ -61,8 +56,7 @@ void Texture::loadFromFile(const char* path, GLuint w, GLuint h, bool printLoade
 
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
-	if (glGetError() != GL_NO_ERROR)
-		printf("Error loading texture! %s Path: %s \n", gluErrorString(glGetError()), path);
+	if (glGetError() != GL_NO_ERROR) printf("Error loading texture! %s Path: %s \n", gluErrorString(glGetError()), path);
 
 	///Initialize VBO
 	if (m_texture != 0 && m_VBOid == 0)
@@ -100,23 +94,27 @@ void Texture::loadFromText(const char* text, SDL_Color color)
 {
 	free();
 
-	//SWAP R and B
+	//Swaps R and B for the correct values
 	Uint8 temp = color.r;
 	color.r = color.b;
 	color.b = temp;
 
 	SDL_Surface* _surface = TTF_RenderText_Blended(g_font, text, color);
-	if (_surface == NULL)
-		printf("Unable to load image %s!\n", text);
 
-	m_width = _surface->w;
-	m_height = _surface->h;
+	if (_surface != NULL) 
+	{
+		m_width = _surface->w;
+		m_height = _surface->h;
+	}
 
 	m_textureFormat = GL_RGBA;
 
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _surface->pixels);
+
+	//Blank image if surface can't load
+	if (_surface != NULL) glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, _surface->pixels);
+	else glTexImage2D(GL_TEXTURE_2D, 0, m_textureFormat, m_width, m_height, 0, m_textureFormat, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -124,8 +122,7 @@ void Texture::loadFromText(const char* text, SDL_Color color)
 
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
-	if (glGetError() != GL_NO_ERROR)
-		printf("Error loading texture! %s\n", gluErrorString(glGetError()));
+	if (glGetError() != GL_NO_ERROR) printf("Error loading texture! %s\n", gluErrorString(glGetError()));
 
 	///Initialize VBO
 	if (m_texture != 0 && m_VBOid == 0)
@@ -215,6 +212,7 @@ void Texture::render(
 		glPopMatrix();
 		glPushMatrix();
 
+		//For the game over animation
 		if (alpha != 255) glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, alpha / 255.f);
 		else glColor4f(color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f);
 		if(g_isPlayerDead) glColor4f(1.f, 0.25f, 0.25f, 255.f);

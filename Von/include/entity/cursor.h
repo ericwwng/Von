@@ -16,6 +16,9 @@ public:
 
 	void render() const;
 	void update(float deltaTime, Vector2f cameraPosition);
+	void handleEvents(SDL_Event* event); //For updating the particles when cursor moves
 private:
 	ParticleEmitter* m_particleEmitter;
+
+	float deltaTime;
 };

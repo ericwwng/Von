@@ -67,5 +67,5 @@ void renderFillCircle(Vector2f position, GLfloat radius, SDL_Color color, int nu
 
 void changeFontSize(int ptsize)
 {
-	g_font = TTF_OpenFont("res/arial.ttf", ptsize);
+	g_font = TTF_OpenFont("res/Oswald-Regular.ttf", ptsize);
 }

@@ -90,6 +90,23 @@ void ParticleEmitter::update(float deltaTime, Vector2f& velocity)
 	}
 }
 
+void ParticleEmitter::updateParticlesOnly(float deltaTime)
+{
+	for (int i = 0; i < m_particleCount; i++)
+	{
+		if (m_particles[i].isAlive())
+		{
+			if (!m_particles[i].update(deltaTime)) //If particle just died
+			{
+				Particle temp = m_particles[i];
+				m_particles[i] = m_particles[m_particleCount - 1];
+				m_particles[m_particleCount - 1] = temp;
+				m_particleCount--;
+			}
+		}
+	}
+}
+
 void ParticleEmitter::render() const
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);

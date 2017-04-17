@@ -4,7 +4,7 @@ SDL_Window* g_window = NULL;
 TTF_Font* g_font = NULL;
 bool g_showCollisionBox = false;
 bool g_isPlayerDead = false;
-int g_bgmVolume = 10;
+int g_bgmVolume = 25;
 int g_sfxVolume = 25;
 GameState* g_gameState = NULL;
 

@@ -286,6 +286,7 @@ void Sun::aimedShot(Vector2f position)
 		_direction = _direction.normalized();
 		m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
 		m_Projectiles[_index].setActive(true);
+		m_Projectiles[_index].setParticleEmitter(new ParticleEmitter(20, m_position, color(255, 120, 0, 255), 0.5f, 0.1f, 4));
 
 		_index++;
 	}

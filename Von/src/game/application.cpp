@@ -5,8 +5,7 @@ Application::Application() :
 	m_countedFrames(0)
 {
     printf("Application Initializing... \n");
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
-		printf("SDL could not initialize!\n");
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) printf("SDL could not initialize!\n");
 	else
 	{
 		//Use OpenGL 2.1
@@ -15,24 +14,19 @@ Application::Application() :
 
 		g_window = SDL_CreateWindow("Von", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
             SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-		if(g_window == NULL)
-			printf("Window could not be created!\n");
+		if(g_window == NULL) printf("Window could not be created!\n");
 		else
 		{
 			m_context = SDL_GL_CreateContext(g_window);
-			if (m_context == NULL)
-				printf("OpenGL Context could not be created!\n");
+			if (m_context == NULL) printf("OpenGL Context could not be created!\n");
 			else
 			{
 				int flags = IMG_INIT_PNG;
-				if(!(IMG_Init(flags) & flags))
-					printf("SDL_image could not initialize!\n");
-				if (TTF_Init() == -1)
-					printf("SDL_ttf could not initialize!\n");
+				if(!(IMG_Init(flags) & flags)) printf("SDL_image could not initialize!\n");
+				if (TTF_Init() == -1) printf("SDL_ttf could not initialize!\n");
 			}
 			//Initialize SDL_mixer
-			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-				printf("SDL_mixer could not initialize! %s\n", Mix_GetError());
+			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) printf("SDL_mixer could not initialize! %s\n", Mix_GetError());
 
 			//TODO: load this volume from a sav file
 			Mix_VolumeMusic((int)(MIX_MAX_VOLUME * (g_bgmVolume / 100.f)));
@@ -42,11 +36,9 @@ Application::Application() :
 
 	///Initialize OpenGL
 	//Initialize GLEW
-	if (glewInit() != GLEW_OK)
-		printf("Error initializing GLEW! %s\n", glewGetErrorString(glewInit()));
+	if (glewInit() != GLEW_OK) printf("Error initializing GLEW! %s\n", glewGetErrorString(glewInit()));
 
-	if (!GLEW_VERSION_2_1)
-		printf("OpenGL 2.1 not supported!\n");
+	if (!GLEW_VERSION_2_1) printf("OpenGL 2.1 not supported!\n");
 
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	//Initiailize Matrices
@@ -66,8 +58,7 @@ Application::Application() :
 	glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	if (glGetError() != GL_NO_ERROR)
-		printf("Error initializing OpenGL! %s\n", gluErrorString(glGetError()));
+	if (glGetError() != GL_NO_ERROR) printf("Error initializing OpenGL! %s\n", gluErrorString(glGetError()));
 
 	srand(static_cast <unsigned> (time(0)));
 

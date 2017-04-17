@@ -18,7 +18,7 @@ public:
     virtual ~Texture();
 
 	void loadFromFile(const char* path, GLuint w = 32, GLuint h = 32, bool printLoaded = true);
-	void loadFromText(const char* text, SDL_Color color);
+	void loadFromText(const char* text, SDL_Color color); //For displaying text
 
 	//Deallocate the textures from the GPU
     void free();

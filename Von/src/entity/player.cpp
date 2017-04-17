@@ -71,7 +71,7 @@ void Player::handleEvents(SDL_Event* event)
 		if (_currentKeyStates[SDL_SCANCODE_S]) m_velocityGoal.y = (GLfloat)m_playerSpeed;
 		if (_currentKeyStates[SDL_SCANCODE_D]) m_velocityGoal.x = (GLfloat)m_playerSpeed;
 
-		if(event->button.button == SDL_BUTTON_LEFT) m_isClickPressed = true;
+		if (event->button.button == SDL_BUTTON_LEFT) m_isClickPressed = true;
 		else if(event->type == SDL_MOUSEBUTTONUP) m_isClickPressed = false;
 	}
 }

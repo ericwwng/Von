@@ -76,13 +76,6 @@ void SelectionState::update(float deltaTime)
 
 void SelectionState::handleEvents(SDL_Event* event)
 {
-	if (event->type == SDL_KEYDOWN)
-		if (event->key.keysym.sym == SDLK_ESCAPE)
-		{
-			delete g_gameState;
-			g_gameState = new Menu(false);
-		}
-
 	for (unsigned int i = 0; i < m_selectionItems.size(); i++)
 		m_selectionItems[i]->handleEvents(event, m_cursor->getCollisionBox());
 
@@ -93,4 +86,13 @@ void SelectionState::handleEvents(SDL_Event* event)
 			g_gameState = new Menu(false);
 		}
 	}
+
+	m_cursor->handleEvents(event);
+
+	if (event->type == SDL_KEYDOWN)
+		if (event->key.keysym.sym == SDLK_ESCAPE)
+		{
+			delete g_gameState;
+			g_gameState = new Menu(false);
+		}
 }

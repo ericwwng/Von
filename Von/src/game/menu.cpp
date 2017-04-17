@@ -38,6 +38,9 @@ Menu::Menu(bool playBgm)
 	m_optionsButtons[6]->setColor(color(255, 0, 0, 255));
 
 	m_optionsButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.50, SCREEN_HEIGHT - (SCREEN_HEIGHT / 6)), SCREEN_WIDTH / 6, SCREEN_HEIGHT / 7, "Home", true));
+	
+	m_optionsButtons.push_back(new Button(Vector2f(SCREEN_WIDTH * 0.80, SCREEN_HEIGHT - (SCREEN_HEIGHT / 6)), SCREEN_WIDTH / 6, SCREEN_HEIGHT / 10, "Credits", true));
+	m_optionsButtons[8]->setColor(color(0, 0, 255, 255));
 
 	changeFontSize(16);
 
@@ -208,6 +211,12 @@ void Menu::handleEvents(SDL_Event* event)
 			m_menuState = MAIN_MENU;
 		}
 
+		//Credits
+		if (m_optionsButtons[8]->isClicked())
+		{
+			g_gameState = new Credits();
+		}
+
 		changeFontSize(16);
 
 		if (event->type == SDL_KEYDOWN)
@@ -215,4 +224,6 @@ void Menu::handleEvents(SDL_Event* event)
 			if (event->key.keysym.sym == SDLK_ESCAPE) m_menuState = MAIN_MENU;
 		}
 	}
+
+	m_cursor->handleEvents(event);
 }

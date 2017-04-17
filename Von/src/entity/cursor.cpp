@@ -4,7 +4,7 @@ Cursor::Cursor()
 {
 	m_texture.loadFromFile("res/Entity/cursor.png");
 
-	m_particleEmitter = new ParticleEmitter(40, m_position, color(192, 128, 192, 255), 0.5, 0.25, 2);
+	m_particleEmitter = new ParticleEmitter(50, m_position, color(192, 128, 192, 255), 0.75f, 0.25f, 4);
 }
 
 void Cursor::render() const
@@ -18,6 +18,8 @@ void Cursor::render() const
 
 void Cursor::update(float deltaTime, Vector2f cameraPosition)
 {
+	this->deltaTime = deltaTime;
+
 	int x, y;
 	SDL_GetMouseState(&x, &y);
 
@@ -27,6 +29,14 @@ void Cursor::update(float deltaTime, Vector2f cameraPosition)
 	m_collisionBox = { Vector2f(m_position.x, m_position.y), 1, 1 };
 
 	m_particleEmitter->setPosition(Vector2f((GLfloat)x, (GLfloat)y));
-	Vector2f _particleVelocity(randFloat(0.1f, -0.1f), randFloat(0.1f, -0.1f));
-	m_particleEmitter->update(deltaTime, _particleVelocity);
+	m_particleEmitter->updateParticlesOnly(deltaTime);
+}
+
+void Cursor::handleEvents(SDL_Event* event)
+{
+	if (event->type == SDL_MOUSEMOTION)
+	{
+		Vector2f _particleVelocity(randFloat(0.1f, -0.1f), randFloat(0.1f, -0.1f));
+		m_particleEmitter->update(deltaTime, _particleVelocity);
+	}
 }

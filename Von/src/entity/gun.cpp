@@ -30,7 +30,7 @@ void Gun::action()
 
 		Vector2f _tempPosition;
 
-		m_initialPosition.x += 96;
+		m_initialPosition.x += 90;
 		m_initialPosition = m_initialPosition - m_playerCenter;
 
 		_tempPosition.x = (GLfloat)(m_initialPosition.x * cos(m_angle * PI / 180) - m_initialPosition.y * sin(m_angle * PI / 180));

@@ -9,8 +9,6 @@ Base class for all game states to inherit from
 class GameState
 {
 public:
-    virtual ~GameState(){};
-	
 	virtual void render() {};
 	virtual void update(float deltaTime) {};
 	virtual void handleEvents(SDL_Event* event) {};
