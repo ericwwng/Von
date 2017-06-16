@@ -42,17 +42,17 @@ void Player::renderUI(Camera* camera)
 	if(m_health >= 1)
 	{
 		Rectf leftClip = { camera->m_collisionBox.position.x + 32.f, camera->m_collisionBox.position.y + 64.f, 85.f, 32.f};
-		renderFillRect(leftClip, color(255, 0, 0, 128));
+		renderFillRect(leftClip, color(255, 0, 0, 192));
 	}
 	if (m_health >= 2)
 	{
 		Rectf middleClip = { camera->m_collisionBox.position.x + 117.f, camera->m_collisionBox.position.y + 64.f, 85.f, 32.f };
-		renderFillRect(middleClip, color(0, 255, 0, 128));
+		renderFillRect(middleClip, color(0, 255, 0, 192));
 	}
 	if (m_health == 3)
 	{
 		Rectf rightClip = { camera->m_collisionBox.position.x + 202.f, camera->m_collisionBox.position.y + 64.f, 85.f, 32.f };
-		renderFillRect(rightClip, color(0, 0, 255, 128));
+		renderFillRect(rightClip, color(0, 0, 255, 192));
 	}
 
 	Rectf _box = { camera->m_collisionBox.position.x + 32, camera->m_collisionBox.position.y + 64, 256.f, 32.f };
@@ -71,7 +71,7 @@ void Player::handleEvents(SDL_Event* event)
 		if (_currentKeyStates[SDL_SCANCODE_S]) m_velocityGoal.y = (GLfloat)m_playerSpeed;
 		if (_currentKeyStates[SDL_SCANCODE_D]) m_velocityGoal.x = (GLfloat)m_playerSpeed;
 
-		if (event->button.button == SDL_BUTTON_LEFT) m_isClickPressed = true;
+		if (event->type == SDL_MOUSEBUTTONDOWN) m_isClickPressed = true;
 		else if(event->type == SDL_MOUSEBUTTONUP) m_isClickPressed = false;
 	}
 }
@@ -170,7 +170,7 @@ void Player::update(
 	m_direction = m_direction.normalized();
 	m_angle = (float)(atan2(m_direction.y, m_direction.x) * (180.f / PI));
 	m_weapon->setDirection(m_direction);
-	m_weapon->update(m_position, m_angle, deltaTime);
+	m_weapon->update(m_position, m_angle, deltaTime, camera);
 
 	if (m_isClickPressed) m_weapon->action();
 	if (m_health <= 0) g_isPlayerDead = true;

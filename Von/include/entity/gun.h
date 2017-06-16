@@ -17,16 +17,19 @@ public:
     void action();
 
     void render() const;
-    void update(Vector2f& position, float angle, float deltaTime);
+    void update(Vector2f& position, float angle, float deltaTime, Camera* camera);
 
 	inline void setDirection(Vector2f& dir) { m_weaponDirection = dir; }
 
-	Projectile* getProjectile() { return m_bullet; };
+	Projectile* getProjectiles() { return m_bullets; };
 
 	//Updates the roatation in relation to the direction the player is facing
 	Vector2f updateRotation();
+
+	const int getBulletAmount() { return BULLET_AMOUNT; }
 private:
-    Projectile* m_bullet;
+	const int BULLET_AMOUNT = 3;
+    Projectile* m_bullets;
 
 	Vector2f m_weaponDirection;
 	Vector2f m_playerCenter;

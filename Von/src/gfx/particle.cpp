@@ -121,3 +121,9 @@ void ParticleEmitter::setPosition(Vector2f& position)
 {
 	m_position = position;
 }
+
+void ParticleEmitter::setLifeDuration(float lifeDuration) 
+{
+	m_lifeDuration = lifeDuration; 
+	//m_emissionRate = m_totalParticles / lifeDuration;
+}

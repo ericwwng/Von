@@ -31,7 +31,7 @@ Sun::Sun()
 	m_shootingRate = 1000;
 	m_shootingSpeed = 300;
 	m_healthColor = color(255, 165, 0, 128);
-	m_healthBarParticleEmitter = new ParticleEmitter(100, Vector2f((GLfloat)SCREEN_WIDTH, 32), color(255, 255, 255, 255), 5.f, 2.f, 4.f);
+	m_healthBarParticleEmitter = new ParticleEmitter(100, Vector2f(0, 32), color(255, 255, 255, 255), 3.f, 1.f, 4.f);
 }
 
 Sun::~Sun()
@@ -113,14 +113,17 @@ void Sun::update(float deltaTime, Player* player)
 	}
 
 	//Player hits boss
-	if (player->getWeapon()->getProjectile()->isActive())
-		if (Collision(m_collisionBox, player->getWeapon()->getProjectile()->getCollisionBox()))
+	for (int i = 0; i < player->getWeapon()->getBulletAmount(); i++)
+	{
+		if (player->getWeapon()->getProjectiles()->isActive())
 		{
-			if (m_bossCollisionTimer.getTicks() > 1500)
+			if (Collision(m_collisionBox, player->getWeapon()->getProjectiles()[i].getCollisionBox()))
 			{
-				m_bossCollisionTimer.start();
-				switch (m_phaseNumber)
+				if (m_bossCollisionTimer.getTicks() > 1500)
 				{
+					m_bossCollisionTimer.start();
+					switch (m_phaseNumber)
+					{
 					case 1:
 					{
 						m_health -= 1;
@@ -133,13 +136,16 @@ void Sun::update(float deltaTime, Player* player)
 					{
 						m_health -= 5;
 					} break;
+					}
 				}
+				player->getWeapon()->getProjectiles()[i].reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
 			}
-			player->getWeapon()->getProjectile()->reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
 		}
+	}
 
-	m_healthBarParticleEmitter->setPosition(Vector2f(m_health * 12.8f - 5, 32));
-	m_healthBarParticleEmitter->update(deltaTime, Vector2f(randFloat(-2.f, -4.f), randFloat(0.05f, -0.05f)));
+	m_healthBarParticleEmitter->setLifeDuration(3.f / (100 / m_health));
+	m_healthBarParticleEmitter->setLifeVariance(1.f / (100 / m_health));
+	m_healthBarParticleEmitter->update(deltaTime, Vector2f(randFloat(2.f, 4.f), randFloat(0.05f / (m_health / 100), -0.05f / (m_health / 100))));
 
 	if (m_phaseNumber == 0)
 	{
@@ -286,7 +292,7 @@ void Sun::aimedShot(Vector2f position)
 		_direction = _direction.normalized();
 		m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
 		m_Projectiles[_index].setActive(true);
-		m_Projectiles[_index].setParticleEmitter(new ParticleEmitter(20, m_position, color(255, 120, 0, 255), 0.5f, 0.1f, 4));
+		m_Projectiles[_index].setParticleEmitter(new ParticleEmitter(10, m_position, color(255, 120, 0, 255), 0.5f, 0.1f, 4));
 
 		_index++;
 	}

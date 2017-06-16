@@ -63,7 +63,9 @@ public:
 	void updateParticlesOnly(float deltaTime); //For cursor particles
 	void render() const;
 
-	void setEmissionRate(float emissionRate) { m_emissionRate = emissionRate; }
+	void setLifeVariance(float lifeVariance) { m_lifeVariance = lifeVariance; }
+
+	void setLifeDuration(float lifeDuration);
 
 	void setPosition(Vector2f& position);
 private:

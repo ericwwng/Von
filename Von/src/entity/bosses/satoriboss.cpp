@@ -9,8 +9,7 @@ Satori::Satori()
 	m_healthDecreaseTimer.start();
 	m_collisionTimer.start();
 
-	m_phaseNumber = 1;
-	m_health = 1280.f;
+	m_health = 1280.f; //Width of the screen
 
 	m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f), 0.f };
 
@@ -18,14 +17,15 @@ Satori::Satori()
 	m_spawnCircle.setPosition(m_bulletSpawnPosition);
 	m_spawnCircle.setColor(color(255, 105, 180, 255));
 
-	//random360
+	//Set particle properties
 	for (int i = 0; i < MAX_PROJECTILE_AMOUNT; i++)
 	{
 		m_Projectiles[i].setCenteredBox(true);
 	}
 
-	m_shootingRate = 200;
-	m_shootingSpeed = 100;
+	//For first attack
+	m_shootingRate = 180;
+	m_shootingSpeed = 120;
 }
 
 Satori::~Satori()
@@ -54,10 +54,7 @@ void Satori::render()
 
 void Satori::update(float deltaTime, Player* player)
 {
-	if (m_phaseNumber == 1)
-		phaseOne();
-	else if (m_phaseNumber == 2)
-		phaseTwo();
+	if (m_health > 0) attack(player);
 
 	for (int i = 0; i < MAX_PROJECTILE_AMOUNT; i++)
 	{
@@ -82,29 +79,17 @@ void Satori::update(float deltaTime, Player* player)
 					if (player->getPlayerHealth() <= 0) g_isPlayerDead = true;
 				}
 			}
-
-
-			if(player->getWeapon()->getProjectile()->isActive())
-				if (Collision(m_Projectiles[i].getCollisionBox(), player->getWeapon()->getProjectile()->getCollisionBox()))
-				{
-					m_Projectiles[i].reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
-					player->getWeapon()->getProjectile()->reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
-				}
 		}
 	}
 }
 
-void Satori::phaseOne()
+void Satori::attack(Player* player)
 {
-	if(m_songTimer.getTicks() > 3000 && m_songTimer.getTicks() < 25800) random360();
-	else if(m_songTimer.getTicks() > 25800)
-	{
-		m_phaseNumber = 2;
+	static bool _endAttack1 = false;
+	if (!_endAttack1) _endAttack1 = attack1();
 
-		//transition
-		//for (int i = 0; i <= 300; i++)
-		//	m_Projectiles[i].multiplyVelocity(8.f);
-	}
+	static bool _endAttack2 = false;
+	if (_endAttack1 && !_endAttack2) _endAttack2 = attack2(player);
 
 	if(m_healthDecreaseTimer.getTicks() >= 500)
 	{
@@ -113,7 +98,27 @@ void Satori::phaseOne()
 	}
 }
 
-void Satori::phaseTwo()
+bool Satori::attack1()
+{
+	//Attack 1: randomly shoot
+	bool _endAttackOne = false;
+	if (m_songTimer.getTicks() > 3000 && m_songTimer.getTicks() < 25800)
+	{
+		random360(m_bulletSpawnPosition);
+	}
+	else if (m_songTimer.getTicks() > 25800)
+	{
+		//Transition to next attack
+		for (int i = 0; i <= 300; i++) m_Projectiles[i].setVelocity(
+			Vector2f(m_Projectiles[i].getVelocity().x * 8, m_Projectiles[i].getVelocity().y * 8));
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Satori::attack2(Player* player)
 {
 	static Timer repeatedTimer(true);
 
@@ -122,35 +127,27 @@ void Satori::phaseTwo()
 		if (repeatedTimer.getTicks() >= 1000)
 		{
 			m_shootingSpeed = 500;
-			//aimedShot();
+			aimedShot(player->getPosition());
 			repeatedTimer.start();
 		}
 	}
 
-	if (m_healthDecreaseTimer.getTicks() >= 500)
-	{
-		m_health -= (1280.f / 155.f / 2.f);
-		m_healthDecreaseTimer.start();
-	}
+	return false;
 }
 
-void Satori::random360()
+void Satori::random360(Vector2f position)
 {
 	static int _index = 0;
-	static Timer repeatedTimer(true);
+	static Timer _repeatedTimer(true);
 
-	if(repeatedTimer.getTicks() >= m_shootingRate / 5)
+	if (_repeatedTimer.getTicks() >= m_shootingRate / 5)
 	{
-		repeatedTimer.start();
-		if(_index >= 300)
-			_index = 0;
-		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/2.f);
-		float r2 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/2.f);
-		Vector2f _direction = { r1 - 1.f, r2 - 1.f };
+		_repeatedTimer.start();
+		if (_index >= 300) _index = 0;
+		Vector2f _direction = { randFloat(-1.f, 1.f), randFloat(-1.f, 1.f) };
 		_direction = _direction.normalized();
-		m_Projectiles[_index].reload(m_bulletSpawnPosition, _direction, 0, (float)m_shootingSpeed);
+		m_Projectiles[_index].reload(position, _direction, 0, (float)m_shootingSpeed);
 		m_Projectiles[_index].setActive(true);
-		m_Projectiles[_index].setColor(color(rand() % 255, rand() % 255, rand() % 255, 255));
 		_index++;
 	}
 }
@@ -158,24 +155,21 @@ void Satori::random360()
 void Satori::explodeAttack(Vector2f position)
 {
 	static int _index = 300;
-	static Timer repeatedTimer(true);
+	static Timer _repeatedTimer(true);
 
-	if(repeatedTimer.getTicks() >= m_shootingRate)
+	if (_repeatedTimer.getTicks() >= m_shootingRate)
 	{
-		repeatedTimer.start();
-		SDL_Color col = color(rand() % 255, rand() % 255, rand() % 255, 255);
+		_repeatedTimer.start();
 		int randomOffset = rand() % 360;
-		for(int i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++)
 		{
-			if(_index >= 500)
-				_index = 300;
+			if (_index >= 500) _index = 300;
 			int angle = (i * 30) + randomOffset;
 			Vector2f _aimedPosition = { position.x + (GLfloat)cos(angle * PI / 180), position.y + (GLfloat)sin(angle * PI / 180) };
 			Vector2f _direction = _aimedPosition - position;
 			_direction = _direction.normalized();
 			m_Projectiles[_index].reload(position, _direction, 0, (float)m_shootingSpeed);
 			m_Projectiles[_index].setActive(true);
-			m_Projectiles[_index].setColor(col);
 			_index++;
 		}
 	}
@@ -183,16 +177,17 @@ void Satori::explodeAttack(Vector2f position)
 
 void Satori::aimedShot(Vector2f position)
 {
-	static int _index = 500;
+	static Timer _repeatedTimer(true);
+	if (_repeatedTimer.getTicks() >= m_shootingRate)
+	{
+		_repeatedTimer.start();
+		static int _index = 700;
+		if (_index >= 800) _index = 700;
+		Vector2f _direction = position - m_position;
+		_direction = _direction.normalized();
+		m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
+		m_Projectiles[_index].setActive(true);
 
-	if (_index >= 600)
-		_index = 500;
-
-	Vector2f _direction = position - m_bulletSpawnPosition;
-	_direction = _direction.normalized();
-	m_Projectiles[_index].reload(m_bulletSpawnPosition, _direction, 0, (float)m_shootingSpeed);
-	m_Projectiles[_index].setActive(true);
-	m_Projectiles[_index].setColor(color(rand() % 255, rand() % 255, rand() % 255, 255));
-
-	_index++;
+		_index++;
+	}
 }

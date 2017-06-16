@@ -45,7 +45,8 @@ BigMoney::BigMoney()
 	m_shootingSpeed = 250;
 	m_position = { SCREEN_WIDTH / 2 - (m_texture.getWidth() / 2.f) + m_texture.getWidth() / 2.f, m_texture.getHeight() / 2.f };
 	m_healthColor = color(0, 255, 0, 128);
-	m_healthBarParticleEmitter = new ParticleEmitter(100, Vector2f((GLfloat)SCREEN_WIDTH, 32), color(255, 255, 255, 255), 5.f, 2.f, 4.f);
+	m_healthBarParticleEmitter = new ParticleEmitter(100, Vector2f(0, 32), color(255, 255, 255, 255), 3.f, 1.f, 4.f);
+	m_bossStartTimer.start();
 }
 
 BigMoney::~BigMoney()
@@ -135,14 +136,17 @@ void BigMoney::update(float deltaTime, Player* player)
 	}
 	
 	//Player hits boss
-	if (player->getWeapon()->getProjectile()->isActive())
-		if (Collision(m_collisionBox, player->getWeapon()->getProjectile()->getCollisionBox()))
+	for (int i = 0; i < player->getWeapon()->getBulletAmount(); i++)
+	{
+		if (player->getWeapon()->getProjectiles()[i].isActive())
 		{
-			if (m_bossCollisionTimer.getTicks() > 1500)
+			if (Collision(m_collisionBox, player->getWeapon()->getProjectiles()[i].getCollisionBox()))
 			{
-				m_bossCollisionTimer.start();
-				switch (m_phaseNumber)
+				if (m_bossCollisionTimer.getTicks() > 1500)
 				{
+					m_bossCollisionTimer.start();
+					switch (m_phaseNumber)
+					{
 					case 1:
 					{
 						m_health -= 3.75;
@@ -155,13 +159,16 @@ void BigMoney::update(float deltaTime, Player* player)
 					{
 						m_health -= 5;
 					} break;
+					}
 				}
+				player->getWeapon()->getProjectiles()[i].reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
 			}
-			player->getWeapon()->getProjectile()->reload(Vector2f(0, 0), Vector2f(0, 0), 0, 0);
 		}
+	}
 
-	m_healthBarParticleEmitter->setPosition(Vector2f(m_health * 12.8f - 5, 32));
-	m_healthBarParticleEmitter->update(deltaTime, Vector2f(randFloat(-2.f, -4.f), randFloat(0.05f, -0.05f)));
+	m_healthBarParticleEmitter->setLifeDuration(3.f / (100 / m_health));
+	m_healthBarParticleEmitter->setLifeVariance(1.f / (100 / m_health));
+	m_healthBarParticleEmitter->update(deltaTime, Vector2f(randFloat(2.f, 4.f), randFloat(0.05f / (m_health / 100), -0.05f / (m_health / 100))));
 
 	if (m_phaseNumber == 3 && m_health == 0)
 	{
@@ -172,14 +179,17 @@ void BigMoney::update(float deltaTime, Player* player)
 
 void BigMoney::phaseOne()
 {
-	random360();
-	implodeAttack();
-	if (m_health <= 0)
+	if (m_bossStartTimer.getTicks() >= 2000)
 	{
-		m_health = 100;
-		m_healthColor = color(0, 0, 255, 128);
-		m_phaseNumber = 2;
-		m_velocityGoal.x = 1000.f;
+		random360();
+		implodeAttack();
+		if (m_health <= 0)
+		{
+			m_health = 100;
+			m_healthColor = color(0, 0, 255, 128);
+			m_phaseNumber = 2;
+			m_velocityGoal.x = 1000.f;
+		}
 	}
 }
 
@@ -202,51 +212,54 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 		m_velocityGoal.x = -m_velocityGoal.x;
 	}
 
-	//Attack 1: move and shoot randomly
-	if (_attackNumber == 0)
+	if (_miniPhaseTimer.getTicks() < 10000)
 	{
-		m_shootingRate = 300;
-		m_shootingSpeed = 400;
-		random360();
-	}
-	//Attack 2: move while shoot circles of projectils and an aimed shot every so often
-	else if (_attackNumber == 1)
-	{
-		m_shootingRate = 600;
-		m_shootingSpeed = 400;
-		explodeAttack(m_position);
-
-		m_shootingRate = 1000;
-		m_shootingSpeed = 600;
-		aimedShot(player->getPosition());
-	}
-	//Attack 3: windmill of projectiles
-	else
-	{
-		//Taken from aimedshot
-		static Timer __repeatedTimer(true);
-		if (__repeatedTimer.getTicks() >= m_shootingRate)
+		//Attack 1: move and shoot randomly
+		if (_attackNumber == 0)
 		{
-			__repeatedTimer.start();
-			for (int i = 0; i < 12; i++)
+			m_shootingRate = 300;
+			m_shootingSpeed = 400;
+			random360();
+		}
+		//Attack 2: move while shoot circles of projectils and an aimed shot every so often
+		else if (_attackNumber == 1)
+		{
+			m_shootingRate = 600;
+			m_shootingSpeed = 400;
+			explodeAttack(m_position);
+
+			m_shootingRate = 1000;
+			m_shootingSpeed = 600;
+			aimedShot(player->getPosition());
+		}
+		//Attack 3: windmill of projectiles
+		else
+		{
+			//Taken from aimedshot
+			static Timer __repeatedTimer(true);
+			if (__repeatedTimer.getTicks() >= m_shootingRate)
 			{
-				static int _index = 300;
+				__repeatedTimer.start();
+				for (int i = 0; i < 12; i++)
+				{
+					static int _index = 300;
 
-				if (_index >= 660) _index = 300;
+					if (_index >= 660) _index = 300;
 
-				int angle = (i * 30) + (_index - 300) / 4;
-				Vector2f _aimedPosition = { m_position.x + (GLfloat)cos(angle * PI / 180), m_position.y + (GLfloat)sin(angle * PI / 180) };
-				Vector2f _direction = _aimedPosition - m_position;
-				_direction = _direction.normalized();
-				m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
-				m_Projectiles[_index].setActive(true);
+					int angle = (i * 30) + (_index - 300) / 4;
+					Vector2f _aimedPosition = { m_position.x + (GLfloat)cos(angle * PI / 180), m_position.y + (GLfloat)sin(angle * PI / 180) };
+					Vector2f _direction = _aimedPosition - m_position;
+					_direction = _direction.normalized();
+					m_Projectiles[_index].reload(m_position, _direction, 0, (float)m_shootingSpeed);
+					m_Projectiles[_index].setActive(true);
 
-				_index++;
+					_index++;
+				}
 			}
 		}
 	}
 
-	if (_miniPhaseTimer.getTicks() > 12000)
+	if (_miniPhaseTimer.getTicks() > 14000)
 	{
 		_miniPhaseTimer.start();
 		_attackNumber++;
@@ -286,8 +299,8 @@ void BigMoney::phaseTwo(float deltaTime, Player* player)
 void BigMoney::phaseThree(float deltaTime)
 {
 	//Shoot increasingly faster projecties randomly
-	m_shootingRate -= 8 * deltaTime;
-	m_shootingSpeed += 8 * deltaTime;
+	m_shootingRate -= 9 * deltaTime;
+	m_shootingSpeed += 10 * deltaTime;
 	random360();
 
 	if (m_health <= 0) m_phaseNumber = 0;
@@ -349,7 +362,6 @@ void BigMoney::aimedShot(Vector2f position)
 		_index++;
 	}
 }
-
 
 void BigMoney::implodeAttack()
 {

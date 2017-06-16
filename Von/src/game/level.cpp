@@ -90,6 +90,8 @@ void Level::screenTransition(float addBy)
 
 void Level::render()
 {
+	m_camera->update();
+
 	m_dungeon->render();
 	m_dungeon->renderSolidTiles();
 
@@ -130,8 +132,6 @@ void Level::update(float deltaTime)
 
 	if (!m_isGameOver)
 	{
-		m_camera->update();
-
 		m_dungeon->updateScroll(deltaTime);
 
 		if (m_boss) m_boss->update(deltaTime, m_player);

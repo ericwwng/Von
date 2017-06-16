@@ -33,4 +33,6 @@ public:
 	void implodeAttack();
 private:
 	const int MAX_PROJECTILE_AMOUNT = 800;
+	
+	Timer m_bossStartTimer;
 };

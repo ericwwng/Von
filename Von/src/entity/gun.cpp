@@ -5,25 +5,28 @@ Gun::Gun()
 	m_angle = 0.f;
 	m_texture.loadFromFile("res/Entity/gun.png");
 
-	m_bullet = new Projectile();
+	m_bullets = new Projectile[BULLET_AMOUNT];
 
 	m_shootSfx.loadSoundFile("res/Music/sfx/shoot.wav");
 
-	m_bullet->loadTexture("res/Projectile/bullet.png");
-	m_bullet->setCollisionBox(8, 8);
-	m_bullet->setCenteredBox(false);
+	for (int i = 0; i < BULLET_AMOUNT; i++)
+	{
+		m_bullets[i].loadTexture("res/Projectile/bullet.png");
+		m_bullets[i].setCollisionBox(8, 8);
+		m_bullets[i].setCenteredBox(false);
+	}
 
 	m_rateOfFire.start();
 }
 
 Gun::~Gun()
 {
-	
+	delete m_bullets;
 }
 
 void Gun::action()
 {
-	if (m_rateOfFire.getTicks() >= 500)
+	if (m_rateOfFire.getTicks() >= 300)
 	{
 		//Calculate position to shoot bullet from the edge of the gun
 		//Look at updateRotation()
@@ -39,10 +42,17 @@ void Gun::action()
 		m_initialPosition = _tempPosition + m_playerCenter;
 
 		//Shoot the bullet
-		m_bullet->reload(m_initialPosition, m_weaponDirection, m_angle, 2500);
-		m_bullet->setActive(true);
-		m_rateOfFire.start();
-		m_shootSfx.playSound();
+		for (int i = 0; i < BULLET_AMOUNT; i++)
+		{
+			if (!m_bullets[i].isActive())
+			{
+				m_bullets[i].reload(m_initialPosition, m_weaponDirection, m_angle, 2000);
+				m_bullets[i].setActive(true);
+				m_rateOfFire.start();
+				m_shootSfx.playSound();
+				break;
+			}
+		}
 	}
 }
 
@@ -50,10 +60,13 @@ void Gun::render() const
 {
 	Vector2f _rotationPoint = { 0.f, 0.f };
 	m_texture.render(m_position.x, m_position.y, NULL, NULL, NULL, m_angle, &_rotationPoint);
-	if (m_bullet->isActive()) m_bullet->render();
+	for (int i = 0; i < BULLET_AMOUNT; i++)
+	{
+		if (m_bullets[i].isActive()) m_bullets[i].render();
+	}
 }
 
-void Gun::update(Vector2f& position, float angle, float deltaTime)
+void Gun::update(Vector2f& position, float angle, float deltaTime, Camera* camera)
 {
 	m_position = m_initialPosition = position;
 	m_playerCenter = Vector2f(m_position.x + 32.f, m_position.y + 32.f);
@@ -63,7 +76,17 @@ void Gun::update(Vector2f& position, float angle, float deltaTime)
 
 	m_collisionBox = { m_position, 32, 16 };
 
-	m_bullet->update(deltaTime);
+	for (int i = 0; i < BULLET_AMOUNT; i++)
+	{
+		m_bullets[i].update(deltaTime);
+		if (m_bullets[i].getPosition().x > SCREEN_WIDTH + camera->getPosition().x 
+			|| m_bullets[i].getPosition().y > SCREEN_HEIGHT + camera->getPosition().y
+			|| m_bullets[i].getPosition().x + m_bullets[i].getCollisionBox().width < 0 
+			|| m_bullets[i].getPosition().y + m_bullets[i].getCollisionBox().height < 0)
+		{
+			m_bullets[i].setActive(false);
+		}
+	}
 }
 
 Vector2f Gun::updateRotation()
